@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Card {
+  id         String   @id @default(uuid())
+  groupId    String
+  group      Group    @relation(fields: [groupId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  wordId     String
+  word       Word     @relation(fields: [wordId], references: [id])
+  showCount  Int
+  writeCount Int
+  guessRatio Float
+  writeRatio Float
+  updatedAt  DateTime @updatedAt
+}
+
+model Group {
+  id        String @id
+  name      String
+  wordCount Int
+  Card      Card[]
+}
+
+model User {
+  id       String @id
+  username String
+  Card     Card[]
+}
+
+model Word {
+  id           String @id
+  transcrition String
+  translation  String
+  symbols      String
+  Card         Card[]
+}
