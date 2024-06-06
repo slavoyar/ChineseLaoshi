@@ -4,10 +4,13 @@ import { CreateCardRequest, CustomRequest, UpdateCardRequest } from '../models';
 import { Card } from '.prisma/client';
 
 export class CardController {
-  constructor(private prisma: PrismaClient) {
+  private prisma: PrismaClient;
+
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
   }
 
-  async getAllGroupCards(req: Request, res: Response) {
+  getAllGroupCards = async (req: Request, res: Response) => {
     const cards = await this.prisma.card.findMany({
       where: {
         groupId: req.params.groupId
@@ -17,7 +20,7 @@ export class CardController {
     res.status(200).json(cards);
   }
 
-  async createCard(req: CustomRequest<Card, CreateCardRequest>, res: Response<Card>) {
+  createCard = async (req: CustomRequest<Card, CreateCardRequest>, res: Response<Card>) => {
     let { wordId, symbols, transcrition, translation } = req.body;
     if (!wordId || !translation || !transcrition || !symbols) {
       res.status(422);
@@ -44,7 +47,7 @@ export class CardController {
     res.status(501);
   }
 
-  async updateCard(req: CustomRequest<Card, UpdateCardRequest>, res: Response) {
+  updateCard = async (req: CustomRequest<Card, UpdateCardRequest>, res: Response) => {
     const card = await this.prisma.card.findFirst({ where: { id: req.params.cardId }, include: { word: true } })
     if (!card) {
       throw new Error(`Card with id=${req.params.cardId} not found`);
@@ -73,7 +76,7 @@ export class CardController {
     res.status(200);
   }
 
-  async deleteCard(req: Request, res: Response) {
+  deleteCard = async (req: Request, res: Response) => {
     const card = await this.prisma.card.findFirst({ where: { id: req.params.cardId }, include: { word: true } });
     if (!card) {
       throw new Error(`Card with id=${req.params.cardId} not found`);

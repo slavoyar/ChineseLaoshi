@@ -1,12 +1,11 @@
 ﻿import express from 'express';
-import cardRoutes from './CardRoutes';
-import groupRoutes from './GroupRoutes';
-import wordRoutes from './WordRoutes';
+import { PrismaClient } from '@prisma/client';
+import { getCardRoutes } from './cardRoutes';
 
-const router = express.Router();
+export const getRoutes = (prisma: PrismaClient) => {
+  const router = express.Router();
 
-router.use('/cards', cardRoutes);
-router.use('/words', wordRoutes);
-router.use('/groups', groupRoutes);
-
-export default router;
+  router.use('/cards', getCardRoutes(prisma));
+  
+  return router;
+}
