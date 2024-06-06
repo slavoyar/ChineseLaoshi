@@ -11,32 +11,33 @@ model Card {
   id         String   @id @default(uuid())
   groupId    String
   group      Group    @relation(fields: [groupId], references: [id])
-  userId     String
-  user       User     @relation(fields: [userId], references: [id])
   wordId     String
   word       Word     @relation(fields: [wordId], references: [id])
-  showCount  Int
-  writeCount Int
-  guessRatio Float
-  writeRatio Float
+  showCount  Int      @default(0)
+  writeCount Int      @default(0)
+  guessRatio Float    @default(0)
+  writeRatio Float    @default(0)
   updatedAt  DateTime @updatedAt
 }
 
 model Group {
-  id        String @id
+  id        String @id @default(uuid())
   name      String
-  wordCount Int
+  wordCount Int    @default(0)
+  userId    String
+  user      User   @relation(fields: [userId], references: [id])
   Card      Card[]
 }
 
 model User {
-  id       String @id
+  id       String  @id
   username String
-  Card     Card[]
+  password String
+  Group    Group[]
 }
 
 model Word {
-  id           String @id
+  id           String @id @default(uuid())
   transcrition String
   translation  String
   symbols      String
