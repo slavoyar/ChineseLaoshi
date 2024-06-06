@@ -1,17 +1,11 @@
 ﻿import express from 'express'
-import { PrismaClient } from '@prisma/client';
-import { CardController } from '../controllers/cardController';
+import { createCard, deleteCard, getAllGroupCards, updateCard } from '../controllers/cardController';
 
-export const getCardRoutes = (prisma: PrismaClient) => {
   const router = express.Router();
 
-  const controller = new CardController(prisma);
+  router.get('/:groupId', getAllGroupCards);
+  router.post('/:groupId', createCard);
+  router.put('/:cardId', updateCard);
+  router.delete('/:cardId', deleteCard)
 
-  router.get('/:groupId', controller.getAllGroupCards);
-  router.post('/:groupId', controller.createCard);
-  router.put('/:cardId', controller.updateCard);
-  router.delete('/:cardId', controller.deleteCard)
-
-  return router
-}
-
+export default router;
