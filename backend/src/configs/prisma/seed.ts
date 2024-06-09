@@ -1,7 +1,7 @@
-﻿import { PrismaClient } from '@prisma/client';
+﻿// eslint-disable-next-line import/no-extraneous-dependencies
 import { faker } from '@faker-js/faker';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
-
 
 const prisma = new PrismaClient();
 

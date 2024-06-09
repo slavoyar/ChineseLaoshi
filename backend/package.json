@@ -4,6 +4,8 @@
   "description": "backend app for chinese laoshi",
   "main": "./src/index.ts",
   "scripts": {
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "nodemon index.ts",
@@ -33,10 +35,17 @@
     "@types/express": "^4.17.21",
     "@types/express-session": "^1.18.0",
     "@types/faker": "^6.6.9",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-typescript": "^18.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-simple-import-sort": "^12.1.0",
+    "prettier": "^3.3.1",
     "prisma": "^5.15.0",
     "prisma-import": "^1.0.5",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.12.0"
   }
 }

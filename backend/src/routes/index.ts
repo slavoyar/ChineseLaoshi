@@ -1,7 +1,8 @@
 ﻿import express from 'express';
+
+import authRoutes from './authRoutes';
 import cardRoutes from './cardRoutes';
 import groupRoutes from './groupRoutes';
-import authRoutes from './authRoutes';
 
 const router = express.Router();
 

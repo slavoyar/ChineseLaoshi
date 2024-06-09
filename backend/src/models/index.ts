@@ -1,2 +1,2 @@
-﻿export * from './cardDto'
-export * from './customTypes'
+﻿export * from './cardDto';
+export * from './customTypes';

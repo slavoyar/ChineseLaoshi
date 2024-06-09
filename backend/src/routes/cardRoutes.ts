@@ -1,11 +1,17 @@
-﻿import express from 'express'
-import { createCard, deleteCard, getAllGroupCards, updateCard } from '../controllers/cardController';
+﻿import express from 'express';
+
+import {
+  createCard,
+  deleteCard,
+  getAllGroupCards,
+  updateCard,
+} from '../controllers/cardController';
 
 const router = express.Router();
 
 router.get('/:groupId', getAllGroupCards);
 router.post('/:groupId', createCard);
 router.put('/:cardId', updateCard);
-router.delete('/:cardId', deleteCard)
+router.delete('/:cardId', deleteCard);
 
 export default router;

@@ -1,4 +1,4 @@
-﻿import { Word } from '.prisma/client'
+﻿import { Word } from '@prisma/client';
 
 export interface CreateCardRequest extends Partial<Word> {
   groupId: string;

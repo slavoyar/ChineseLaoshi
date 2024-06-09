@@ -1,12 +1,13 @@
-﻿import passport from 'passport';
-import bcrypt from 'bcrypt';
+﻿import bcrypt from 'bcrypt';
+import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
+
 import { getPrisma } from '../prisma/prismaInjection';
 
 const prisma = getPrisma();
 
-passport.use(new LocalStrategy(
-  async (username: string, password: string, done) => {
+passport.use(
+  new LocalStrategy(async (username: string, password: string, done) => {
     try {
       const user = await prisma.user.findFirst({ where: { username } });
 
@@ -22,11 +23,10 @@ passport.use(new LocalStrategy(
     } catch (err) {
       return done(err);
     }
-  }
-));
+  }),
+);
 
 passport.serializeUser((user, done) => {
-  // @ts-ignore
   done(null, user.id);
 });
 
