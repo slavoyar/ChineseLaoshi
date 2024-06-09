@@ -1,11 +1,13 @@
 ﻿import express from 'express';
-import routes from './src/routes';
-import passport from './src/configs/passport';
+import routes from './routes';
+import passport from './configs/passport';
 import session from 'express-session';
 
 const app = express();
 const port = 3000;
 
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 app.use(session({
   secret: 'your-secret-key',

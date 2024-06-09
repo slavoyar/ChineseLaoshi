@@ -18,7 +18,7 @@ passport.use(new LocalStrategy(
         return done(null, false, { message: 'Incorrect password.' });
       }
 
-      return done(null, user);
+      return done(null, { ...user, password: undefined });
     } catch (err) {
       return done(err);
     }
@@ -33,7 +33,11 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (id: string, done) => {
   try {
     const user = await prisma.user.findFirst({ where: { id } });
-    done(null, user);
+    if (!user) {
+      done('User not found');
+      return;
+    }
+    done(null, { id: user.id, username: user.username });
   } catch (err) {
     done(err);
   }
