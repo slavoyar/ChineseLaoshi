@@ -6,8 +6,12 @@ module.exports = {
         'airbnb',
         'airbnb-typescript',
         'prettier',
-    ], parserOptions: {
-        project: './tsconfig.json'
+    ],
+    parserOptions: {
+        project: './tsconfig.json',
+        ecmaFeatures: {
+            jsx: true,
+        },
     },
     ignorePatterns: ['dist', '.eslintrc.cjs'],
     parser: '@typescript-eslint/parser',
@@ -29,7 +33,17 @@ module.exports = {
             tabWidth: 2,
             trailingComma: 'es5',
             useTabs: false,
-            vueIndentScriptAndStyle: false,
         }],
+        "react/jsx-props-no-spreading": 'off',
+        'import/extensions': 'off',
+        'import/no-absolute-path': 'off',
+        'import/no-extraneous-dependencies': 'off',
+        'react/function-component-definition': [
+            2,
+            {
+                namedComponents: 'arrow-function',
+                unnamedComponents: 'arrow-function',
+            },
+        ],
     },
 }
