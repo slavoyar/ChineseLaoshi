@@ -1,19 +1,11 @@
-﻿import { FC } from 'react';
+import { FC } from 'react';
 import { ButtonProps } from './types';
-import PrimaryButton from './PrimaryButton';
-import SecondaryButton from './SecondaryButton';
-import TextButton from './TextButton';
+import './styles.css';
 
-const Button: FC<ButtonProps> = ({ variant, ...props }) => {
-  switch (variant) {
-    case 'primary':
-      return <PrimaryButton {...props} />;
-    case 'secondary':
-      return <SecondaryButton {...props} />;
-    case 'text':
-    default:
-      return <TextButton {...props} />;
-  }
-};
+const Button: FC<ButtonProps> = ({ variant, children, className, ...props }) => (
+  <button type='button' className={`btn btn--${variant} ${className}`} {...props}>
+    {children}
+  </button>
+);
 
 export default Button;

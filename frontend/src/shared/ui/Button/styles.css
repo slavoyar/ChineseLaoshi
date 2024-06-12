@@ -1,0 +1,13 @@
+﻿
+.btn {
+    @apply inline-block px-4 py-2 rounded text-white;
+}
+.btn--primary {
+    @apply bg-primary-500 hover:bg-primary-600;
+}
+.btn--secondary {
+    @apply bg-secondary-700 hover:bg-secondary-600;
+}
+.btn--text {
+    @apply hover:bg-secondary-800;
+}
