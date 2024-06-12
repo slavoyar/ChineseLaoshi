@@ -26,14 +26,14 @@ model Group {
   wordCount Int    @default(0)
   userId    String
   user      User   @relation(fields: [userId], references: [id])
-  Card      Card[]
+  cards     Card[]
 }
 
 model User {
-  id       String  @id
+  id       String  @id @default(uuid())
   username String
   password String
-  Group    Group[]
+  groups   Group[]
 }
 
 model Word {
@@ -41,5 +41,5 @@ model Word {
   transcrition String
   translation  String
   symbols      String
-  Card         Card[]
+  cards        Card[]
 }

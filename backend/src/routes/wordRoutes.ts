@@ -1,8 +1,9 @@
 ﻿import express from 'express';
 
-import { login } from '../controllers/authController';
+import { searchWord } from '../controllers/wordController';
 
 const router = express.Router();
 
-router.post('/login', login);
+router.get('/', searchWord);
+
 export default router;

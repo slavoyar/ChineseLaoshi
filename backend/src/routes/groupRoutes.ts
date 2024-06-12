@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.get('/', getAllGroups);
 router.post('/', createGroup);
-router.put('/:groupId', updateGroup);
+router.put('/', updateGroup);
 router.delete('/:groupId', deleteGroup);
 
 export default router;

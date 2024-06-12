@@ -28,7 +28,7 @@ export const createGroup = async (req: CustomRequest<Group, { name: string }>, r
 };
 export const updateGroup = async (req: CustomRequest<Group, Group>, res: Response) => {
   const group = await prisma.group.update({
-    where: { id: req.params.groupId },
+    where: { id: req.body.id },
     data: { name: req.body.name },
   });
   res.status(200).json(group);

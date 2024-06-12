@@ -22,7 +22,7 @@ export const createCard = async (
 ) => {
   let { wordId } = req.body;
   const { symbols, transcrition, translation } = req.body;
-  if (!wordId || !translation || !transcrition || !symbols) {
+  if (!wordId && (!translation || !transcrition || !symbols)) {
     res.status(422);
     return;
   }
@@ -30,21 +30,30 @@ export const createCard = async (
   if (!wordId) {
     const word = await prisma.word.create({
       data: {
-        translation,
-        transcrition,
-        symbols,
+        translation: translation as string,
+        transcrition: transcrition as string,
+        symbols: symbols as string,
       },
     });
     wordId = word.id;
   }
 
-  prisma.card.create({
+  const card = await prisma.card.create({
     data: {
       groupId: req.body.groupId,
       wordId,
     },
   });
-  res.status(501);
+
+  await prisma.group.update({
+    data: {
+      wordCount: { increment: 1 },
+    },
+    where: {
+      id: req.body.groupId,
+    },
+  });
+  res.json(card);
 };
 
 export const updateCard = async (req: CustomRequest<Card, UpdateCardRequest>, res: Response) => {
@@ -95,6 +104,13 @@ export const deleteCard = async (req: Request, res: Response) => {
   }
 
   await prisma.card.delete({ where: { id: card.id } });
-
+  await prisma.group.update({
+    data: {
+      wordCount: { decrement: 1 },
+    },
+    where: {
+      id: req.body.groupId,
+    },
+  });
   res.status(200);
 };

@@ -1,5 +1,5 @@
 ﻿// eslint-disable-next-line import/no-extraneous-dependencies
-import { faker } from '@faker-js/faker';
+import { faker, fakerRU, fakerZH_CN } from '@faker-js/faker';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
@@ -13,7 +13,7 @@ async function main() {
     const user = await prisma.user.create({
       data: {
         id: faker.string.uuid(),
-        username: faker.internet.userName(),
+        username: i === 0 ? 'slavoyar' : faker.internet.userName(),
         password: hashedPassword,
       },
     });
@@ -26,8 +26,8 @@ async function main() {
     const group = await prisma.group.create({
       data: {
         id: faker.string.uuid(),
-        name: faker.company.name(),
-        userId: users[faker.number.int({ min: 0, max: users.length - 1 })].id,
+        name: fakerRU.company.name(),
+        userId: users[i].id,
         wordCount: 0, // Initialize with 0, will update later
       },
     });
@@ -41,8 +41,8 @@ async function main() {
       data: {
         id: faker.string.uuid(),
         transcrition: faker.lorem.word(),
-        translation: faker.lorem.word(),
-        symbols: faker.lorem.word(),
+        translation: fakerRU.lorem.word(),
+        symbols: fakerZH_CN.person.firstName(),
       },
     });
     words.push(word);
@@ -57,8 +57,8 @@ async function main() {
         wordId: words[faker.number.int({ min: 0, max: words.length - 1 })].id,
         showCount: faker.number.int({ min: 1, max: 10 }),
         writeCount: faker.number.int({ min: 1, max: 10 }),
-        guessRatio: faker.number.float({ min: 0, max: 1, precision: 0.01 }),
-        writeRatio: faker.number.float({ min: 0, max: 1, precision: 0.01 }),
+        guessRatio: faker.number.float({ min: 0, max: 1, multipleOf: 0.01 }),
+        writeRatio: faker.number.float({ min: 0, max: 1, multipleOf: 0.01 }),
         updatedAt: faker.date.recent(),
       },
     });

@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.get('/:groupId', getAllGroupCards);
 router.post('/:groupId', createCard);
-router.put('/:cardId', updateCard);
+router.put('/', updateCard);
 router.delete('/:cardId', deleteCard);
 
 export default router;
