@@ -1,5 +1,5 @@
-import { Button } from '@shared/ui';
-import Accordion from '@shared/ui/Accordion';
+import { Accordion, Button } from '@shared/ui';
+import { FC } from 'react';
 
 const sections = [
   {
@@ -16,6 +16,11 @@ const sections = [
   },
 ];
 
+const GroupHeader: FC<{ name: string }> = ({ name }) => (
+  <div>
+    {name} <span className='text-secondary-200'>(20 words)</span>
+  </div>
+);
 const App = () => (
   <>
     <div className='flex gap-4 p-4 w-full'>
@@ -33,7 +38,7 @@ const App = () => (
       <Accordion
         sections={sections}
         rowKey={(item) => item.id}
-        header={(item) => item.name}
+        header={(item) => <GroupHeader name={item.name} />}
         content={(item) => item.name}
       />
     </div>

@@ -7,7 +7,7 @@
 }
 
 .accordion-header {
-    @apply flex items-center select-none justify-between border-white pb-2;
+    @apply flex items-center select-none justify-between border-secondary-200 pb-2;
 }
 
 .accordion-content {

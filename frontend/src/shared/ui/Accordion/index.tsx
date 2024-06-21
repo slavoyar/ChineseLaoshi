@@ -1,20 +1,13 @@
 import { HTMLAttributes, Key, ReactNode, useState } from 'react';
 import './styles.css';
 
-interface OptionalProps<T> {
-  onDelete?: (item: T) => void;
-}
-
-interface Props<T> extends Omit<HTMLAttributes<HTMLDivElement>, 'content'>, OptionalProps<T> {
+interface Props<T> extends Omit<HTMLAttributes<HTMLDivElement>, 'content'> {
   sections: T[];
   rowKey: (item: T) => Key;
   header: (item: T) => ReactNode;
   content: (item: T) => ReactNode;
+  onDelete?: (item: T) => void;
 }
-
-const defaultProps: OptionalProps<unknown> = {
-  onDelete: () => {},
-};
 
 const Accordion = <T,>({ sections, rowKey, header, content, onDelete, ...props }: Props<T>) => {
   const [openedKeys, setOpenedKeys] = useState<Key[]>([]);
@@ -59,7 +52,5 @@ const Accordion = <T,>({ sections, rowKey, header, content, onDelete, ...props }
     </div>
   );
 };
-
-Accordion.defaultProps = defaultProps;
 
 export default Accordion;

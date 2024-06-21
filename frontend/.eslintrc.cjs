@@ -38,6 +38,10 @@ module.exports = {
         'import/extensions': 'off',
         'import/no-absolute-path': 'off',
         'import/no-extraneous-dependencies': 'off',
+        'react/no-unstable-nested-components': ['error', {
+           allowAsProps: true, 
+        }],
+        'react/require-default-props': 'off',
         'react/function-component-definition': [
             2,
             {
