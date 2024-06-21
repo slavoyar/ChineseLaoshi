@@ -1,0 +1,20 @@
+﻿.accordion {
+    @apply  text-white w-full flex flex-col gap-2;
+}
+
+.accordion-item {
+    @apply bg-secondary-800 rounded-xl p-4;
+}
+
+.accordion-header {
+    @apply flex items-center select-none justify-between border-white pb-2;
+}
+
+.accordion-content {
+    @apply max-h-20;
+    display: none;
+}
+
+.accordion-content.active {
+    display: block;
+}
