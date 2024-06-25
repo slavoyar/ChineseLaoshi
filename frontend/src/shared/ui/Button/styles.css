@@ -1,6 +1,6 @@
 ﻿
 .btn {
-    @apply inline-block px-4 py-2 rounded text-white;
+    @apply inline-block px-4 py-2 rounded text-white w-full;
 }
 .btn--primary {
     @apply bg-primary-500 hover:bg-primary-600;

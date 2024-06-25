@@ -1,4 +1,4 @@
-import { Accordion, Button } from '@shared/ui';
+import { Accordion, Button, TextField } from '@shared/ui';
 import { FC } from 'react';
 
 const sections = [
@@ -34,13 +34,14 @@ const App = () => (
         Text
       </Button>
     </div>
-    <div className='w-7/12 m-auto'>
+    <div className='w-7/12 m-auto flex flex-col gap-4'>
       <Accordion
         sections={sections}
         rowKey={(item) => item.id}
         header={(item) => <GroupHeader name={item.name} />}
         content={(item) => item.name}
       />
+      <TextField />
     </div>
   </>
 );

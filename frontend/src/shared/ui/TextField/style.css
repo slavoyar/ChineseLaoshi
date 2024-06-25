@@ -1,0 +1,7 @@
+﻿.input {
+    @apply rounded px-4 py-2 w-full text-xl h-fit box-border;
+}
+
+.input--primary {
+    @apply text-white bg-secondary-700 focus:bg-secondary-600 outline-secondary-200 outline-[1px] ;
+}

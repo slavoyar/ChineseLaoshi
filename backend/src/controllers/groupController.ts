@@ -7,7 +7,7 @@ import { CustomRequest } from '../models';
 const prisma = getPrisma();
 export const getAllGroups = async (req: Request, res: Response) => {
   if (!req.user) {
-    res.status(401).json({ message: 'Not authorised', code: 'notAuth' });
+    res.status(401).json({ message: 'Not authorized', code: 'notAuth' });
     return;
   }
   const groups = await prisma.group.findMany({
