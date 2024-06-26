@@ -11,7 +11,7 @@
 }
 
 .accordion-content {
-    @apply max-h-20;
+    @apply max-h-[365px] overflow-auto;
     display: none;
 }
 

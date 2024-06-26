@@ -7,20 +7,30 @@ interface Props<T> extends Omit<HTMLAttributes<HTMLDivElement>, 'content'> {
   header: (item: T) => ReactNode;
   content: (item: T) => ReactNode;
   onDelete?: (item: T) => void;
+  onOpen?: (item: T) => void;
 }
 
-const Accordion = <T,>({ sections, rowKey, header, content, onDelete, ...props }: Props<T>) => {
-  const [openedKeys, setOpenedKeys] = useState<Key[]>([]);
+const Accordion = <T,>({
+  sections,
+  rowKey,
+  header,
+  content,
+  onDelete,
+  onOpen,
+  ...props
+}: Props<T>) => {
+  const [openedKey, setOpenedKey] = useState<Key>();
 
   const toggleSection = (section: T) => {
     const key = rowKey(section);
-    const keys = openedKeys.includes(key)
-      ? openedKeys.filter((item) => item !== key)
-      : [...openedKeys, key];
-    setOpenedKeys(keys);
+    const isOpen = openedKey === key;
+    if (!isOpen && onOpen) {
+      onOpen(section);
+    }
+    setOpenedKey(key);
   };
 
-  const isOpened = (section: T) => openedKeys.includes(rowKey(section));
+  const isOpened = (section: T) => openedKey === rowKey(section);
 
   const handleDelete = (section: T) => {
     if (onDelete) {
