@@ -13,7 +13,7 @@ const Main = () => {
     });
   }, []);
   return (
-    <div className='w-8/12 m-auto'>
+    <div className='md:w-8/12 m-auto h-full'>
       <Groups />
     </div>
   );

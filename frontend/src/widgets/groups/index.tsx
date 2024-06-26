@@ -11,7 +11,15 @@ const Groups = () => {
   };
 
   return (
-    <GroupList content={(item) => <CardList groupId={item.id} />} onGroupOpen={groupOpenHandler} />
+    <div className='md:p-10 p-5 bg-secondary-900 rounded-2xl flex flex-col md:gap-10 gap-5 h-fit max-h-full'>
+      <div className='text-2xl text-white'>Folders</div>
+      <div className='overflow-auto h-full'>
+        <GroupList
+          content={(item) => <CardList groupId={item.id} />}
+          onGroupOpen={groupOpenHandler}
+        />
+      </div>
+    </div>
   );
 };
 

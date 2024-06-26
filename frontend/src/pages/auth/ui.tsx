@@ -16,6 +16,13 @@ const Login = () => {
       console.error(error);
     }
   };
+
+  const keyUpHandler = async (key: string) => {
+    if (key === 'Enter') {
+      await handleClick();
+    }
+  };
+
   return (
     <div className='w-3/12 h-full grid grid-cols-1 gap-4 m-auto place-content-center'>
       <h1 className='text-white text-2xl text-center uppercase'>Login</h1>
@@ -28,6 +35,7 @@ const Login = () => {
         placeholder='Password'
         value={password}
         onInput={(e) => setPassword(e.currentTarget.value)}
+        onKeyUp={(e) => keyUpHandler(e.key)}
         type='password'
       />
       <Button variant='primary' onClick={() => handleClick()}>

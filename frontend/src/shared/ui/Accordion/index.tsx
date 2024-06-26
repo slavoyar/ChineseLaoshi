@@ -27,7 +27,7 @@ const Accordion = <T,>({
     if (!isOpen && onOpen) {
       onOpen(section);
     }
-    setOpenedKey(key);
+    setOpenedKey((prev) => (prev === key ? undefined : key));
   };
 
   const isOpened = (section: T) => openedKey === rowKey(section);
