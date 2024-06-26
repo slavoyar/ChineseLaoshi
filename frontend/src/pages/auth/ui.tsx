@@ -1,16 +1,20 @@
 import { Button, TextField } from '@shared/ui';
-import axios from 'axios';
 import { useState } from 'react';
+import { authService } from '@entities/user';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
-  const handleClick = () => {
-    axios.post(
-      '/api/auth/login',
-      { username: login, password },
-      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-    );
+
+  const navigate = useNavigate();
+  const handleClick = async () => {
+    try {
+      await authService.login(login, password);
+      navigate('/');
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <div className='w-3/12 h-full grid grid-cols-1 gap-4 m-auto place-content-center'>

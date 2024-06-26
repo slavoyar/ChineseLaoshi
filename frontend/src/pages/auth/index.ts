@@ -1,3 +1,3 @@
-import login from './ui';
+import Login from './ui';
 
-export default login;
+export default Login;

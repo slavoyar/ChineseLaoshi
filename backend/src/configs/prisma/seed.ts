@@ -27,7 +27,7 @@ async function main() {
       data: {
         id: faker.string.uuid(),
         name: fakerRU.company.name(),
-        userId: users[i].id,
+        userId: users[0].id,
         wordCount: 0, // Initialize with 0, will update later
       },
     });
