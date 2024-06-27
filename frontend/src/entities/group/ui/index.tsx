@@ -9,8 +9,11 @@ interface Props {
 }
 
 const GroupList: FC<Props> = ({ content, onGroupOpen }) => {
-  const groups = useGroupStore((state) => state.groups);
+  const [groups, deleteGroup] = useGroupStore((state) => [state.groups, state.delete]);
 
+  const deleteHandler = async (item: Group) => {
+    await deleteGroup(item.id);
+  };
   return (
     <Accordion
       sections={groups}
@@ -18,6 +21,7 @@ const GroupList: FC<Props> = ({ content, onGroupOpen }) => {
       header={(item) => <GroupHeader name={item.name} wordCount={item.wordCount} />}
       content={content}
       onOpen={onGroupOpen}
+      onDelete={deleteHandler}
     />
   );
 };

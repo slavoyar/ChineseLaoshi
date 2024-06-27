@@ -34,6 +34,9 @@ export const updateGroup = async (req: CustomRequest<Group, Group>, res: Respons
   res.status(200).json(group);
 };
 export const deleteGroup = async (req: Request, res: Response) => {
-  await prisma.group.delete({ where: { id: req.params.groupId } });
-  res.status(200);
+  const group = await prisma.group.findFirst({ where: { id: req.params.groupId } });
+  if (group) {
+    await prisma.group.delete({ where: { id: req.params.groupId } });
+  }
+  res.status(200).json(true);
 };
