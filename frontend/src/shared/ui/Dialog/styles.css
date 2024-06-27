@@ -1,0 +1,24 @@
+.dialog-overlay {
+    @apply fixed top-0 left-0 w-full h-full backdrop-blur-xl flex items-center justify-center;
+    z-index: 1000;
+}
+
+.dialog {
+    @apply bg-secondary-800 max-h-[90%] min-w-[20%] py-4 px-8 rounded-xl;
+}
+
+.dialog-header {
+    @apply flex justify-between text-white py-2 items-center;
+}
+
+.dialog-header h2 {
+    @apply text-2xl select-none;
+}
+
+.dialog-body {
+    @apply py-2;
+}
+
+.dialog-footer {
+    @apply py-2;
+}
