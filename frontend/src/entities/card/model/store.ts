@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Card } from '@entities/card';
+import { Card, Word } from '@entities/card';
 import cardService from '@entities/card/api';
 
 interface State {
@@ -8,7 +8,8 @@ interface State {
 
 interface Action {
   fetch: (id: string) => Promise<void>;
-  getGroupCards: (id: string) => Card[];
+  create: (id: string, data: Omit<Word, 'id'>) => Promise<void>;
+  delete: (id: string) => Promise<void>;
 }
 
 const useCardStore = create<State & Action>((set, get) => ({
@@ -17,9 +18,26 @@ const useCardStore = create<State & Action>((set, get) => ({
     const response = await cardService.getList(id);
     set((state) => ({ cardsPerGroup: { ...state.cardsPerGroup, [id]: response } }));
   },
-  getGroupCards: (id: string) => {
-    const cards = get().cardsPerGroup[id];
-    return cards ?? [];
+  create: async (id: string, data: Omit<Word, 'id'>) => {
+    const response = await cardService.post(data, id);
+    const cards = [...get().cardsPerGroup[id], response];
+    set((state) => ({ cardsPerGroup: { ...state.cardsPerGroup, [id]: cards } }));
+  },
+  delete: async (id: string) => {
+    await cardService.delete(id);
+    const { cardsPerGroup } = get();
+    const groupId = Object.keys(cardsPerGroup).find((group) =>
+      cardsPerGroup[group].some((item) => item.id === id)
+    );
+    if (!groupId) {
+      return;
+    }
+    set((state) => ({
+      cardsPerGroup: {
+        ...state.cardsPerGroup,
+        [groupId]: cardsPerGroup[groupId].filter((item) => item.id !== id),
+      },
+    }));
   },
 }));
 

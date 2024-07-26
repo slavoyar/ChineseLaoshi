@@ -1,6 +1,6 @@
 export interface Word {
   id: string;
-  transcrition: string;
+  transcription: string;
   translation: string;
   symbols: string;
 }

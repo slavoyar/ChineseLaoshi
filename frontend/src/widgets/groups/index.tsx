@@ -1,9 +1,11 @@
 import { CardList, useCardStore } from '@entities/card';
-import { Group, GroupList } from '@entities/group';
+import { Group, GroupList, useGroupStore } from '@entities/group';
 import AddGroup from '@features/addGroup';
+import AddWord from '@features/addWord';
 
 const Groups = () => {
   const [cardsPerGroup, fetchCards] = useCardStore((state) => [state.cardsPerGroup, state.fetch]);
+  const decrementWordCount = useGroupStore((state) => state.decrementWordCount);
 
   const groupOpenHandler = async (group: Group) => {
     if (!cardsPerGroup[group.id]) {
@@ -19,7 +21,12 @@ const Groups = () => {
       </div>
       <div className='overflow-auto h-full'>
         <GroupList
-          content={(item) => <CardList groupId={item.id} />}
+          content={(item) => (
+            <div>
+              <CardList groupId={item.id} onDelete={() => decrementWordCount(item.id)} />
+              <AddWord groupId={item.id} />{' '}
+            </div>
+          )}
           onGroupOpen={groupOpenHandler}
         />
       </div>

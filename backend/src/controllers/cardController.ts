@@ -21,9 +21,9 @@ export const createCard = async (
   res: Response<Card>,
 ) => {
   let { wordId } = req.body;
-  const { symbols, transcrition, translation } = req.body;
-  if (!wordId && (!translation || !transcrition || !symbols)) {
-    res.status(422);
+  const { symbols, transcription, translation } = req.body;
+  if (!wordId && (!translation || !transcription || !symbols)) {
+    res.sendStatus(422);
     return;
   }
 
@@ -31,7 +31,7 @@ export const createCard = async (
     const word = await prisma.word.create({
       data: {
         translation: translation as string,
-        transcrition: transcrition as string,
+        transcription: transcription as string,
         symbols: symbols as string,
       },
     });
@@ -40,9 +40,10 @@ export const createCard = async (
 
   const card = await prisma.card.create({
     data: {
-      groupId: req.body.groupId,
+      groupId: req.params.groupId,
       wordId,
     },
+    include: { word: true },
   });
 
   await prisma.group.update({
@@ -50,7 +51,7 @@ export const createCard = async (
       wordCount: { increment: 1 },
     },
     where: {
-      id: req.body.groupId,
+      id: req.params.groupId,
     },
   });
   res.json(card);
@@ -98,19 +99,19 @@ export const deleteCard = async (req: Request, res: Response) => {
     throw new Error(`Card with id=${req.params.cardId} not found`);
   }
 
+  await prisma.card.delete({ where: { id: card.id } });
+
   const wordCount = await prisma.card.count({ where: { wordId: card.wordId } });
-  if (wordCount === 1) {
+  if (wordCount === 0) {
     await prisma.word.delete({ where: { id: card.word.id } });
   }
-
-  await prisma.card.delete({ where: { id: card.id } });
   await prisma.group.update({
     data: {
       wordCount: { decrement: 1 },
     },
     where: {
-      id: req.body.groupId,
+      id: card.groupId,
     },
   });
-  res.status(200);
+  res.json();
 };

@@ -37,9 +37,9 @@ model User {
 }
 
 model Word {
-  id           String @id @default(uuid())
-  transcrition String
-  translation  String
-  symbols      String
-  cards        Card[]
+  id            String @id @default(uuid())
+  transcription String
+  translation   String
+  symbols       String
+  cards         Card[]
 }

@@ -40,7 +40,7 @@ async function main() {
     const word = await prisma.word.create({
       data: {
         id: faker.string.uuid(),
-        transcrition: faker.lorem.word(),
+        transcription: faker.lorem.word(),
         translation: fakerRU.lorem.word(),
         symbols: fakerZH_CN.person.firstName(),
       },
