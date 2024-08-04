@@ -2,6 +2,7 @@ import { Button, CreateDialog, TextField } from '@shared/ui';
 import { FC, useState } from 'react';
 import { useCardStore } from '@entities/card';
 import { useGroupStore } from '@entities/group';
+import pinyin from 'pinyin';
 
 interface AddWordProps {
   groupId: string;
@@ -23,6 +24,16 @@ const AddWord: FC<AddWordProps> = ({ groupId }) => {
     }
   };
 
+  const symbolsHandler = (value: string) => {
+    // TODO: add check if it is a hieroglyph
+    setSymbols(value);
+    setTranscription(
+      pinyin(value)
+        .map((item: string[]) => item[0])
+        .join('')
+    );
+  };
+
   return (
     <>
       <Button variant='text' onClick={() => setIsOpen(true)}>
@@ -39,13 +50,9 @@ const AddWord: FC<AddWordProps> = ({ groupId }) => {
           <TextField
             value={symbols}
             placeholder='Enter hieroglyphs'
-            onInput={(e) => setSymbols(e.currentTarget.value)}
+            onInput={(e) => symbolsHandler(e.currentTarget.value)}
           />
-          <TextField
-            value={transcription}
-            placeholder='Enter transription'
-            onInput={(e) => setTranscription(e.currentTarget.value)}
-          />
+          <TextField value={transcription} placeholder='Enter transription' disabled />
           <TextField
             value={translation}
             placeholder='Enter translation'
