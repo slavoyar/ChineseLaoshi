@@ -1,5 +1,6 @@
 import { Accordion, Button, CreateDialog, TextField } from '@shared/ui';
 import { FC, useState } from 'react';
+import { WriteCard } from '@entities/card';
 
 const sections = [
   {
@@ -57,6 +58,14 @@ const App = () => {
       >
         <TextField placeholder='Enter group name' />
       </CreateDialog>
+      <div className='w-7/12 m-auto flex flex-col gap-4'>
+        <WriteCard
+          id='123'
+          symbols='我是俄罗斯人'
+          transcription='Wǒ shì èluósī rén'
+          translation='Я русский'
+        />
+      </div>
     </>
   );
 };
