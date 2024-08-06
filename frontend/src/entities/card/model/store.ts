@@ -48,7 +48,16 @@ const useCardStore = create<State & Action>((set, get) => ({
     }));
   },
   updateStats: async (id: string, guessed: boolean) => {
-    await cardService.updateCardStats(id, guessed);
+    const card = await cardService.updateCardStats(id, guessed);
+
+    set((state) => ({
+      cardsPerGroup: {
+        ...state.cardsPerGroup,
+        [card.groupId]: state.cardsPerGroup[card.groupId]?.map((item) =>
+          item.id === id ? { ...item, writeRatio: card.writeRatio } : item
+        ),
+      },
+    }));
   },
 }));
 

@@ -31,7 +31,8 @@ const GroupList: FC<Props> = ({ content, onGroupOpen }) => {
       header={(item) => <GroupHeader name={item.name} wordCount={item.wordCount} />}
       actions={(item) => (
         <i
-          className='fa fa-book-reader hover:bg-secondary-600 rounded p-1 cursor-pointer'
+          className='fa fa-pencil-square hover:bg-secondary-600 rounded p-1 cursor-pointer'
+          title='Study'
           onClick={() => onStudyClick(item.id)}
         />
       )}

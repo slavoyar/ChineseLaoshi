@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import HanziWriter from 'hanzi-writer';
 import { useCardStore, Word } from '@entities/card';
 import { Button } from '@shared/ui';
@@ -18,9 +18,12 @@ const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
 
   const [guessedSymbols, setGuessedSymbols] = useState<string[]>([]);
 
-  const onQuizComplete = useCallback(({ character }: { character: string }) => {
+  const onQuizComplete = ({ character }: { character: string }) => {
     setGuessedSymbols((prev) => [...prev, character]);
-  }, []);
+    if (currentIndex < symbols.length - 1) {
+      inc();
+    }
+  };
 
   useEffect(() => {
     writers.current = symbols.split('').map((sym, index) =>
@@ -40,20 +43,26 @@ const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
         item.target.node.remove();
       });
       writers.current = [];
+      setGuessedSymbols([]);
       reset();
     };
   }, [symbols]);
 
   useEffect(() => {
     const symbol = symbols[debouncedIndex];
+    const writer = writers.current[debouncedIndex];
+    if (!writer) {
+      return;
+    }
+
     if (guessedSymbols.includes(symbol)) {
-      writers.current[debouncedIndex].showCharacter();
+      writer.showCharacter();
     } else {
-      writers.current[debouncedIndex].quiz({
+      writer.quiz({
         onComplete: onQuizComplete,
       });
     }
-  }, [debouncedIndex]);
+  }, [symbols, debouncedIndex]);
 
   const iconClass = (cond: boolean) => (cond ? 'text-primary-100' : 'text-secondary-700');
 

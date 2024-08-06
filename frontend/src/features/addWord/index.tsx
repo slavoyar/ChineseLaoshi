@@ -20,6 +20,9 @@ const AddWord: FC<AddWordProps> = ({ groupId }) => {
       await createWord(groupId, { transcription, translation, symbols });
       incrementWordCount(groupId);
     } finally {
+      setTranscription('');
+      setTranslation('');
+      setSymbols('');
       setIsOpen(false);
     }
   };

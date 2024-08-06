@@ -158,13 +158,12 @@ export const updateCardStats = async (req: CustomRequest<Card, UpdateCardStats>,
     res.sendStatus(404);
     return;
   }
-  const { writeCount } = card;
-  let writeRatio;
-  if (req.body.guessed) {
-    writeRatio = Math.min(card.writeRatio + writeCount > 20 ? 0.05 : 0.1, 1);
-  } else {
-    writeRatio = Math.max(card.writeRatio - writeCount > 20 ? 0.05 : 0.1, 0);
-  }
+  const { writeCount, writeRatio: ratio } = card;
+
+  const changeValue = writeCount > 20 ? 0.05 : 0.1;
+  const writeRatio = req.body.guessed
+    ? Math.min(ratio + changeValue, 1)
+    : Math.max(ratio - changeValue, 0);
   card = await prisma.card.update({
     where: { id: cardId },
     data: {

@@ -17,9 +17,9 @@ const CardItem: FC<Props> = ({ card, onDelete }) => {
   return (
     <div className='w-full flex rounded-xl bg-secondary-600 px-4 py-2 items-center justify-between'>
       <div className='flex items-center gap-4'>
-        <div className={`text-center w-10 ${getColorByPercent(card.guessRatio)}`}>
+        <div className={`text-center w-10 ${getColorByPercent(card.writeRatio)}`}>
           <i className='fa fa-circle fa-sm' />
-          <div>{getPercentFromRatio(card.guessRatio)}%</div>
+          <div>{getPercentFromRatio(card.writeRatio)}%</div>
         </div>
         <div>
           {card.word.symbols}

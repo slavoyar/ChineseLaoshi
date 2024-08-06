@@ -18,7 +18,7 @@ export const getAllGroups = async (req: Request, res: Response) => {
 
 export const createGroup = async (req: CustomRequest<Group, { name: string }>, res: Response) => {
   if (!req.user) {
-    res.status(401).json({ message: 'Not authorised', code: 'notAuth' });
+    res.status(401).json({ message: 'Not authorized', code: 'notAuth' });
     return;
   }
   const group = await prisma.group.create({
@@ -36,6 +36,7 @@ export const updateGroup = async (req: CustomRequest<Group, Group>, res: Respons
 export const deleteGroup = async (req: Request, res: Response) => {
   const group = await prisma.group.findFirst({ where: { id: req.params.groupId } });
   if (group) {
+    await prisma.card.deleteMany({ where: { groupId: group.id } });
     await prisma.group.delete({ where: { id: req.params.groupId } });
   }
   res.status(200).json(true);
