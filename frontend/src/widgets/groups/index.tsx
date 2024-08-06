@@ -24,7 +24,7 @@ const Groups = () => {
           content={(item) => (
             <div>
               <CardList groupId={item.id} onDelete={() => decrementWordCount(item.id)} />
-              <AddWord groupId={item.id} />{' '}
+              <AddWord groupId={item.id} />
             </div>
           )}
           onGroupOpen={groupOpenHandler}

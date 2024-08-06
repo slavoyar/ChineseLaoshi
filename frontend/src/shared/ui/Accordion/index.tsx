@@ -3,6 +3,7 @@ import './styles.css';
 
 interface Props<T> extends Omit<HTMLAttributes<HTMLDivElement>, 'content'> {
   sections: T[];
+  actions?: (item: T) => ReactNode;
   rowKey: (item: T) => Key;
   header: (item: T) => ReactNode;
   content: (item: T) => ReactNode;
@@ -17,6 +18,7 @@ const Accordion = <T,>({
   content,
   onDelete,
   onOpen,
+  actions,
   ...props
 }: Props<T>) => {
   const [openedKey, setOpenedKey] = useState<Key>();
@@ -49,10 +51,13 @@ const Accordion = <T,>({
               {`${index + 1}.`} {header(section)}
               <i className={`fa ${isOpened(section) ? 'fa-chevron-down' : 'fa-chevron-right'}`} />
             </div>
-            <i
-              className='fa fa-close text-error-600 cursor-pointer hover:bg-secondary-600 p-1 rounded'
-              onClick={() => handleDelete(section)}
-            />
+            <div className='flex gap-2 items-center'>
+              {actions && actions(section)}
+              <i
+                className='fa fa-close text-error-600 cursor-pointer hover:bg-secondary-600 p-1 rounded'
+                onClick={() => handleDelete(section)}
+              />
+            </div>
           </div>
           <div className={`accordion-content  ${isOpened(section) ? 'active' : ''}`}>
             {content(section)}

@@ -7,6 +7,7 @@ export interface Word {
 
 export interface Card {
   id: string;
-  guessRatio: number;
+  groupId: string;
+  writeRatio: number;
   word: Word;
 }

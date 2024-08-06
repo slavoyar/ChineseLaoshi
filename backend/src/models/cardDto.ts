@@ -5,3 +5,7 @@ export interface CreateCardRequest extends Partial<Word> {
 }
 
 export interface UpdateCardRequest extends Partial<Word> {}
+
+export interface UpdateCardStats {
+  guessed: boolean;
+}

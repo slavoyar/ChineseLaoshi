@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export default class BaseService<Data> {
-  private url: string;
+  protected url: string;
 
   constructor(url: string) {
     this.url = url;

@@ -1,11 +1,17 @@
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import HanziWriter from 'hanzi-writer';
-import { Word } from '@entities/card';
+import { useCardStore, Word } from '@entities/card';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { useCounter, useDebounceValue } from '@siberiacancode/reactuse';
 
-const WriteCard: FC<Word> = ({ symbols, translation }) => {
+interface Props extends Word {
+  onNext: () => void;
+}
+
+const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
+  const updateCardStats = useCardStore((state) => state.updateStats);
+
   const writers = useRef<HanziWriter[]>([]);
   const { value: currentIndex, inc, dec, reset } = useCounter(0);
   const debouncedIndex = useDebounceValue(currentIndex, 300);
@@ -51,12 +57,9 @@ const WriteCard: FC<Word> = ({ symbols, translation }) => {
 
   const iconClass = (cond: boolean) => (cond ? 'text-primary-100' : 'text-secondary-700');
 
-  const onNext = () => {
-    // TODO: Add next handler
-  };
-
-  const onSkip = () => {
-    // TODO: Add skip handler
+  const buttonHandler = async (guessed: boolean) => {
+    await updateCardStats(id, guessed);
+    onNext();
   };
 
   return (
@@ -82,7 +85,7 @@ const WriteCard: FC<Word> = ({ symbols, translation }) => {
         </Button>
       </div>
       <div className='w-full flex gap-4'>
-        <Button className='w-full' variant='secondary' onClick={() => onSkip()}>
+        <Button className='w-full' variant='secondary' onClick={() => buttonHandler(false)}>
           Skip
         </Button>
         <Button
@@ -90,7 +93,7 @@ const WriteCard: FC<Word> = ({ symbols, translation }) => {
           variant='primary'
           title='Enter all hieroglyphs'
           disabled={guessedSymbols.length !== symbols.length}
-          onClick={() => onNext()}
+          onClick={() => buttonHandler(true)}
         >
           Next
         </Button>

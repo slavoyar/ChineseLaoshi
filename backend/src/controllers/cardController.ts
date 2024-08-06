@@ -2,7 +2,7 @@
 import { Request, Response } from 'express';
 
 import { getPrisma } from '../configs/prisma/prismaInjection';
-import { CreateCardRequest, CustomRequest, UpdateCardRequest } from '../models';
+import { CreateCardRequest, CustomRequest, UpdateCardRequest, UpdateCardStats } from '../models';
 
 const prisma = getPrisma();
 
@@ -77,7 +77,7 @@ export const updateCard = async (req: CustomRequest<Card, UpdateCardRequest>, re
         wordId: newWord.id,
       },
     });
-    res.status(200);
+    res.sendStatus(200);
     return;
   }
 
@@ -87,7 +87,7 @@ export const updateCard = async (req: CustomRequest<Card, UpdateCardRequest>, re
       ...req.body,
     },
   });
-  res.status(200);
+  res.sendStatus(200);
 };
 
 export const deleteCard = async (req: Request, res: Response) => {
@@ -114,4 +114,63 @@ export const deleteCard = async (req: Request, res: Response) => {
     },
   });
   res.json();
+};
+
+export const getCardsToStudy = async (req: Request, res: Response) => {
+  const { groupId } = req.params;
+
+  const TWO_WEEKS = 14 * 24 * 60 * 60 * 1000;
+  const MIN_GUESS_RATIO = 0.9; // Only cards with less ratio will be presented
+
+  const currentDate = new Date();
+  const twoWeeksOld = new Date(currentDate.getMilliseconds() - TWO_WEEKS);
+
+  const cards = await prisma.card.findMany({
+    where: {
+      groupId,
+      OR: [
+        {
+          updatedAt: {
+            lt: twoWeeksOld,
+          },
+        },
+        {
+          writeRatio: {
+            lt: MIN_GUESS_RATIO,
+          },
+        },
+      ],
+    },
+    include: { word: true },
+  });
+  res.json(cards);
+};
+
+export const updateCardStats = async (req: CustomRequest<Card, UpdateCardStats>, res: Response) => {
+  const { cardId } = req.params;
+  let card = await prisma.card.findFirst({
+    where: {
+      id: cardId,
+    },
+  });
+
+  if (!card) {
+    res.sendStatus(404);
+    return;
+  }
+  const { writeCount } = card;
+  let writeRatio;
+  if (req.body.guessed) {
+    writeRatio = Math.min(card.writeRatio + writeCount > 20 ? 0.05 : 0.1, 1);
+  } else {
+    writeRatio = Math.max(card.writeRatio - writeCount > 20 ? 0.05 : 0.1, 0);
+  }
+  card = await prisma.card.update({
+    where: { id: cardId },
+    data: {
+      writeRatio,
+      writeCount: writeCount + 1,
+    },
+  });
+  res.json(card);
 };
