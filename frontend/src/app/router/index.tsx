@@ -3,6 +3,7 @@ import App from '@app/ui';
 import Login from '@pages/auth';
 import Main from '@pages/main';
 import StudyWrite from '@pages/studyWrite';
+import { HeaderLayout } from '@shared/layouts';
 
 const router = createBrowserRouter([
   {
@@ -15,11 +16,19 @@ const router = createBrowserRouter([
   },
   {
     path: '/study/write/:groupId',
-    element: <StudyWrite />,
+    element: (
+      <HeaderLayout username='Slavoyar'>
+        <StudyWrite />
+      </HeaderLayout>
+    ),
   },
   {
     path: '/',
-    element: <Main />,
+    element: (
+      <HeaderLayout username='Slavoyar'>
+        <Main />
+      </HeaderLayout>
+    ),
   },
 ]);
 
