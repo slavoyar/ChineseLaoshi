@@ -38,6 +38,7 @@ module.exports = {
         'import/extensions': 'off',
         'import/no-absolute-path': 'off',
         'import/no-extraneous-dependencies': 'off',
+        'import/prefer-default-export': 'off',
         'react/no-unstable-nested-components': ['error', {
            allowAsProps: true, 
         }],

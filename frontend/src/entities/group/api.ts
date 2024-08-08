@@ -1,4 +1,4 @@
-import BaseService from '@shared/api';
+import { BaseService } from '@shared/api';
 import { Group } from './model/types';
 
 const URL = '/api/groups';

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { Group } from '@entities/group/model/types';
-import groupService from '@entities/group/api';
+import groupService from '../api';
+import { Group } from './types';
 
 interface State {
   groups: Group[];

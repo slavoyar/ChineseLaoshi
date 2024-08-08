@@ -1,5 +1,5 @@
 import { Button, CreateDialog, TextField } from '@shared/ui';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useCardStore } from '@entities/card';
 import { useGroupStore } from '@entities/group';
 import pinyin from 'pinyin';
@@ -15,14 +15,17 @@ const AddWord: FC<AddWordProps> = ({ groupId }) => {
 
   const createWord = useCardStore((state) => state.create);
   const incrementWordCount = useGroupStore((state) => state.incrementWordCount);
+
+  useEffect(() => {
+    setTranscription('');
+    setTranslation('');
+    setSymbols('');
+  }, [isOpen]);
   const saveHandler = async () => {
     try {
       await createWord(groupId, { transcription, translation, symbols });
       incrementWordCount(groupId);
     } finally {
-      setTranscription('');
-      setTranslation('');
-      setSymbols('');
       setIsOpen(false);
     }
   };

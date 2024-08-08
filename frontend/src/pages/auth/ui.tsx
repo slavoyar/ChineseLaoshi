@@ -1,7 +1,7 @@
 import { Button, TextField } from '@shared/ui';
 import { useState } from 'react';
-import { authService } from '@entities/user';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '@shared/api';
 
 const Login = () => {
   const [login, setLogin] = useState('');
