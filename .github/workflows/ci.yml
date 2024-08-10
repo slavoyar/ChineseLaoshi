@@ -62,7 +62,7 @@ jobs:
 
   build-deploy-backend:
     runs-on: ubuntu-latest
-    needs: lint-build-frontend
+    needs: deploy-frontend
 
     steps:
       - name: Checkout code
