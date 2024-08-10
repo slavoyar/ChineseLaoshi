@@ -93,6 +93,7 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_BACKEND_PATH }}
           EXCLUDE: "/dist/"
+          SCRIPT_AFTER_REQUIRED: true
           SCRIPT_AFTER: |
             cd ${{ secrets.REMOTE_BACKEND_PATH }} \
             npm run migrate:prod \
