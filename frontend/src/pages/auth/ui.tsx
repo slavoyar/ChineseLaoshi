@@ -9,12 +9,8 @@ const Login = () => {
 
   const navigate = useNavigate();
   const handleClick = async () => {
-    try {
-      await authService.login(login.trim(), password);
-      navigate('/');
-    } catch (error) {
-      console.error(error);
-    }
+    await authService.login(login.trim(), password);
+    navigate('/');
   };
 
   const keyUpHandler = async (key: string) => {
