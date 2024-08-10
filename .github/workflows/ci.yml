@@ -57,7 +57,7 @@ jobs:
           REMOTE_PATH: ${{ secrets.REMOTE_PATH }}
         run: |
           eval $(ssh-agent -s)  # Start the SSH agent
-          echo "${SSH_PRIVATE_KEY}" | ssh-add -
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add -  # Add the SSH key
           scp -r ./frontend/build/* ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}
 
   build-deploy-backend:
@@ -90,7 +90,7 @@ jobs:
           REMOTE_PATH: ${{ secrets.REMOTE_BACKEND_PATH }}
         run: |
           eval $(ssh-agent -s)  # Start the SSH agent
-          echo "${SSH_PRIVATE_KEY}" | ssh-add -
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add -  # Add the SSH key
           scp -r ./backend/* ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}
 
       - name: Restart backend with Forever
