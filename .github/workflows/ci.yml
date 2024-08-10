@@ -36,7 +36,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: frontend-build
-          path: ./frontend/build
+          path: ./frontend/dist
 
   deploy-frontend:
     runs-on: ubuntu-latest
@@ -47,19 +47,17 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: frontend-build
-          path: ./frontend/build
+          path: ./frontend/dist
             
       - name: Deploy to remote server
         uses: easingthemes/ssh-deploy@main
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
         with:
-          flags: "-avz --delete"  # Rsync flags, adjusts as necessary
-          local_path: "./frontend/build/"
-          remote_path: ${{ secrets.REMOTE_PATH }}
-          remote_host: ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: "-rltgoDzvO --delete"  # Optional: rsync options for more control
+          TARGET: ${{ secrets.REMOTE_BACKEND_PATH }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          SOURCE: "./frontend/dist/"
 
 
   build-deploy-backend:
@@ -86,38 +84,14 @@ jobs:
         
       - name: Deploy to Remote Server
         uses: easingthemes/ssh-deploy@main
-        env:
+        with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          REMOTE_BACKEND_PATH: ${{ secrets.REMOTE_BACKEND_PATH }}
           ARGS: "-rltgoDzvO --delete"  # Optional: rsync options for more control
-          EXCLUDE: "/node_modules/"
-        with:
-          flags: "-avz --delete"  # Rsync flags for file transfer
-          remote_path: ${{ secrets.REMOTE_BACKEND_PATH }}
-          local_path: "./backend/"
-          remote_host: ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}
-          ssh_port: 22  # Default is 22, change if using a different port
-
-      - name: Run database migrations
-        uses: easingthemes/ssh-deploy@main
-        env:
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          TARGET: ${{ secrets.REMOTE_BACKEND_PATH }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          REMOTE_BACKEND_PATH: ${{ secrets.REMOTE_BACKEND_PATH }}
-        with:
-          command: "cd ${{ secrets.REMOTE_BACKEND_PATH }} && npm run migrate"
-
-      - name: Restart backend with Forever
-        uses: easingthemes/ssh-deploy@main
-        env:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          REMOTE_BACKEND_PATH: ${{ secrets.REMOTE_BACKEND_PATH }}
-          APP_ENTRY: ${{ secrets.APP_ENTRY }}
-        with:
-          command: |
-            cd ${{ secrets.REMOTE_BACKEND_PATH }} && \
+          SCRIPT_AFTER: |
+            cd ${{ secrets.REMOTE_BACKEND_PATH }} \
+            npm run migrate:prod
             forever stop ${{ secrets.APP_ENTRY }} || true && \
             forever start ${{ secrets.APP_ENTRY }}"
