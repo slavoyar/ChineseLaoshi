@@ -48,17 +48,19 @@ jobs:
         with:
           name: frontend-build
           path: ./frontend/build
-
+            
       - name: Deploy to remote server
+        uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          REMOTE_PATH: ${{ secrets.REMOTE_PATH }}
-        run: |
-          eval $(ssh-agent -s)  # Start the SSH agent
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add -  # Add the SSH key
-          scp -r ./frontend/build/* ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}
+        with:
+          flags: "-avz --delete"  # Rsync flags, adjusts as necessary
+          local_path: "./frontend/build/"
+          remote_path: ${{ secrets.REMOTE_PATH }}
+          remote_host: ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}
+
 
   build-deploy-backend:
     runs-on: ubuntu-latest
@@ -81,27 +83,41 @@ jobs:
       - name: Build backend
         working-directory: ./backend
         run: npm run build  # If you have a build step, otherwise omit this
-
-      - name: Deploy backend to remote server
+        
+      - name: Deploy to Remote Server
+        uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          REMOTE_PATH: ${{ secrets.REMOTE_BACKEND_PATH }}
-        run: |
-          eval $(ssh-agent -s)  # Start the SSH agent
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add -  # Add the SSH key
-          scp -r ./backend/* ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}
+          REMOTE_BACKEND_PATH: ${{ secrets.REMOTE_BACKEND_PATH }}
+          ARGS: "-rltgoDzvO --delete"  # Optional: rsync options for more control
+          EXCLUDE: "/node_modules/"
+        with:
+          flags: "-avz --delete"  # Rsync flags for file transfer
+          remote_path: ${{ secrets.REMOTE_BACKEND_PATH }}
+          local_path: "./backend/"
+          remote_host: ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}
+          ssh_port: 22  # Default is 22, change if using a different port
+
+      - name: Run database migrations
+        uses: easingthemes/ssh-deploy@main
+        env:
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_BACKEND_PATH: ${{ secrets.REMOTE_BACKEND_PATH }}
+        with:
+          command: "cd ${{ secrets.REMOTE_BACKEND_PATH }} && npm run migrate"
 
       - name: Restart backend with Forever
+        uses: easingthemes/ssh-deploy@main
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          REMOTE_PATH: ${{ secrets.REMOTE_BACKEND_PATH }}
-          APP_ENTRY: ${{ secrets.APP_ENTRY }}  # Entry point for your backend application
-        run: |
-          echo "${SSH_PRIVATE_KEY}" | ssh-add -
-          ssh ${REMOTE_USER}@${REMOTE_HOST} "cd ${REMOTE_PATH} && \
-          forever stop ${APP_ENTRY} || true && \
-          forever start ${APP_ENTRY}"
+          REMOTE_BACKEND_PATH: ${{ secrets.REMOTE_BACKEND_PATH }}
+          APP_ENTRY: ${{ secrets.APP_ENTRY }}
+        with:
+          command: |
+            cd ${{ secrets.REMOTE_BACKEND_PATH }} && \
+            forever stop ${{ secrets.APP_ENTRY }} || true && \
+            forever start ${{ secrets.APP_ENTRY }}"
