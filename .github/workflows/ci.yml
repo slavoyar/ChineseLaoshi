@@ -92,14 +92,13 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_BACKEND_PATH }}
-          EXCLUDE: "/dist/, /node_modules/"
+          EXCLUDE: "/dist/"
           SCRIPT_BEFORE_REQUIRED: true
           SCRIPT_BEFORE: |
             forever stop ${{ secrets.APP_ENTRY }} || true
           SCRIPT_AFTER_REQUIRED: true
           SCRIPT_AFTER: |
             cd ${{ secrets.REMOTE_BACKEND_PATH }} 
-            npm install || exit 1
             npm run migrate:prod || exit 1
             npm run build || exit 1
             cd dist 
