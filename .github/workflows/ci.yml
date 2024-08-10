@@ -94,5 +94,6 @@ jobs:
           SCRIPT_AFTER: |
             cd ${{ secrets.REMOTE_BACKEND_PATH }} \
             npm run migrate:prod \
+            cd "dist" \
             forever stop ${{ secrets.APP_ENTRY }} || true && \
             forever start ${{ secrets.APP_ENTRY }}"
