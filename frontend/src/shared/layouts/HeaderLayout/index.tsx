@@ -18,7 +18,7 @@ const HeaderLayout: FC<Props> = ({ children, username }) => {
     <div className='w-full h-full'>
       <Header ref={ref} username={username} />
       <div
-        className='w-full absolute p-5'
+        className='w-full absolute md:px-5 p-2'
         style={{
           height: `calc(100% - ${height}px)`,
           top: `${height}px`,

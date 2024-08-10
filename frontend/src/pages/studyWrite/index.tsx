@@ -34,18 +34,16 @@ const StudyWrite = () => {
   };
 
   return (
-    <div className='w-7/12 m-auto items-center h-full'>
-      <div className='m-auto w-fit'>
-        {currentCard.current && (
-          <WriteCard
-            id={currentCard.current.id}
-            transcription={currentCard.current.word.transcription}
-            translation={currentCard.current.word.translation}
-            symbols={currentCard.current.word.symbols}
-            onNext={onNext}
-          />
-        )}
-      </div>
+    <div className='flex h-full items-center justify-center'>
+      {currentCard.current && (
+        <WriteCard
+          id={currentCard.current.id}
+          transcription={currentCard.current.word.transcription}
+          translation={currentCard.current.word.translation}
+          symbols={currentCard.current.word.symbols}
+          onNext={onNext}
+        />
+      )}
     </div>
   );
 };

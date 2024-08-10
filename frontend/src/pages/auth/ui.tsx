@@ -24,7 +24,7 @@ const Login = () => {
   };
 
   return (
-    <div className='lg:w-3/12 sm:w-full h-full grid grid-cols-1 gap-4 m-auto place-content-center'>
+    <div className='lg:w-3/12 sm:w-full px-2 h-full grid grid-cols-1 gap-4 m-auto place-content-center'>
       <h1 className='text-white text-2xl text-center uppercase'>Login</h1>
       <TextField
         placeholder='Login'

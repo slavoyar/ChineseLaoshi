@@ -3,7 +3,7 @@ import HanziWriter from 'hanzi-writer';
 import { useCardStore, Word } from '@entities/card';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
-import { useCounter, useDebounceValue } from '@siberiacancode/reactuse';
+import { useCounter, useDebounceValue, useResizeObserver } from '@siberiacancode/reactuse';
 
 interface Props extends Word {
   onNext: () => void;
@@ -15,6 +15,16 @@ const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
   const writers = useRef<HanziWriter[]>([]);
   const { value: currentIndex, inc, dec, reset } = useCounter(0);
   const debouncedIndex = useDebounceValue(currentIndex, 300);
+
+  const [fieldSize, setFieldSize] = useState(300);
+  const { ref } = useResizeObserver<HTMLDivElement>({
+    onChange: ([entry]) => {
+      const { width } = entry.contentRect;
+
+      // TODO: remove magic numbers
+      setFieldSize(width > 400 ? 300 : 250);
+    },
+  });
 
   const [guessedSymbols, setGuessedSymbols] = useState<string[]>([]);
 
@@ -28,8 +38,8 @@ const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
   useEffect(() => {
     writers.current = symbols.split('').map((sym, index) =>
       HanziWriter.create(`hanzi-input-${index}`, sym, {
-        width: 300,
-        height: 300,
+        width: fieldSize,
+        height: fieldSize,
         showOutline: false,
         showHintAfterMisses: 3,
         drawingWidth: 20,
@@ -46,7 +56,7 @@ const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
       setGuessedSymbols([]);
       reset();
     };
-  }, [symbols]);
+  }, [symbols, fieldSize]);
 
   useEffect(() => {
     const symbol = symbols[debouncedIndex];
@@ -72,7 +82,7 @@ const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
   };
 
   return (
-    <div className='w-[500px] p-4 flex flex-col bg-secondary-900 rounded-2xl gap-4'>
+    <div ref={ref} className='md:w-[500px] p-4 flex flex-col bg-secondary-900 rounded-2xl gap-4'>
       <div className='w-full bg-secondary-700 text-center text-white rounded p-2 text-xl'>
         {translation}
       </div>
@@ -80,7 +90,7 @@ const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
         <Button variant='text' onClick={() => dec()} disabled={currentIndex === 0}>
           <i className={cn('fa fa-chevron-left', iconClass(currentIndex > 0))} />
         </Button>
-        <div className='w-[300px] h-[300px] bg-secondary-500 rounded'>
+        <div className='max-w-[300px] max-h-[300px] bg-secondary-500 rounded'>
           {symbols.split('').map((sym, index) => (
             <div
               id={`hanzi-input-${index}`}
