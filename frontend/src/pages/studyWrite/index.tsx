@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { cardService, Card, WriteCard, useCardStore } from '@entities/card';
+import { Route } from '@shared/types';
 
 const StudyWrite = () => {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ const StudyWrite = () => {
 
   useEffect(() => {
     if (!groupId || !isStudy) {
-      navigate('/');
+      navigate(Route.Root);
       return;
     }
     cardService.getCardsToStudy(groupId).then((data) => {
@@ -28,7 +29,7 @@ const StudyWrite = () => {
     if (!currentCard.current) {
       // TODO: add notification for lesson end
       setIsStudy(false);
-      navigate('/');
+      navigate(Route.Root);
     }
     setCards(newCards);
   };
