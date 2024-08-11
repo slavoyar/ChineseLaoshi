@@ -94,12 +94,10 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_BACKEND_PATH }}
-          EXCLUDE: "/dist/, prod.db"
+          EXCLUDE: "prod.db"
           SCRIPT_BEFORE_REQUIRED: true
           SCRIPT_BEFORE: |
-            cd ${{ secrets.REMOTE_BACKEND_PATH }} 
-            ./stop_forever.sh ${{ secrets.APP_ENTRY }}
+            systemctl stop chineselaoshi-api
           SCRIPT_AFTER_REQUIRED: true
           SCRIPT_AFTER: |
-            cd ${{ secrets.REMOTE_BACKEND_PATH }} 
-            ./deploy.sh
+            systemctl start chineselaoshi-api
