@@ -58,5 +58,4 @@ jobs:
       - name: Build backend
         working-directory: ./backend
         run: |
-          npm run migrate:dev  # Assuming you have a dev migration script
           npm run build  # If you have a build step, otherwise omit this
