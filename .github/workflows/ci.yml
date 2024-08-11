@@ -81,7 +81,9 @@ jobs:
 
       - name: Build backend
         working-directory: ./backend
-        run: npm run build  # If you have a build step, otherwise omit this
+        run: |
+          npm run migrate:prod
+          npm run build  # If you have a build step, otherwise omit this
 
       - name: Deploy to Remote Server
         uses: easingthemes/ssh-deploy@main
@@ -92,14 +94,12 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_BACKEND_PATH }}
-          EXCLUDE: "/dist/"
+          EXCLUDE: "/dist/, prod.db"
           SCRIPT_BEFORE_REQUIRED: true
           SCRIPT_BEFORE: |
-            forever stop ${{ secrets.APP_ENTRY }} || true
+            cd ${{ secrets.REMOTE_BACKEND_PATH }} 
+            ./stop_forever.sh ${{ secrets.APP_ENTRY }}
           SCRIPT_AFTER_REQUIRED: true
           SCRIPT_AFTER: |
             cd ${{ secrets.REMOTE_BACKEND_PATH }} 
-            npm run migrate:prod || exit 1
-            npm run build || exit 1
-            cd dist 
-            forever start ${{ secrets.APP_ENTRY }}" || exit 1
+            ./deploy.sh
