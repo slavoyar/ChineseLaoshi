@@ -1,18 +1,21 @@
-﻿import express from 'express';
+﻿import * as dotenv from 'dotenv';
+import express from 'express';
 import session from 'express-session';
 
 import passport from './configs/passport';
 import routes from './routes';
 
+dotenv.config();
+
 const app = express();
-const port = 3000;
+const port = Number(process.env.PORT);
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.use(
   session({
-    secret: 'your-secret-key',
+    secret: process.env.SESSION_SECRET_KEY,
     resave: false,
     saveUninitialized: false,
   }),
