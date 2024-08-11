@@ -1,0 +1,103 @@
+name: CI/CD Pipeline
+
+on:
+  pull_request:
+    branches:
+      - production  # Trigger on pull requests to the production branch
+  push:
+    branches:
+      - production  # Also trigger on direct pushes to production
+
+jobs:
+  lint-build-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Lint frontend
+        working-directory: ./frontend
+        run: npm run lint
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: Archive production artifacts
+        if: success()
+        uses: actions/upload-artifact@v2
+        with:
+          name: frontend-build
+          path: ./frontend/dist
+
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    needs: lint-build-frontend
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: frontend-build
+          path: ./frontend/dist
+            
+      - name: Deploy to remote server
+        uses: easingthemes/ssh-deploy@main
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: "-rltgoDzvO --delete"  # Optional: rsync options for more control
+          SOURCE: "./frontend/dist/"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: ${{ secrets.REMOTE_BACKEND_PATH }}
+
+
+  build-and-deploy-backend:
+    runs-on: ubuntu-latest
+    needs: deploy-frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm install
+      
+      - name: Create .env file
+        run: |
+          echo "DATABASE_URL=${{ secrets.DB_HOST }}" >> ./backend/.env       
+
+      - name: Build backend
+        working-directory: ./backend
+        run: |
+          npm run migrate:prod
+          npm run build  # If you have a build step, otherwise omit this
+
+      - name: Deploy to Remote Server
+        uses: easingthemes/ssh-deploy@main
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: "-rltgoDzvO --delete"  # Optional: rsync options for more control
+          SOURCE: "./backend/"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: ${{ secrets.REMOTE_BACKEND_PATH }}
+          EXCLUDE: "prod.db"
+          SCRIPT_BEFORE_REQUIRED: true
+          SCRIPT_BEFORE: |
+            systemctl stop chineselaoshi-api
+          SCRIPT_AFTER_REQUIRED: true
+          SCRIPT_AFTER: |
+            systemctl start chineselaoshi-api

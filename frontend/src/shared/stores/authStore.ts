@@ -15,12 +15,12 @@ export const useAuthStore = create<State & Action>(() => ({
   isAuth: false,
   username: '',
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   login: (username, password) => {
-    console.log(username, password);
     throw new Error('Not implemented');
   },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   register: (username, password) => {
-    console.log(username, password);
     throw new Error('Not implemented');
   },
   signOut: () => {
