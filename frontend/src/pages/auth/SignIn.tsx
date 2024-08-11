@@ -1,16 +1,18 @@
 import { Button, TextField } from '@shared/ui';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '@shared/api';
 import { Route } from '@shared/types';
+import { useAuthStore } from '@shared/stores';
 
 const SignIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+  const login = useAuthStore((state) => state.login);
+
   const navigate = useNavigate();
   const handleClick = async () => {
-    await authService.login(username.trim(), password);
+    await login(username, password);
     navigate(Route.Root);
   };
 

@@ -1,12 +1,17 @@
 import { Route } from '@shared/types';
 import { Button, TextField } from '@shared/ui';
 import { useState } from 'react';
+import { useAuthStore } from '@shared/stores';
+import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  const register = useAuthStore((state) => state.register);
+
+  const navigate = useNavigate();
   const updatePassword = (value: string) => {
     setPassword(value);
     if (confirmPassword) {
@@ -21,8 +26,9 @@ const SignUp = () => {
     return 'Sign Up';
   };
 
-  const handleClick = () => {
-    console.log();
+  const handleClick = async () => {
+    await register(username, password);
+    navigate(Route.Root);
   };
 
   return (

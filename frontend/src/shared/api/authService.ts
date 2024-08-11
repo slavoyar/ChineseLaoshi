@@ -10,6 +10,10 @@ class AuthService {
       { username, password },
       { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
     );
+
+  // eslint-disable-next-line class-methods-use-this
+  register = (username: string, password: string) =>
+    axios.post(`${URL}/register`, { username, password });
 }
 
 export default new AuthService();

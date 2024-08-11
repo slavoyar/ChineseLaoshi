@@ -4,7 +4,6 @@ import Main from '@pages/main';
 import StudyWrite from '@pages/studyWrite';
 import { HeaderLayout } from '@shared/layouts';
 import { Route } from '@shared/types';
-import { cn } from '@shared/utils';
 
 const router = createBrowserRouter([
   {
@@ -16,9 +15,9 @@ const router = createBrowserRouter([
     element: <SignUp />,
   },
   {
-    path: cn(Route.StudyWrite, ':groupId'),
+    path: Route.StudyWrite,
     element: (
-      <HeaderLayout username='Slavoyar'>
+      <HeaderLayout>
         <StudyWrite />
       </HeaderLayout>
     ),
@@ -26,7 +25,7 @@ const router = createBrowserRouter([
   {
     path: Route.Root,
     element: (
-      <HeaderLayout username='Slavoyar'>
+      <HeaderLayout>
         <Main />
       </HeaderLayout>
     ),
