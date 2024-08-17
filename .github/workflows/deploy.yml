@@ -32,7 +32,7 @@ jobs:
           SOURCE: "frontend/dist/"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: ${{ secrets.REMOTE_PATH }}
+          TARGET: ${{ secrets.FRONTEND_PATH }}
 
 
   build-and-deploy-backend:
@@ -72,5 +72,5 @@ jobs:
           SOURCE: "backend/"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: ${{ secrets.REMOTE_BACKEND_PATH }}
+          TARGET: ${{ secrets.BACKEND_PATH }}
           EXCLUDE: "/node_modules/"

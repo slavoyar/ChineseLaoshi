@@ -4,8 +4,7 @@
   "description": "backend app for chinese laoshi",
   "main": "./src/index.ts",
   "scripts": {
-    "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix",
+    "lint": "eslint src/**/*.ts --fix",
     "build": "npm run generate && tsc",
     "start": "node dist/index.js",
     "dev:server": "nodemon index.ts",
