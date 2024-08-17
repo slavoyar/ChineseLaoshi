@@ -1,9 +1,4 @@
-interface Error {
-  message: string;
-  statusCode: number;
-}
-
-export const errors = {
+const errors = {
   loginError: {
     message: 'Wrong username or password',
     statusCode: 500,
@@ -26,4 +21,24 @@ export const errors = {
   },
 } as const;
 
-export type ErrorCode = keyof typeof errors;
+type ErrorCode = keyof typeof errors;
+
+export class CustomError {
+  public code: string;
+  public statusCode: number;
+  public message: string;
+
+  constructor(code: ErrorCode) {
+    this.code = code;
+    this.statusCode = errors[code].statusCode;
+    this.message = errors[code].message;
+  }
+}
+
+export const isCustomError = (err: unknown): err is CustomError => {
+  return (
+    !!(err as CustomError).message &&
+    !!(err as CustomError).code &&
+    !isNaN(Number((err as CustomError).statusCode))
+  );
+};
