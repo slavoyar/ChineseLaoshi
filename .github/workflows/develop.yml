@@ -1,0 +1,61 @@
+name: CI Pipeline for Development
+
+on:
+  pull_request:
+    branches:
+      - develop  # Trigger on pull requests to the develop branch
+    paths:
+      - 'frontend/**'
+      - 'backend/**'
+  push:
+    branches:
+      - develop  # Also trigger on direct pushes to develop
+    paths:
+      - 'frontend/**'
+      - 'backend/**'
+
+jobs:
+  lint-build-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Lint frontend
+        working-directory: ./frontend
+        run: npm run lint
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: npm run build
+
+  build-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm install
+
+      - name: Create .env file
+        run: |
+          echo "DATABASE_URL=${{ secrets.DB_HOST }}" >> ./backend/.env       
+
+      - name: Build backend
+        working-directory: ./backend
+        run: |
+          npm run build  # If you have a build step, otherwise omit this

@@ -1,7 +1,8 @@
 import { create } from 'zustand';
+import { authService } from '@shared/api';
+import { persist } from 'zustand/middleware';
 
 interface State {
-  isAuth: boolean;
   username: string;
 }
 
@@ -11,19 +12,31 @@ interface Action {
   signOut: () => void;
 }
 
-export const useAuthStore = create<State & Action>(() => ({
-  isAuth: false,
-  username: '',
+export const useAuthStore = create(
+  persist<State & Action>(
+    (set) => ({
+      username: '',
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  login: (username, password) => {
-    throw new Error('Not implemented');
-  },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  register: (username, password) => {
-    throw new Error('Not implemented');
-  },
-  signOut: () => {
-    throw new Error('Not implemented');
-  },
-}));
+      login: async (username, password) => {
+        try {
+          await authService.login(username, password);
+          set(() => ({ username }));
+        } catch {
+          set(() => ({ username: '' }));
+        }
+      },
+      register: async (username, password) => {
+        try {
+          await authService.register(username, password);
+          set(() => ({ username }));
+        } catch {
+          set(() => ({ username: '' }));
+        }
+      },
+      signOut: () => {
+        set(() => ({ username: '' }));
+      },
+    }),
+    { name: 'auth' }
+  )
+);

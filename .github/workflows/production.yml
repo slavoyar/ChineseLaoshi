@@ -4,9 +4,15 @@ on:
   pull_request:
     branches:
       - production  # Trigger on pull requests to the production branch
+    paths:
+      - 'frontend/**'
+      - 'backend/**'
   push:
     branches:
       - production  # Also trigger on direct pushes to production
+    paths:
+      - 'frontend/**'
+      - 'backend/**'
 
 jobs:
   lint-build-frontend:
@@ -54,10 +60,10 @@ jobs:
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           ARGS: "-rltgoDzvO --delete"  # Optional: rsync options for more control
-          SOURCE: "./frontend/dist/"
+          SOURCE: "frontend/dist/"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: ${{ secrets.REMOTE_BACKEND_PATH }}
+          TARGET: ${{ secrets.REMOTE_PATH }}
 
 
   build-and-deploy-backend:
@@ -90,14 +96,8 @@ jobs:
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           ARGS: "-rltgoDzvO --delete"  # Optional: rsync options for more control
-          SOURCE: "./backend/"
+          SOURCE: "backend/"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_BACKEND_PATH }}
           EXCLUDE: "prod.db"
-          SCRIPT_BEFORE_REQUIRED: true
-          SCRIPT_BEFORE: |
-            systemctl stop chineselaoshi-api
-          SCRIPT_AFTER_REQUIRED: true
-          SCRIPT_AFTER: |
-            systemctl start chineselaoshi-api
