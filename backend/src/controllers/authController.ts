@@ -1,12 +1,10 @@
+import { prisma } from '@configs/prisma';
+import { CustomRequest } from '@models';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import bcrypt from 'bcrypt';
 import { NextFunction, Request, Response } from 'express';
 
 import passport from '../configs/passport';
-import { getPrisma } from '../configs/prisma/prismaInjection';
-import { CustomRequest } from '../models';
-
-const prisma = getPrisma();
 
 const SALT_ROUNDS = Number(process.env.SALT_ROUNDS) ?? 10;
 

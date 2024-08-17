@@ -1,10 +1,7 @@
-﻿import { Card } from '@prisma/client';
+﻿import { prisma } from '@configs/prisma';
+import { CreateCardRequest, CustomRequest, UpdateCardRequest, UpdateCardStats } from '@models';
+import { Card } from '@prisma/client';
 import { Request, Response } from 'express';
-
-import { getPrisma } from '../configs/prisma/prismaInjection';
-import { CreateCardRequest, CustomRequest, UpdateCardRequest, UpdateCardStats } from '../models';
-
-const prisma = getPrisma();
 
 export const getAllGroupCards = async (req: Request, res: Response) => {
   const cards = await prisma.card.findMany({

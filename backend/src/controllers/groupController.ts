@@ -1,10 +1,8 @@
-﻿import { Group } from '@prisma/client';
+﻿import { prisma } from '@configs/prisma';
+import { CustomRequest } from '@models';
+import { Group } from '@prisma/client';
 import { Request, Response } from 'express';
 
-import { getPrisma } from '../configs/prisma/prismaInjection';
-import { CustomRequest } from '../models';
-
-const prisma = getPrisma();
 export const getAllGroups = async (req: Request, res: Response) => {
   if (!req.user) {
     res.status(401).json({ message: 'Not authorized', code: 'notAuth' });
