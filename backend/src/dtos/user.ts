@@ -1,10 +1,6 @@
-export type UserDto = {
-  username: string;
-};
+import { User } from '@prisma/client';
 
-export type CreateUserDto = {
-  username: string;
-  password: string;
-};
+export type UserDto = Pick<User, 'username'>;
 
-export type UpdateUserDto = Partial<CreateUserDto>;
+export type CreateUserDto = Pick<User, 'username' | 'password'>;
+export type UpdateUserDto = Partial<User>;

@@ -1,9 +1,7 @@
-export type GroupDto = {
-  id: string;
-  name: string;
-  wordCount: number;
-};
+import { Group } from '@prisma/client';
 
-export type CreateGroupDto = {
-  name: string;
-};
+export type GroupDto = Pick<Group, 'id' | 'name' | 'wordCount'>;
+
+export type CreateGroupDto = Pick<Group, 'name' | 'userId'>;
+
+export type UpdateGroupDto = Pick<Group, 'name' | 'id'>;

@@ -19,6 +19,10 @@ export const errors = {
     message: 'Could not update an entity',
     statusCode: 500,
   },
+  entityDeleteError: {
+    message: 'Could not delete an entity',
+    statusCode: 500,
+  },
 } as const;
 
 export type ErrorCode = keyof typeof errors;
