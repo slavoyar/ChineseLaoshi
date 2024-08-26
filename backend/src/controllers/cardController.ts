@@ -1,7 +1,6 @@
 ﻿import { CustomError } from '@configs/errors';
 import { CreateCardDto, UpdateCardDto } from '@dtos';
 import { Card } from '@prisma/client';
-import { Record } from '@prisma/client/runtime/library';
 import { cardService } from '@services';
 import { NextFunction, Request, Response } from 'express';
 
@@ -38,7 +37,7 @@ export const createCard = async (
 };
 
 export const updateCard = async (
-  req: Request<Record<string, string>, void, UpdateCardDto>,
+  req: Request<void, void, UpdateCardDto>,
   res: Response,
   next: NextFunction,
 ) => {

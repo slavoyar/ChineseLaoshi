@@ -1,11 +1,8 @@
-import { prisma } from '@configs/prisma';
-import { CustomRequest } from '@models';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import passport from '@configs/passport';
+import { CreateUserDto } from '@dtos';
+import { userService } from '@services';
 import bcrypt from 'bcrypt';
 import { NextFunction, Request, Response } from 'express';
-
-import passport from '../configs/passport';
-import { userService } from '@services';
 
 const SALT_ROUNDS = Number(process.env.SALT_ROUNDS) ?? 10;
 
@@ -30,7 +27,7 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export const register = async (
-  req: CustomRequest<{ username: string; password: string }>,
+  req: Request<void, void, CreateUserDto>,
   res: Response,
   next: NextFunction,
 ) => {
