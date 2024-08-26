@@ -1,16 +1,22 @@
+import { userRepository } from '@repositories';
+
 import { CreateUserDto, UpdateUserDto, UserDto } from '../dtos';
+import { User } from '@prisma/client';
 
 class UserService {
-  getUserById(id: string): Promise<UserDto> {
-    throw new Error('Not implemented');
+  async getUserById(id: string): Promise<UserDto> {
+    const user = await userRepository.getById(id);
+    return {
+      username: user.username,
+    };
   }
 
-  createUser(data: CreateUserDto): Promise<void> {
-    throw new Error('Not implemented');
+  createUser(data: CreateUserDto): Promise<User> {
+    return userRepository.create(data);
   }
 
   updateUser(data: UpdateUserDto): Promise<void> {
-    throw new Error('Not implemented');
+    return userRepository.update(data);
   }
 }
 

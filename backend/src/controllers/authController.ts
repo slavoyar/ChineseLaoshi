@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import { NextFunction, Request, Response } from 'express';
 
 import passport from '../configs/passport';
+import { userService } from '@services';
 
 const SALT_ROUNDS = Number(process.env.SALT_ROUNDS) ?? 10;
 
@@ -36,7 +37,7 @@ export const register = async (
   try {
     const { username, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-    const user = await prisma.user.create({ data: { username, password: hashedPassword } });
+    const user = await userService.createUser({ username, password: hashedPassword });
     req.logIn(user, (error) => {
       if (error) {
         return next(error);
@@ -44,11 +45,6 @@ export const register = async (
       return res.json({ message: 'Registration is successful' });
     });
   } catch (error) {
-    if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
-      // Unique constraint failed error
-      res.status(409).json({ message: 'Register error. This login is already registered' });
-    } else {
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
+    next(error);
   }
 };

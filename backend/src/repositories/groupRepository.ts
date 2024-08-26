@@ -11,17 +11,17 @@ class GroupRepository {
     }
   }
 
-  async createGroup(data: CreateGroupDto) {
+  createGroup(data: CreateGroupDto) {
     try {
-      await prisma.group.create({ data });
+      return prisma.group.create({ data });
     } catch {
       throw new CustomError('entityCreateError');
     }
   }
 
-  async updateGroup(data: UpdateGroupDto) {
+  updateGroup(data: UpdateGroupDto) {
     try {
-      await prisma.group.update({ where: { id: data.id }, data });
+      return prisma.group.update({ where: { id: data.id }, data });
     } catch {
       throw new CustomError('entityUpdateError');
     }
@@ -30,6 +30,22 @@ class GroupRepository {
   async deleteGroup(id: string) {
     try {
       await prisma.group.delete({ where: { id } });
+    } catch {
+      throw new CustomError('entityDeleteError');
+    }
+  }
+
+  async incrementWordCount(id: string) {
+    try {
+      await prisma.group.update({ where: { id }, data: { wordCount: { increment: 1 } } });
+    } catch {
+      throw new CustomError('entityDeleteError');
+    }
+  }
+
+  async decrementWordCount(id: string) {
+    try {
+      await prisma.group.update({ where: { id }, data: { wordCount: { decrement: 1 } } });
     } catch {
       throw new CustomError('entityDeleteError');
     }

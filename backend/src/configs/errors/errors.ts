@@ -1,4 +1,8 @@
 export const errors = {
+  notAuth: {
+    message: 'User is not authenticated',
+    statusCode: 500,
+  },
   loginError: {
     message: 'Wrong username or password',
     statusCode: 500,

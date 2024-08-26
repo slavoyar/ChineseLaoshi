@@ -21,7 +21,7 @@ class WordRepository {
 
   async createWord(data: Omit<Word, 'id'>) {
     try {
-      await prisma.word.create({ data });
+      return await prisma.word.create({ data });
     } catch {
       throw new CustomError('entityCreateError');
     }

@@ -1,20 +1,26 @@
-import { CreateGroupDto } from '../dtos';
+import { cardRepository, groupRepository } from '@repositories';
+
+import { CreateGroupDto, GroupDto, UpdateGroupDto } from '../dtos';
 
 class GroupService {
-  getGroupsByUserId(userId: string) {
-    throw new Error('Not implemented');
+  async getGroupsByUserId(userId: string): Promise<GroupDto[]> {
+    const groups = await groupRepository.getGroupsByUserId(userId);
+    return groups.map((group) => ({ id: group.id, name: group.name, wordCount: group.wordCount }));
   }
 
-  createGroup(data: CreateGroupDto): Promise<void> {
-    throw new Error('Not implemented');
+  async createGroup(data: CreateGroupDto): Promise<GroupDto> {
+    const group = await groupRepository.createGroup(data);
+    return { id: group.id, name: group.name, wordCount: group.wordCount };
   }
 
-  updateGroup(data: CreateGroupDto): Promise<void> {
-    throw new Error('Not implemented');
+  async updateGroup(data: UpdateGroupDto): Promise<GroupDto> {
+    const group = await groupRepository.updateGroup(data);
+    return { id: group.id, name: group.name, wordCount: group.wordCount };
   }
 
-  deleteGroup(id: string): Promise<void> {
-    throw new Error('Not implemented');
+  async deleteGroup(id: string): Promise<void> {
+    await cardRepository.deleteCardByGroupId(id);
+    await groupRepository.deleteGroup(id);
   }
 }
 

@@ -6,7 +6,7 @@ export type CardDto = {
   word: Word;
 };
 
-export type CreateCardDto = Word;
+export type CreateCardDto = Word & { groupId: string };
 
 export type UpdateCardDto = Partial<Word>;
 

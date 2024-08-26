@@ -1,41 +1,40 @@
-﻿import { prisma } from '@configs/prisma';
-import { CustomRequest } from '@models';
-import { Group } from '@prisma/client';
-import { Request, Response } from 'express';
+﻿import { CustomError } from '@configs/errors';
+import { CreateGroupDto, GroupDto, UpdateGroupDto } from '@dtos';
+import { groupService } from '@services';
+import { NextFunction, Request, Response } from 'express';
 
-export const getAllGroups = async (req: Request, res: Response) => {
-  if (!req.user) {
-    res.status(401).json({ message: 'Not authorized', code: 'notAuth' });
-    return;
+export const getAllGroups = async (req: Request, res: Response, next: NextFunction) => {
+  const { user } = req;
+  if (!user) {
+    return next(new CustomError('notAuth'));
   }
-  const groups = await prisma.group.findMany({
-    where: { userId: req.user.id },
-  });
+  const groups = await groupService.getGroupsByUserId(user.id);
   res.json(groups);
 };
 
-export const createGroup = async (req: CustomRequest<Group, { name: string }>, res: Response) => {
-  if (!req.user) {
-    res.status(401).json({ message: 'Not authorized', code: 'notAuth' });
-    return;
+export const createGroup = async (
+  req: Request<Record<string, string>, GroupDto, CreateGroupDto>,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { user } = req;
+  if (!user) {
+    return next(new CustomError('notAuth'));
   }
-  const group = await prisma.group.create({
-    data: { name: req.body.name, userId: req.user.id },
-  });
-  res.status(200).json(group);
+
+  const group = await groupService.createGroup({ userId: user.id, name: req.body.name });
+  res.json(group);
 };
-export const updateGroup = async (req: CustomRequest<Group, Group>, res: Response) => {
-  const group = await prisma.group.update({
-    where: { id: req.body.id },
-    data: { name: req.body.name },
-  });
-  res.status(200).json(group);
+
+export const updateGroup = async (
+  req: Request<Record<string, string>, GroupDto, UpdateGroupDto>,
+  res: Response,
+) => {
+  const group = await groupService.updateGroup(req.body);
+  res.json(group);
 };
-export const deleteGroup = async (req: Request, res: Response) => {
-  const group = await prisma.group.findFirst({ where: { id: req.params.groupId } });
-  if (group) {
-    await prisma.card.deleteMany({ where: { groupId: group.id } });
-    await prisma.group.delete({ where: { id: req.params.groupId } });
-  }
-  res.status(200).json(true);
+
+export const deleteGroup = async (req: Request<{ groupId: string }>, res: Response) => {
+  await groupService.deleteGroup(req.params.groupId);
+  res.json(true);
 };
