@@ -15,9 +15,10 @@ model Card {
   wordId     String
   word       Word     @relation(fields: [wordId], references: [id])
   showCount  Int      @default(0)
-  writeCount Int      @default(0)
-  guessRatio Float    @default(0)
-  writeRatio Float    @default(0)
+  progress   Float    @default(0)
+  step       Float    @default(0.1)
+  isWinStreak Boolean @default(true)
+  streak     Int      @default(0)
   updatedAt  DateTime @updatedAt
 }
 
@@ -33,6 +34,7 @@ model Group {
 model User {
   id       String  @id @default(uuid())
   username String  @unique
+  email    String  @unique
   password String
   groups   Group[]
 }
