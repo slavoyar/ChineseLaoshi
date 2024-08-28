@@ -38,7 +38,7 @@ class CardRepository {
   async updateCard(data: UpdateCard) {
     try {
       const dataWithoutId = { ...data, id: undefined };
-      await prisma.card.update({ where: { id: data.id }, data: dataWithoutId });
+      return await prisma.card.update({ where: { id: data.id }, data: dataWithoutId });
     } catch {
       throw new CustomError('entityUpdateError');
     }
@@ -57,6 +57,22 @@ class CardRepository {
       await prisma.card.deleteMany({ where: { groupId } });
     } catch {
       throw new CustomError('entityDeleteError');
+    }
+  }
+
+  getWriteCards(count: number, userId: string) {
+    try {
+      return prisma.card.findMany({
+        include: { word: true, group: true },
+        where: { group: { userId } },
+        orderBy: {
+          progress: 'asc',
+          updatedAt: 'asc',
+        },
+        take: count,
+      });
+    } catch {
+      throw new CustomError('entityNotFoundError');
     }
   }
 }

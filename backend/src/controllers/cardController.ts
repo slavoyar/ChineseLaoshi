@@ -1,5 +1,5 @@
 ﻿import { CustomError } from '@configs/errors';
-import { CreateCardDto, UpdateCardDto } from '@dtos';
+import { CardDto, CreateCardDto, GetWriteCardDto, UpdateCardDto, UpdateCardStatsDto } from '@dtos';
 import { Card } from '@prisma/client';
 import { cardService } from '@services';
 import { NextFunction, Request, Response } from 'express';
@@ -42,7 +42,7 @@ export const updateCard = async (
   next: NextFunction,
 ) => {
   try {
-    await cardService.updateCard();
+    await cardService.updateCard(req.body);
     res.sendStatus(200);
   } catch (error) {
     next(error);
@@ -61,4 +61,17 @@ export const deleteCard = async (
   } catch (error) {
     next(error);
   }
+};
+
+export const updateCardStats = async (
+  req: Request<void, void, UpdateCardStatsDto>,
+  res: Response,
+) => {
+  await cardService.updateCardStats(req.body);
+  res.sendStatus(200);
+};
+
+export const getWriteCards = async (req: Request<GetWriteCardDto, CardDto[]>, res: Response) => {
+  const cards = await cardService.getWriteCards(req.params, req.user.id);
+  res.json(cards);
 };

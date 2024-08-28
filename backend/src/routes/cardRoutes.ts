@@ -4,7 +4,7 @@ import {
   createCard,
   deleteCard,
   getAllGroupCards,
-  getCardsToStudy,
+  getWriteCards,
   updateCard,
   updateCardStats,
 } from '../controllers/cardController';
@@ -12,9 +12,9 @@ import {
 const router = express.Router();
 
 router.get('/:groupId', getAllGroupCards);
-router.get('/study/:groupId', getCardsToStudy);
-router.patch('/:cardId', updateCardStats);
+router.get('/study/write', getWriteCards);
 router.post('/:groupId', createCard);
+router.post('/', updateCardStats);
 router.put('/', updateCard);
 router.delete('/:cardId', deleteCard);
 

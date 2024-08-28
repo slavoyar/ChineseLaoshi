@@ -29,7 +29,7 @@ class WordRepository {
 
   async updateWord(data: Partial<Word>) {
     try {
-      await prisma.word.update({ where: { id: data.id }, data });
+      return await prisma.word.update({ where: { id: data.id }, data });
     } catch {
       throw new CustomError('entityUpdateError');
     }
