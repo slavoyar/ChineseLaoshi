@@ -1,6 +1,6 @@
 import { Button, TextField } from '@shared/ui';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Route } from '@shared/types';
 import { useAuthStore } from '@shared/stores';
 
@@ -42,10 +42,13 @@ export const SignIn = () => {
       </Button>
       <div className='text-white'>
         Do not have an account?{' '}
-        <a className='text-primary-300' href={Route.SignUp}>
+        <Link className='text-primary-300' to={Route.SignUp}>
           Sign Up
-        </a>
+        </Link>
       </div>
+      <Link className='text-primary-300' to={Route.ResetPassword}>
+        Forget password?
+      </Link>
     </div>
   );
 };

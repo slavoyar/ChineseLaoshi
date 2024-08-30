@@ -1,3 +1,4 @@
+import { CreateUserDto } from '@shared/types';
 import axios from 'axios';
 
 const URL = '/api/auth';
@@ -12,8 +13,7 @@ class AuthService {
     );
 
   // eslint-disable-next-line class-methods-use-this
-  register = (username: string, password: string) =>
-    axios.post(`${URL}/register`, { username, password });
+  register = (data: CreateUserDto) => axios.post(`${URL}/register`, data);
 }
 
 export const authService = new AuthService();

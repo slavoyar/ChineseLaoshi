@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { authService } from '@shared/api';
 import { persist } from 'zustand/middleware';
+import { CreateUserDto } from '@shared/types';
 
 interface State {
   username: string;
@@ -8,7 +9,7 @@ interface State {
 
 interface Action {
   login: (username: string, password: string) => Promise<void>;
-  register: (username: string, password: string) => Promise<void>;
+  register: (data: CreateUserDto) => Promise<void>;
   signOut: () => void;
 }
 
@@ -25,10 +26,10 @@ export const useAuthStore = create(
           set(() => ({ username: '' }));
         }
       },
-      register: async (username, password) => {
+      register: async (data: CreateUserDto) => {
         try {
-          await authService.register(username, password);
-          set(() => ({ username }));
+          await authService.register(data);
+          set(() => ({ username: data.username }));
         } catch {
           set(() => ({ username: '' }));
         }

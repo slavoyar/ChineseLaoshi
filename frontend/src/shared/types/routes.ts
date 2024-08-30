@@ -3,4 +3,6 @@ export const Route = {
   SignUp: '/signup',
   Root: '/',
   StudyWrite: 'study/write',
+  ResetPassword: '/reset-password',
+  UpdatePassword: '/update-password',
 } as const;

@@ -1,18 +1,16 @@
 import { Route } from '@shared/types';
 import { Button, TextField } from '@shared/ui';
 import { useState } from 'react';
-import { useAuthStore } from '@shared/stores';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { updatePassword as updatePasswordAsync } from './api';
 
-export const SignUp = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-
-  const register = useAuthStore((state) => state.register);
+export const UpdatePassword = () => {
+  const [searchParams] = useSearchParams();
 
   const navigate = useNavigate();
+
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const updatePassword = (value: string) => {
     setPassword(value);
@@ -29,24 +27,21 @@ export const SignUp = () => {
   };
 
   const handleClick = async () => {
-    await register({ username, email, password });
-    navigate(Route.Root);
+    try {
+      const token = searchParams.get('token');
+      if (!token) {
+        navigate(Route.Root);
+        return;
+      }
+      await updatePasswordAsync(token, password);
+    } finally {
+      navigate(Route.Root);
+    }
   };
 
   return (
     <div className='lg:w-3/12 sm:w-full px-2 h-full grid grid-cols-1 gap-4 m-auto place-content-center'>
-      <h1 className='text-white text-2xl text-center uppercase'>Sign Up</h1>
-      <TextField
-        placeholder='Username'
-        value={username}
-        onInput={(e) => setUsername(e.currentTarget.value)}
-      />
-      <TextField
-        placeholder='Email'
-        type='email'
-        value={email}
-        onInput={(e) => setEmail(e.currentTarget.value)}
-      />
+      <h1 className='text-white text-2xl text-center uppercase'>Update password</h1>
       <TextField
         placeholder='Password'
         value={password}
@@ -65,14 +60,8 @@ export const SignUp = () => {
         title={buttonTitle()}
         onClick={() => handleClick()}
       >
-        Sign Up
+        Update password
       </Button>
-      <div className='text-white'>
-        Already have an account?{' '}
-        <a className='text-primary-300' href={Route.SignIn}>
-          Sign In
-        </a>
-      </div>
     </div>
   );
 };
