@@ -12,6 +12,14 @@ class UserRepository {
     return user;
   }
 
+  async getByEmail(email: string): Promise<User> {
+    const user = await prisma.user.findFirst({ where: { email } });
+    if (!user) {
+      throw new CustomError('entityNotFoundError');
+    }
+    return user;
+  }
+
   async create(data: CreateUserDto) {
     try {
       return await prisma.user.create({ data });

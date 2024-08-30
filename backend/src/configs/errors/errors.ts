@@ -27,6 +27,10 @@ export const errors = {
     message: 'Could not delete an entity',
     statusCode: 500,
   },
+  emailSendError: {
+    message: 'Error during email send',
+    statusCode: 500,
+  },
 } as const;
 
 export type ErrorCode = keyof typeof errors;

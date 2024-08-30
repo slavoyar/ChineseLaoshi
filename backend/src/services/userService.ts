@@ -7,7 +7,9 @@ class UserService {
   async getUserById(id: string): Promise<UserDto> {
     const user = await userRepository.getById(id);
     return {
+      id,
       username: user.username,
+      email: user.email,
     };
   }
 
@@ -17,6 +19,10 @@ class UserService {
 
   updateUser(data: UpdateUserDto): Promise<void> {
     return userRepository.update(data);
+  }
+
+  updatePassword(id: string, password: string) {
+    return userRepository.update({ id, password });
   }
 }
 
