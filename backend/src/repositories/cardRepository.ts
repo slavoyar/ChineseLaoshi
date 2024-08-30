@@ -29,7 +29,7 @@ class CardRepository {
 
   async createCard(data: CreateCard) {
     try {
-      return await prisma.card.create({ data });
+      return await prisma.card.create({ data, include: { word: true } });
     } catch {
       throw new CustomError('entityCreateError');
     }
@@ -67,7 +67,6 @@ class CardRepository {
         where: { group: { userId } },
         orderBy: {
           progress: 'asc',
-          updatedAt: 'asc',
         },
         take: count,
       });

@@ -7,7 +7,6 @@ export interface Word {
 
 export interface Card {
   id: string;
-  groupId: string;
-  writeRatio: number;
+  progress: number;
   word: Word;
 }

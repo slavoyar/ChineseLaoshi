@@ -71,7 +71,10 @@ export const updateCardStats = async (
   res.sendStatus(200);
 };
 
-export const getWriteCards = async (req: Request<GetWriteCardDto, CardDto[]>, res: Response) => {
-  const cards = await cardService.getWriteCards(req.params, req.user.id);
+export const getWriteCards = async (
+  req: Request<void, CardDto[], void, GetWriteCardDto>,
+  res: Response,
+) => {
+  const cards = await cardService.getWriteCards(req.query, req.user.id);
   res.json(cards);
 };

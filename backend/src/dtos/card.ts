@@ -20,5 +20,5 @@ export type UpdateCardStatsDto = {
 };
 
 export type GetWriteCardDto = {
-  count: number;
+  count: string;
 };

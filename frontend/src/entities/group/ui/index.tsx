@@ -3,6 +3,7 @@ import { Accordion } from '@shared/ui';
 import { FC, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCardStore } from '@entities/card';
+import { Route } from '@shared/types';
 import { GroupHeader } from './group-header';
 
 interface Props {
@@ -19,9 +20,9 @@ export const GroupList: FC<Props> = ({ content, onGroupOpen }) => {
     await deleteGroup(item.id);
   };
 
-  const onStudyClick = (id: string) => {
+  const onStudyClick = () => {
     setIsStudy(true);
-    navigate(`/study/write/${id}`);
+    navigate(`/${Route.StudyWrite}`);
   };
 
   return (
@@ -29,11 +30,11 @@ export const GroupList: FC<Props> = ({ content, onGroupOpen }) => {
       sections={groups}
       rowKey={(item) => item.id}
       header={(item) => <GroupHeader name={item.name} wordCount={item.wordCount} />}
-      actions={(item) => (
+      actions={() => (
         <i
           className='fa fa-pencil-square hover:bg-secondary-600 rounded p-1 cursor-pointer'
           title='Study'
-          onClick={() => onStudyClick(item.id)}
+          onClick={() => onStudyClick()}
         />
       )}
       content={content}

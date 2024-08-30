@@ -1,22 +1,25 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { cardService, Card, WriteCard, useCardStore } from '@entities/card';
 import { Route } from '@shared/types';
 
 export const StudyWrite = () => {
   const navigate = useNavigate();
-  const { groupId } = useParams<{ groupId: string }>();
   const [cards, setCards] = useState<Card[]>([]);
   const currentCard = useRef<Card>();
 
-  const [isStudy, setIsStudy] = useCardStore((state) => [state.isStudy, state.setIsStudy]);
+  const [isStudy, setIsStudy, reset] = useCardStore((state) => [
+    state.isStudy,
+    state.setIsStudy,
+    state.reset,
+  ]);
 
   useEffect(() => {
-    if (!groupId || !isStudy) {
+    if (!isStudy) {
       navigate(Route.Root);
       return;
     }
-    cardService.getCardsToStudy(groupId).then((data) => {
+    cardService.getCardsToStudy().then((data) => {
       const [current, ...newCards] = data;
       currentCard.current = current;
       setCards(newCards);
@@ -29,6 +32,7 @@ export const StudyWrite = () => {
     if (!currentCard.current) {
       // TODO: add notification for lesson end
       setIsStudy(false);
+      reset();
       navigate(Route.Root);
     }
     setCards(newCards);

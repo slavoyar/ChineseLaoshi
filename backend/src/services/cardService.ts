@@ -15,7 +15,8 @@ class CardService {
 
   async createCard(data: CreateCardDto): Promise<Card> {
     if (!data.id) {
-      const word = await wordRepository.createWord(data);
+      const dataWithoutId = { ...data, groupId: undefined, id: undefined };
+      const word = await wordRepository.createWord(dataWithoutId);
       data.id = word.id;
     }
     const card = await cardRepository.createCard({ wordId: data.id, groupId: data.groupId });
@@ -67,7 +68,7 @@ class CardService {
   }
 
   async getWriteCards(data: GetWriteCardDto, userId: string): Promise<CardDto[]> {
-    const cards = await cardRepository.getWriteCards(data.count, userId);
+    const cards = await cardRepository.getWriteCards(Number(data.count), userId);
     return cards.map((card) => ({
       id: card.id,
       progress: card.progress,
