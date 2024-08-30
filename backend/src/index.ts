@@ -1,5 +1,5 @@
 ﻿import { errorMiddleware, loggerMiddleware } from '@middlewares';
-import * as dotenv from 'dotenv';
+import dotenv from 'dotenv';
 import express from 'express';
 import session from 'express-session';
 

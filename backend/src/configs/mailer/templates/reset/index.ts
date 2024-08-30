@@ -5,7 +5,7 @@ const { BASE_URL } = process.env;
 export const generateEmail = (locale: string, token: string) => {
   const t = loadTranslations(__dirname, locale);
 
-  const resetLink = `${BASE_URL}/reset-password?token=${token}`;
+  const resetLink = `${BASE_URL}/update-password?token=${token}`;
 
   return `
   <!DOCTYPE html>

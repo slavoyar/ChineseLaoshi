@@ -28,11 +28,12 @@ class UserRepository {
     }
   }
 
-  async update(data: UpdateUserDto) {
+  update(data: UpdateUserDto) {
     try {
-      await prisma.user.update({
+      const withoutId = { ...data, id: undefined };
+      return prisma.user.update({
         where: { id: data.id },
-        data: { password: data.password, username: data.username },
+        data: withoutId,
       });
     } catch {
       throw new CustomError('entityUpdateError');

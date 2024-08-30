@@ -17,7 +17,7 @@ class UserService {
     return userRepository.create(data);
   }
 
-  updateUser(data: UpdateUserDto): Promise<void> {
+  updateUser(data: UpdateUserDto): Promise<User> {
     return userRepository.update(data);
   }
 

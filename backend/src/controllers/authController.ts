@@ -66,6 +66,12 @@ export const updatePassword = async (
     throw new CustomError('entityUpdateError');
   }
   const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-  await userService.updatePassword(payload.userId, hashedPassword);
-  res.sendStatus(200);
+  const user = await userService.updatePassword(payload.userId, hashedPassword);
+
+  req.logIn(user, (error) => {
+    if (error) {
+      throw error;
+    }
+    return res.json({ message: 'Password changed' });
+  });
 };
