@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { cardService, Card, WriteCard, useCardStore } from '@entities/card';
 import { Route } from '@shared/types';
 
-const StudyWrite = () => {
+export const StudyWrite = () => {
   const navigate = useNavigate();
   const { groupId } = useParams<{ groupId: string }>();
   const [cards, setCards] = useState<Card[]>([]);
@@ -48,5 +48,3 @@ const StudyWrite = () => {
     </div>
   );
 };
-
-export default StudyWrite;

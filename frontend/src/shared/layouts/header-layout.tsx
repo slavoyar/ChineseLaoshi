@@ -1,13 +1,11 @@
-import { FC, HTMLAttributes, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Header } from '@shared/ui';
 import { useResizeObserver } from '@siberiacancode/reactuse';
 import { useAuthStore } from '@shared/stores';
-import { useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { Route } from '@shared/types';
 
-interface Props extends HTMLAttributes<HTMLDivElement> {}
-
-const HeaderLayout: FC<Props> = ({ children }) => {
+export const HeaderLayout = () => {
   const [height, setHeight] = useState(0);
   const { ref } = useResizeObserver<HTMLDivElement>({
     onChange: ([entry]) => {
@@ -36,10 +34,8 @@ const HeaderLayout: FC<Props> = ({ children }) => {
           top: `${height}px`,
         }}
       >
-        {children}
+        <Outlet />
       </div>
     </div>
   );
 };
-
-export default HeaderLayout;

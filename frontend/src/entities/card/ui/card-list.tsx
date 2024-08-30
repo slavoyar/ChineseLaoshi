@@ -1,12 +1,13 @@
 import { FC } from 'react';
 import { useCardStore } from '@entities/card';
-import CardItem from './CardItem';
+import { CardItem } from './card-item';
 
 interface Props {
   groupId: string;
   onDelete: () => void;
 }
-const CardList: FC<Props> = ({ groupId, onDelete }) => {
+
+export const CardList: FC<Props> = ({ groupId, onDelete }) => {
   const cardsPerGroup = useCardStore((state) => state.cardsPerGroup);
 
   return (
@@ -17,5 +18,3 @@ const CardList: FC<Props> = ({ groupId, onDelete }) => {
     </div>
   );
 };
-
-export default CardList;

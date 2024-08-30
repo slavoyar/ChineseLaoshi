@@ -1,10 +1,10 @@
-import Groups from '@widgets/groups';
 import { useGroupStore } from '@entities/group';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Route } from '@shared/types';
+import { Groups } from '@widgets/groups';
 
-const Main = () => {
+export const Main = () => {
   const fetchGroups = useGroupStore((state) => state.fetch);
   const navigate = useNavigate();
 
@@ -19,5 +19,3 @@ const Main = () => {
     </div>
   );
 };
-
-export default Main;

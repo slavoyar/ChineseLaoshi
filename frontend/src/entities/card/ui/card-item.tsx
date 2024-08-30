@@ -8,7 +8,7 @@ interface Props {
   onDelete: () => void;
 }
 
-const CardItem: FC<Props> = ({ card, onDelete }) => {
+export const CardItem: FC<Props> = ({ card, onDelete }) => {
   const deleteCard = useCardStore((state) => state.delete);
   const onDeleteHandler = async (id: string) => {
     await deleteCard(id);
@@ -34,5 +34,3 @@ const CardItem: FC<Props> = ({ card, onDelete }) => {
     </div>
   );
 };
-
-export default CardItem;

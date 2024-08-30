@@ -1,9 +1,10 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { SignIn, SignUp } from '@pages/auth';
-import Main from '@pages/main';
-import StudyWrite from '@pages/studyWrite';
 import { HeaderLayout } from '@shared/layouts';
 import { Route } from '@shared/types';
+import { SignIn } from '@pages/sign-in';
+import { SignUp } from '@pages/sign-up';
+import { Main } from '@pages/main';
+import { StudyWrite } from '@pages/study-write';
 
 const router = createBrowserRouter([
   {
@@ -15,20 +16,18 @@ const router = createBrowserRouter([
     element: <SignUp />,
   },
   {
-    path: Route.StudyWrite,
-    element: (
-      <HeaderLayout>
-        <StudyWrite />
-      </HeaderLayout>
-    ),
-  },
-  {
     path: Route.Root,
-    element: (
-      <HeaderLayout>
-        <Main />
-      </HeaderLayout>
-    ),
+    element: <HeaderLayout />,
+    children: [
+      {
+        index: true,
+        element: <Main />,
+      },
+      {
+        path: Route.StudyWrite,
+        element: <StudyWrite />,
+      },
+    ],
   },
 ]);
 

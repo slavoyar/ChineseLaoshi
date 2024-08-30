@@ -9,7 +9,7 @@ interface Props extends Word {
   onNext: () => void;
 }
 
-const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
+export const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
   const updateCardStats = useCardStore((state) => state.updateStats);
 
   const writers = useRef<HanziWriter[]>([]);

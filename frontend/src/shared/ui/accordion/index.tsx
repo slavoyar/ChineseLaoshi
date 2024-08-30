@@ -11,7 +11,7 @@ interface Props<T> extends Omit<HTMLAttributes<HTMLDivElement>, 'content'> {
   onOpen?: (item: T) => void;
 }
 
-const Accordion = <T,>({
+export const Accordion = <T,>({
   sections,
   rowKey,
   header,
@@ -67,5 +67,3 @@ const Accordion = <T,>({
     </div>
   );
 };
-
-export default Accordion;

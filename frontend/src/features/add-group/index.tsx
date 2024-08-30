@@ -2,7 +2,7 @@ import { Button, CreateDialog, TextField } from '@shared/ui';
 import { useState } from 'react';
 import { useGroupStore } from '@entities/group';
 
-const AddGroup = () => {
+export const AddGroup = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState('');
   const createGroup = useGroupStore((state) => state.create);
@@ -36,5 +36,3 @@ const AddGroup = () => {
     </>
   );
 };
-
-export default AddGroup;

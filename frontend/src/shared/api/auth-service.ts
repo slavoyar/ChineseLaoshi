@@ -16,4 +16,4 @@ class AuthService {
     axios.post(`${URL}/register`, { username, password });
 }
 
-export default new AuthService();
+export const authService = new AuthService();

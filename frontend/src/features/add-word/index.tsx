@@ -7,7 +7,8 @@ import pinyin from 'pinyin';
 interface AddWordProps {
   groupId: string;
 }
-const AddWord: FC<AddWordProps> = ({ groupId }) => {
+
+export const AddWord: FC<AddWordProps> = ({ groupId }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [transcription, setTranscription] = useState('');
   const [translation, setTranslation] = useState('');
@@ -69,5 +70,3 @@ const AddWord: FC<AddWordProps> = ({ groupId }) => {
     </>
   );
 };
-
-export default AddWord;

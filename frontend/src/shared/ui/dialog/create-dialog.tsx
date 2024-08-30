@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Button } from '@shared/ui';
-import Dialog from './Dialog';
 import { DialogProps } from './types';
+import { Dialog } from './dialog';
 
 interface Props extends Omit<DialogProps, 'footer'> {
   onSave: () => void;
@@ -9,7 +9,7 @@ interface Props extends Omit<DialogProps, 'footer'> {
   closeTitle?: string;
 }
 
-const CreateDialog: FC<Props> = ({
+export const CreateDialog: FC<Props> = ({
   onSave,
   onClose,
   saveTitle = 'Create',
@@ -31,5 +31,3 @@ const CreateDialog: FC<Props> = ({
     }
   />
 );
-
-export default CreateDialog;

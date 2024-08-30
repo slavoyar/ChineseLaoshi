@@ -5,10 +5,8 @@ interface Props {
   wordCount: number;
 }
 
-const GroupHeader: FC<Props> = ({ name, wordCount }) => (
+export const GroupHeader: FC<Props> = ({ name, wordCount }) => (
   <div>
     {name} <span className='text-secondary-200'>({wordCount} words)</span>
   </div>
 );
-
-export default GroupHeader;

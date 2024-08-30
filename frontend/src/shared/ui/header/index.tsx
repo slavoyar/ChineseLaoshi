@@ -9,7 +9,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 
 const APP_NAME = '中国老师';
 
-const Header = forwardRef<HTMLDivElement, Props>(({ username, ...props }, ref) => {
+export const Header = forwardRef<HTMLDivElement, Props>(({ username, ...props }, ref) => {
   const navigate = useNavigate();
   const signOut = useAuthStore((state) => state.signOut);
 
@@ -37,5 +37,3 @@ const Header = forwardRef<HTMLDivElement, Props>(({ username, ...props }, ref) =
     </div>
   );
 });
-
-export default Header;

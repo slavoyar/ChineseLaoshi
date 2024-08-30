@@ -3,14 +3,14 @@ import { Accordion } from '@shared/ui';
 import { FC, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCardStore } from '@entities/card';
-import GroupHeader from './GroupHeader';
+import { GroupHeader } from './group-header';
 
 interface Props {
   content: (item: Group) => ReactNode;
   onGroupOpen: (item: Group) => void;
 }
 
-const GroupList: FC<Props> = ({ content, onGroupOpen }) => {
+export const GroupList: FC<Props> = ({ content, onGroupOpen }) => {
   const [groups, deleteGroup] = useGroupStore((state) => [state.groups, state.delete]);
   const navigate = useNavigate();
   const setIsStudy = useCardStore((state) => state.setIsStudy);
@@ -42,5 +42,3 @@ const GroupList: FC<Props> = ({ content, onGroupOpen }) => {
     />
   );
 };
-
-export default GroupList;

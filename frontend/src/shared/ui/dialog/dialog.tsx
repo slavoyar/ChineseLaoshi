@@ -2,7 +2,7 @@ import './styles.css';
 import { FC } from 'react';
 import { DialogProps } from './types';
 
-const Dialog: FC<DialogProps> = ({ isOpen, onClose, title, footer, children, ...props }) => {
+export const Dialog: FC<DialogProps> = ({ isOpen, onClose, title, footer, children, ...props }) => {
   if (!isOpen) return null;
 
   return (
@@ -21,5 +21,3 @@ const Dialog: FC<DialogProps> = ({ isOpen, onClose, title, footer, children, ...
     </div>
   );
 };
-
-export default Dialog;

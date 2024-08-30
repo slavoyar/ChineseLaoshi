@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export default class BaseService<Data> {
+export class BaseService<Data> {
   protected url: string;
 
   constructor(url: string) {

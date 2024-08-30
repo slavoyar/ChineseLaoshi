@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Route } from '@shared/types';
 import { useAuthStore } from '@shared/stores';
 
-const SignIn = () => {
+export const SignIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -49,5 +49,3 @@ const SignIn = () => {
     </div>
   );
 };
-
-export default SignIn;

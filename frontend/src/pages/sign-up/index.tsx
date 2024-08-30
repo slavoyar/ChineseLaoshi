@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useAuthStore } from '@shared/stores';
 import { useNavigate } from 'react-router-dom';
 
-const SignUp = () => {
+export const SignUp = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -68,4 +68,3 @@ const SignUp = () => {
     </div>
   );
 };
-export default SignUp;
