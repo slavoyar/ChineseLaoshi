@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
@@ -9,16 +10,17 @@ datasource db {
 }
 
 model Card {
-  id         String   @id @default(uuid())
-  groupId    String
-  group      Group    @relation(fields: [groupId], references: [id])
-  wordId     String
-  word       Word     @relation(fields: [wordId], references: [id])
-  showCount  Int      @default(0)
-  writeCount Int      @default(0)
-  guessRatio Float    @default(0)
-  writeRatio Float    @default(0)
-  updatedAt  DateTime @updatedAt
+  id          String   @id @default(uuid())
+  groupId     String
+  group       Group    @relation(fields: [groupId], references: [id])
+  wordId      String
+  word        Word     @relation(fields: [wordId], references: [id])
+  showCount   Int      @default(0)
+  progress    Float    @default(0)
+  step        Float    @default(0.1)
+  isWinStreak Boolean  @default(true)
+  streak      Int      @default(0)
+  updatedAt   DateTime @updatedAt
 }
 
 model Group {
@@ -33,6 +35,7 @@ model Group {
 model User {
   id       String  @id @default(uuid())
   username String  @unique
+  email    String  @unique
   password String
   groups   Group[]
 }

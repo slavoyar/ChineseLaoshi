@@ -1,2 +1,2 @@
-export { default as CardList } from './CardList';
-export { default as WriteCard } from './WriteCard';
+export * from './card-list';
+export * from './write-card';
