@@ -5,8 +5,8 @@ on:
     branches:
       - develop
     paths:
-      - 'frontend/**'
-      - 'backend/**'
+      - "frontend/**"
+      - "backend/**"
 
 jobs:
   lint-build-frontend:
@@ -31,7 +31,7 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
-  build-backend:
+  lint-build-backend:
     runs-on: ubuntu-latest
 
     steps:
@@ -44,6 +44,10 @@ jobs:
       - name: Install backend dependencies
         working-directory: ./backend
         run: npm install
+
+      - name: Lint backend
+        working-directory: ./backend
+        run: npm run lint
 
       - name: Build backend
         working-directory: ./backend
