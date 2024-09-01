@@ -1,6 +1,6 @@
 import { CustomError } from '@configs/errors';
 import { CardDto, CreateCardDto, GetWriteCardDto, UpdateCardDto, UpdateCardStatsDto } from '@dtos';
-import { Card } from '@prisma/client';
+import { Card, Word } from '@prisma/client';
 import { cardRepository, groupRepository, wordRepository } from '@repositories';
 
 const STEP_DIFF = 0.02;
@@ -40,7 +40,8 @@ class CardService {
     const cardCount = await cardRepository.getCardsCount(wordData.id);
 
     if (cardCount !== 1) {
-      const word = await wordRepository.createWord({ ...wordData, id: undefined });
+      const dataWithoutId = { ...wordData, groupId: undefined, id: undefined } as Omit<Word, 'id'>;
+      const word = await wordRepository.createWord(dataWithoutId);
       const card = await cardRepository.updateCard({ id: cardId, wordId: word.id });
       return { id: card.id, progress: card.progress, word };
     }

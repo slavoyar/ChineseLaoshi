@@ -1,11 +1,16 @@
 import { CustomError } from '@configs/errors';
 import { prisma } from '@configs/prisma';
 import { CreateCard, UpdateCard } from '@dtos';
+import { Card } from '@prisma/client';
 
 class CardRepository {
-  getCardById(id: string) {
+  async getCardById(id: string): Promise<Card> {
     try {
-      return prisma.card.findFirst({ where: { id } });
+      const card = await prisma.card.findFirst({ where: { id } });
+      if (!card) {
+        throw new Error('no card');
+      }
+      return card;
     } catch {
       throw new CustomError('entityNotFoundError');
     }
