@@ -1,0 +1,10 @@
+{
+  "subject": "Password Reset Request",
+  "greeting": "Hi there,",
+  "intro": "We recieved a request tor reset your password. Click the button below to reset it:",
+  "reset_button": "Reset Password",
+  "ignore": "If you didn't requesta passwordd reset, please ignore this email.",
+  "thanks": "Thanks,",
+  "team": "Chinese Laoshi",
+  "trouble_clicking": "If you're having trouble clicking the \"Reset Password\" button, use the link below instead:"
+}

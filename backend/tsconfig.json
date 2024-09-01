@@ -1,4 +1,7 @@
 {
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
   "compilerOptions": {
     "target": "es2020",
 
@@ -14,7 +17,10 @@
     "typeRoots": [
       "./node_modules/@types",
       "@types"
-    ]
+    ],
+    "paths": {
+      "@*": ["./src/*"],
+    },
   },
   "include": [
     "@types/**/*.d.ts",

@@ -1,2 +1,2 @@
-export { default as BaseService } from './baseService';
-export { default as authService } from './authService';
+export * from './auth-service';
+export * from './base-service';

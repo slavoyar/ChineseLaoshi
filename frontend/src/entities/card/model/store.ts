@@ -14,6 +14,7 @@ interface Action {
   delete: (id: string) => Promise<void>;
   updateStats: (id: string, guessed: boolean) => Promise<void>;
   setIsStudy: (value: boolean) => void;
+  reset: () => void;
 }
 
 const useCardStore = create<State & Action>((set, get) => ({
@@ -58,6 +59,9 @@ const useCardStore = create<State & Action>((set, get) => ({
         ),
       },
     }));
+  },
+  reset: () => {
+    set(() => ({ cardsPerGroup: {} }));
   },
 }));
 

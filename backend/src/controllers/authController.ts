@@ -1,14 +1,14 @@
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { CustomError } from '@configs/errors';
+import passport from '@configs/passport';
+import { CreateUserDto } from '@dtos';
+import { userService } from '@services';
+import { emailService } from '@services/emailService';
 import bcrypt from 'bcrypt';
 import { NextFunction, Request, Response } from 'express';
+import { verify } from 'jsonwebtoken';
 
-import passport from '../configs/passport';
-import { getPrisma } from '../configs/prisma/prismaInjection';
-import { CustomRequest } from '../models';
-
-const prisma = getPrisma();
-
-const SALT_ROUNDS = Number(process.env.SALT_ROUNDS) ?? 10;
+const SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
+const { JWT_SECRET_KEY } = process.env;
 
 export const login = (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate(
@@ -31,14 +31,14 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export const register = async (
-  req: CustomRequest<{ username: string; password: string }>,
+  req: Request<void, void, CreateUserDto>,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const { username, password } = req.body;
+    const { username, email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-    const user = await prisma.user.create({ data: { username, password: hashedPassword } });
+    const user = await userService.createUser({ username, email, password: hashedPassword });
     req.logIn(user, (error) => {
       if (error) {
         return next(error);
@@ -46,11 +46,32 @@ export const register = async (
       return res.json({ message: 'Registration is successful' });
     });
   } catch (error) {
-    if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
-      // Unique constraint failed error
-      res.status(409).json({ message: 'Register error. This login is already registered' });
-    } else {
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
+    next(error);
   }
+};
+
+export const resetPassword = async (req: Request<void, void, { email: string }>, res: Response) => {
+  const { email } = req.body;
+  await emailService.resetPassword(email);
+  res.sendStatus(200);
+};
+
+export const updatePassword = async (
+  req: Request<void, void, { token: string; password: string }>,
+  res: Response,
+) => {
+  const { token, password } = req.body;
+  const { payload } = verify(token, JWT_SECRET_KEY, { complete: true });
+  if (typeof payload === 'string') {
+    throw new CustomError('entityUpdateError');
+  }
+  const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+  const user = await userService.updatePassword(payload.userId, hashedPassword);
+
+  req.logIn(user, (error) => {
+    if (error) {
+      throw error;
+    }
+    return res.json({ message: 'Password changed' });
+  });
 };

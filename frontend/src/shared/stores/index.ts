@@ -1,2 +1,2 @@
-export * from './stateStore';
-export * from './authStore';
+export * from './state-store';
+export * from './auth-store';

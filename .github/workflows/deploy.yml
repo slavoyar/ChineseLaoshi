@@ -28,12 +28,11 @@ jobs:
         uses: easingthemes/ssh-deploy@main
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          ARGS: "-rltgoDzvO --delete"  # Optional: rsync options for more control
+          ARGS: "-rltgoDzvO --delete" # Optional: rsync options for more control
           SOURCE: "frontend/dist/"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: ${{ secrets.REMOTE_PATH }}
-
+          TARGET: ${{ secrets.FRONTEND_PATH }}
 
   build-and-deploy-backend:
     runs-on: ubuntu-latest
@@ -51,26 +50,30 @@ jobs:
 
       - name: Create .env file
         run: |
+          echo "BASE_URL=${{ secrets.BASE_URL }}" > ./backend/.env
           echo "DB_URL=${{ secrets.DB_URL }}" > ./backend/.env
           echo "SESSION_SECRET_KEY=${{ secrets.SESSION_SECRET_KEY }}" >> ./backend/.env
-          echo "SALT_ROUNDS=${{ secrets.SALT_ROUNDS }}" >> ./backend/.env
           echo "PORT=${{ secrets.PORT }}" >> ./backend/.env      
+          echo "SALT_ROUNDS=${{ secrets.SALT_ROUNDS }}" >> ./backend/.env
+          echo "MAILER_HOST=${{ secrets.MAILER_HOST }}" >> ./backend/.env
+          echo "MAILER_USER=${{ secrets.MAILER_USER }}" >> ./backend/.env
+          echo "MAILER_PASSWORD=${{ secrets.MAILER_PASSWORD }}" >> ./backend/.env
+          echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> ./backend/.env
 
       - name: Migrate database
         working-directory: ./backend
         run: npm run migrate:prod
-          
+
       - name: Build backend
         working-directory: ./backend
-        run: npm run build 
+        run: npm run build
 
       - name: Deploy to Remote Server
         uses: easingthemes/ssh-deploy@main
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          ARGS: "-rltgoDzvO --delete"  # Optional: rsync options for more control
+          ARGS: "-rltgoDzvO --delete" # Optional: rsync options for more control
           SOURCE: "backend/"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: ${{ secrets.REMOTE_BACKEND_PATH }}
-          EXCLUDE: "/node_modules/"
+          TARGET: ${{ secrets.BACKEND_PATH }}

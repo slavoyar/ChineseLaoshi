@@ -1,10 +1,7 @@
-﻿import bcrypt from 'bcrypt';
+﻿import { prisma } from '@configs/prisma';
+import bcrypt from 'bcrypt';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
-
-import { getPrisma } from '../prisma/prismaInjection';
-
-const prisma = getPrisma();
 
 passport.use(
   new LocalStrategy(async (username: string, password: string, done) => {

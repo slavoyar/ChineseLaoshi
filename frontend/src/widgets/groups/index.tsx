@@ -1,9 +1,9 @@
 import { CardList, useCardStore } from '@entities/card';
 import { Group, GroupList, useGroupStore } from '@entities/group';
-import AddGroup from '@features/addGroup';
-import AddWord from '@features/addWord';
+import { AddGroup } from '@features/add-group';
+import { AddWord } from '@features/add-word';
 
-const Groups = () => {
+export const Groups = () => {
   const [cardsPerGroup, fetchCards] = useCardStore((state) => [state.cardsPerGroup, state.fetch]);
   const decrementWordCount = useGroupStore((state) => state.decrementWordCount);
 
@@ -33,5 +33,3 @@ const Groups = () => {
     </div>
   );
 };
-
-export default Groups;
