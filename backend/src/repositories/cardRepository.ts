@@ -3,42 +3,42 @@ import { prisma } from '@configs/prisma';
 import { CreateCard, UpdateCard } from '@dtos';
 
 class CardRepository {
-  async getCardById(id: string) {
+  getCardById(id: string) {
     try {
-      return await prisma.card.findFirst({ where: { id } });
+      return prisma.card.findFirst({ where: { id } });
     } catch {
       throw new CustomError('entityNotFoundError');
     }
   }
 
-  async getCardsCount(wordId: string) {
+  getCardsCount(wordId: string) {
     try {
-      return await prisma.card.count({ where: { wordId } });
+      return prisma.card.count({ where: { wordId } });
     } catch {
       throw new CustomError('entityNotFoundError');
     }
   }
 
-  async getCardsByGroupId(groupId: string) {
+  getCardsByGroupId(groupId: string) {
     try {
-      return await prisma.card.findMany({ where: { groupId }, include: { word: true } });
+      return prisma.card.findMany({ where: { groupId }, include: { word: true } });
     } catch {
       throw new CustomError('entityNotFoundError');
     }
   }
 
-  async createCard(data: CreateCard) {
+  createCard(data: CreateCard) {
     try {
-      return await prisma.card.create({ data, include: { word: true } });
+      return prisma.card.create({ data, include: { word: true } });
     } catch {
       throw new CustomError('entityCreateError');
     }
   }
 
-  async updateCard(data: UpdateCard) {
+  updateCard(data: UpdateCard) {
     try {
       const dataWithoutId = { ...data, id: undefined };
-      return await prisma.card.update({ where: { id: data.id }, data: dataWithoutId });
+      return prisma.card.update({ where: { id: data.id }, data: dataWithoutId });
     } catch {
       throw new CustomError('entityUpdateError');
     }

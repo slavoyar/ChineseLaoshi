@@ -3,9 +3,9 @@ import { prisma } from '@configs/prisma';
 import { CreateGroupDto, UpdateGroupDto } from '@dtos';
 
 class GroupRepository {
-  async getGroupsByUserId(userId: string) {
+  getGroupsByUserId(userId: string) {
     try {
-      return await prisma.group.findMany({ where: { userId } });
+      return prisma.group.findMany({ where: { userId } });
     } catch {
       throw new CustomError('entityNotFoundError');
     }

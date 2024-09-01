@@ -3,9 +3,9 @@ import { prisma } from '@configs/prisma';
 import { Word } from '@prisma/client';
 
 class WordRepository {
-  async searchWord(query: string) {
+  searchWord(query: string) {
     try {
-      return await prisma.word.findMany({
+      return prisma.word.findMany({
         where: {
           OR: [
             { translation: { contains: query } },
@@ -19,17 +19,17 @@ class WordRepository {
     }
   }
 
-  async createWord(data: Omit<Word, 'id'>) {
+  createWord(data: Omit<Word, 'id'>) {
     try {
-      return await prisma.word.create({ data });
+      return prisma.word.create({ data });
     } catch {
       throw new CustomError('entityCreateError');
     }
   }
 
-  async updateWord(data: Partial<Word>) {
+  updateWord(data: Partial<Word>) {
     try {
-      return await prisma.word.update({ where: { id: data.id }, data });
+      return prisma.word.update({ where: { id: data.id }, data });
     } catch {
       throw new CustomError('entityUpdateError');
     }

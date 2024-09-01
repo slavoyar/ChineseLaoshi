@@ -20,9 +20,9 @@ class UserRepository {
     return user;
   }
 
-  async create(data: CreateUserDto) {
+  create(data: CreateUserDto) {
     try {
-      return await prisma.user.create({ data });
+      return prisma.user.create({ data });
     } catch {
       throw new CustomError('entityCreateError');
     }
