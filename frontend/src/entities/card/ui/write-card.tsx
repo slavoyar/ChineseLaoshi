@@ -4,19 +4,26 @@ import { useCardStore, Word } from '@entities/card';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { useCounter, useDebounceValue, useResizeObserver } from '@siberiacancode/reactuse';
+import { useStateStore } from '@shared/stores';
 
 interface Props extends Word {
   onNext: () => void;
 }
 
-export const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
+const keysBySymbols = (symbols: string, id: string) =>
+  symbols.split('').map((symbol, index) => `${id}-${symbol}-${index}`);
+
+export const WriteCard: FC<Props> = ({ id, symbols, translation, transcription, onNext }) => {
   const updateCardStats = useCardStore((state) => state.updateStats);
+  const settings = useStateStore((state) => state.settings);
 
   const writers = useRef<HanziWriter[]>([]);
   const { value: currentIndex, inc, dec, reset } = useCounter(0);
   const debouncedIndex = useDebounceValue(currentIndex, 300);
 
   const [fieldSize, setFieldSize] = useState(300);
+  const [guessedSymbols, setGuessedSymbols] = useState<string[]>([]);
+
   const { ref } = useResizeObserver<HTMLDivElement>({
     onChange: ([entry]) => {
       const { width } = entry.contentRect;
@@ -26,12 +33,10 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
     },
   });
 
-  const [guessedSymbols, setGuessedSymbols] = useState<string[]>([]);
-
   const onQuizComplete = ({ character }: { character: string }) => {
-    setGuessedSymbols((prev) => [...prev, character]);
+    setGuessedSymbols((prev) => [...prev, `${id}-${character}-${currentIndex}`]);
     if (currentIndex < symbols.length - 1) {
-      inc();
+      setTimeout(() => inc(), 500);
     }
   };
 
@@ -40,14 +45,21 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
       HanziWriter.create(`hanzi-input-${index}`, sym, {
         width: fieldSize,
         height: fieldSize,
+        showCharacter: false,
         showOutline: false,
-        showHintAfterMisses: 3,
+        showHintAfterMisses: settings.toggleHints ? 3 : false,
         drawingWidth: 20,
         strokeColor: '#31363F',
         strokeFadeDuration: 0,
         drawingFadeDuration: 0,
       })
     );
+
+    // TODO: Refactor if possible
+    writers.current[0].quiz({
+      onComplete: onQuizComplete,
+    });
+
     return () => {
       writers.current.forEach((item) => {
         item.target.node.remove();
@@ -59,13 +71,13 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
   }, [symbols, fieldSize]);
 
   useEffect(() => {
-    const symbol = symbols[debouncedIndex];
+    const symbolKey = keysBySymbols(symbols, id)[debouncedIndex];
     const writer = writers.current[debouncedIndex];
     if (!writer) {
       return;
     }
 
-    if (guessedSymbols.includes(symbol)) {
+    if (guessedSymbols.includes(symbolKey)) {
       writer.showCharacter();
     } else {
       writer.quiz({
@@ -85,16 +97,19 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
     <div ref={ref} className='md:w-[500px] p-4 flex flex-col bg-secondary-900 rounded-2xl gap-4'>
       <div className='w-full bg-secondary-700 text-center text-white rounded p-2 text-xl'>
         {translation}
+        <span className='ml-2 rounded text-secondary-500 bg-secondary-500 hover:bg-secondary-700'>
+          ({transcription})
+        </span>
       </div>
       <div className='flex justify-around items-center'>
         <Button variant='text' onClick={() => dec()} disabled={currentIndex === 0}>
           <i className={cn('fa fa-chevron-left', iconClass(currentIndex > 0))} />
         </Button>
         <div className='max-w-[300px] max-h-[300px] bg-secondary-500 rounded'>
-          {symbols.split('').map((sym, index) => (
+          {keysBySymbols(symbols, id).map((key, index) => (
             <div
               id={`hanzi-input-${index}`}
-              key={sym}
+              key={key}
               className={cn(index === currentIndex ? 'block' : 'hidden')}
             />
           ))}

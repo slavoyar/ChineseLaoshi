@@ -65,11 +65,11 @@ class CardRepository {
     }
   }
 
-  getWriteCards(count: number, userId: string) {
+  getWriteCards(count: number, userId: string, groupId?: string) {
     try {
       return prisma.card.findMany({
         include: { word: true, group: true },
-        where: { group: { userId } },
+        where: { group: { userId, id: groupId } },
         orderBy: {
           progress: 'asc',
         },

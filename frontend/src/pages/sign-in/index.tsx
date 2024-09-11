@@ -12,7 +12,7 @@ export const SignIn = () => {
 
   const navigate = useNavigate();
   const handleClick = async () => {
-    await login(username, password);
+    await login(username.trim(), password);
     navigate(Route.Root);
   };
 
