@@ -51,15 +51,7 @@ jobs:
       - name: Create .env file
         working-directory: ./backend
         run: |
-          echo "BASE_URL=${{ secrets.BASE_URL }}" > .env
-          echo "DB_URL=${{ secrets.DB_URL }}" >> .env
-          echo "SESSION_SECRET_KEY=${{ secrets.SESSION_SECRET_KEY }}" >> .env
-          echo "PORT=${{ secrets.PORT }}" >> .env
-          echo "SALT_ROUNDS=${{ secrets.SALT_ROUNDS }}" >> .env
-          echo "MAILER_HOST=${{ secrets.MAILER_HOST }}" >> .env
-          echo "MAILER_USER=${{ secrets.MAILER_USER }}" >> .env
-          echo "MAILER_PASSWORD=${{ secrets.MAILER_PASSWORD }}" >> .env
-          echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
+          echo "DB_URL=${{ secrets.DB_URL }}" > .env
 
       - name: Migrate database
         working-directory: ./backend
