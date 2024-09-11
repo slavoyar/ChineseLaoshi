@@ -14,17 +14,12 @@
 
     "strict": true,
     "skipLibCheck": true,
-    "typeRoots": [
-      "./node_modules/@types",
-      "@types"
-    ],
+    "typeRoots": ["./node_modules/@types", "@types"],
+    "baseUrl": "./",
     "paths": {
-      "@*": ["./src/*"],
-    },
+      "@*": ["./src/*"]
+    }
   },
-  "include": [
-    "@types/**/*.d.ts",
-    "./src/**/*.ts",
-  ],
-  "exclude": ["node_modules"],
+  "include": ["@types/**/*.d.ts", "./src/**/*.ts"],
+  "exclude": ["node_modules"]
 }
