@@ -4,9 +4,6 @@ on:
   pull_request:
     branches:
       - develop
-    paths:
-      - "frontend/**"
-      - "backend/**"
 
 jobs:
   lint-build-frontend:
