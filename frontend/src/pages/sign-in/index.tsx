@@ -1,18 +1,10 @@
 import { Button, TextField } from '@shared/ui';
 import { useState } from 'react';
-<<<<<<<< HEAD:frontend/src/pages/sign-in/index.tsx
 import { Link, useNavigate } from 'react-router-dom';
 import { Route } from '@shared/types';
 import { useAuthStore } from '@shared/stores';
 
 export const SignIn = () => {
-========
-import { useNavigate } from 'react-router-dom';
-import { Route } from '@shared/types';
-import { useAuthStore } from '@shared/stores';
-
-const SignIn = () => {
->>>>>>>> 9783300 (Refactor auth and add registration (#12) (#13)):frontend/src/pages/sign-in/SignIn.tsx
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -50,7 +42,6 @@ const SignIn = () => {
       </Button>
       <div className='text-white'>
         Do not have an account?{' '}
-<<<<<<<< HEAD:frontend/src/pages/sign-in/index.tsx
         <Link className='text-primary-300' to={Route.SignUp}>
           Sign Up
         </Link>
@@ -61,14 +52,3 @@ const SignIn = () => {
     </div>
   );
 };
-========
-        <a className='text-primary-300' href={Route.SignUp}>
-          Sign Up
-        </a>
-      </div>
-    </div>
-  );
-};
-
-export default SignIn;
->>>>>>>> 9783300 (Refactor auth and add registration (#12) (#13)):frontend/src/pages/sign-in/SignIn.tsx
