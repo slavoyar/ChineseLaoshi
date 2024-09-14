@@ -1,10 +1,13 @@
-import { FC, InputHTMLAttributes } from 'react';
+import { InputHTMLAttributes, forwardRef } from 'react';
 import './style.css';
 
-interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
+interface Props extends InputHTMLAttributes<HTMLInputElement> {
   variant?: 'primary';
+  autoFocus?: boolean;
 }
 
-export const TextField: FC<TextFieldProps> = ({ variant = 'primary', ...props }) => (
-  <input className={`input input--${variant}`} {...props} />
+export const TextField = forwardRef<HTMLInputElement, Props>(
+  ({ variant = 'primary', ...props }, ref) => (
+    <input ref={ref} className={`input input--${variant}`} {...props} />
+  )
 );

@@ -1,5 +1,5 @@
 import { Button, CreateDialog, TextField } from '@shared/ui';
-import { useState } from 'react';
+import { KeyboardEvent, useState } from 'react';
 import { useGroupStore } from '@entities/group';
 
 export const AddGroup = () => {
@@ -7,14 +7,25 @@ export const AddGroup = () => {
   const [name, setName] = useState('');
   const createGroup = useGroupStore((state) => state.create);
 
+  const handleClose = () => {
+    setIsOpen(false);
+    setName('');
+  };
+
   const saveHandler = async () => {
     try {
       await createGroup(name);
     } finally {
-      setIsOpen(false);
-      setName('');
+      handleClose();
     }
   };
+
+  const handleEnter = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (name && e.key === 'Enter') {
+      saveHandler();
+    }
+  };
+
   return (
     <>
       <Button variant='secondary' onClick={() => setIsOpen(true)}>
@@ -23,11 +34,14 @@ export const AddGroup = () => {
       </Button>
       <CreateDialog
         onSave={() => saveHandler()}
+        isDisabled={!name}
         isOpen={isOpen}
         title='Create group'
-        onClose={() => setIsOpen(false)}
+        onClose={handleClose}
       >
         <TextField
+          autoFocus
+          onKeyUp={handleEnter}
           placeholder='Enter group name'
           onInput={(e) => setName(e.currentTarget.value)}
           value={name}
