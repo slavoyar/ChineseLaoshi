@@ -9,6 +9,9 @@ interface Props extends Word {
   onNext: () => void;
 }
 
+const keysBySymbols = (symbols: string, id: string) =>
+  symbols.split('').map((symbol, index) => `${id}-${symbol}-${index}`);
+
 export const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
   const updateCardStats = useCardStore((state) => state.updateStats);
 
@@ -17,6 +20,8 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
   const debouncedIndex = useDebounceValue(currentIndex, 300);
 
   const [fieldSize, setFieldSize] = useState(300);
+  const [guessedSymbols, setGuessedSymbols] = useState<string[]>([]);
+
   const { ref } = useResizeObserver<HTMLDivElement>({
     onChange: ([entry]) => {
       const { width } = entry.contentRect;
@@ -26,10 +31,8 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
     },
   });
 
-  const [guessedSymbols, setGuessedSymbols] = useState<string[]>([]);
-
   const onQuizComplete = ({ character }: { character: string }) => {
-    setGuessedSymbols((prev) => [...prev, character]);
+    setGuessedSymbols((prev) => [...prev, `${id}-${character}-${currentIndex}`]);
     if (currentIndex < symbols.length - 1) {
       inc();
     }
@@ -59,13 +62,13 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
   }, [symbols, fieldSize]);
 
   useEffect(() => {
-    const symbol = symbols[debouncedIndex];
+    const symbolKey = keysBySymbols(symbols, id)[debouncedIndex];
     const writer = writers.current[debouncedIndex];
     if (!writer) {
       return;
     }
 
-    if (guessedSymbols.includes(symbol)) {
+    if (guessedSymbols.includes(symbolKey)) {
       writer.showCharacter();
     } else {
       writer.quiz({
@@ -91,10 +94,10 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
           <i className={cn('fa fa-chevron-left', iconClass(currentIndex > 0))} />
         </Button>
         <div className='max-w-[300px] max-h-[300px] bg-secondary-500 rounded'>
-          {symbols.split('').map((sym, index) => (
+          {keysBySymbols(symbols, id).map((key, index) => (
             <div
               id={`hanzi-input-${index}`}
-              key={sym}
+              key={key}
               className={cn(index === currentIndex ? 'block' : 'hidden')}
             />
           ))}

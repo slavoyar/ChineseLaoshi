@@ -6,7 +6,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export const Button: FC<ButtonProps> = ({ variant, children, className, ...props }) => (
-  <button type='button' className={`btn btn--${variant} ${className}`} {...props}>
+  <button type='button' className={`btn btn--${variant} ${className ?? ''}`} {...props}>
     {children}
   </button>
 );
