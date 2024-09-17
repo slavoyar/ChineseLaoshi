@@ -2,20 +2,18 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { cardService, Card, WriteCard, useCardStore } from '@entities/card';
 import { Route } from '@shared/types';
+import { useStateStore } from '@shared/stores';
 
 export const StudyWrite = () => {
   const navigate = useNavigate();
   const [cards, setCards] = useState<Card[]>([]);
   const currentCard = useRef<Card>();
 
-  const [isStudy, setIsStudy, reset] = useCardStore((state) => [
-    state.isStudy,
-    state.setIsStudy,
-    state.reset,
-  ]);
+  const reset = useCardStore((state) => state.reset);
+  const [state, setState] = useStateStore((store) => [store.state, store.setState]);
 
   useEffect(() => {
-    if (!isStudy) {
+    if (state !== 'main') {
       navigate(Route.Root);
       return;
     }
@@ -31,7 +29,7 @@ export const StudyWrite = () => {
     currentCard.current = current;
     if (!currentCard.current) {
       // TODO: add notification for lesson end
-      setIsStudy(false);
+      setState('main');
       reset();
       navigate(Route.Root);
     }
