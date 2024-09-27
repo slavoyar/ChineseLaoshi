@@ -34,7 +34,7 @@ const router = createBrowserRouter([
         element: <Main />,
       },
       {
-        path: Route.StudyWrite,
+        path: `${Route.StudyWrite}/:count/:groupId?`,
         element: <StudyWrite />,
       },
     ],

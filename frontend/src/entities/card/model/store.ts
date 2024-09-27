@@ -4,8 +4,6 @@ import cardService from '@entities/card/api';
 
 interface State {
   cardsPerGroup: Record<string, Card[]>;
-  // TODO: move isStudy state to another store
-  isStudy: boolean;
 }
 
 interface Action {
@@ -13,16 +11,11 @@ interface Action {
   create: (id: string, data: Omit<Word, 'id'>) => Promise<void>;
   delete: (id: string) => Promise<void>;
   updateStats: (id: string, guessed: boolean) => Promise<void>;
-  setIsStudy: (value: boolean) => void;
   reset: () => void;
 }
 
 const useCardStore = create<State & Action>((set, get) => ({
   cardsPerGroup: {},
-  isStudy: false,
-  setIsStudy: (value) => {
-    set(() => ({ isStudy: value }));
-  },
   fetch: async (id: string) => {
     const response = await cardService.getList(id);
     set((state) => ({ cardsPerGroup: { ...state.cardsPerGroup, [id]: response } }));
