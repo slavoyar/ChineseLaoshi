@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 
 export const WriteStudy = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [groupId, setGroupId] = useState('');
 
   const [setState, setSettings, settings] = useStateStore((state) => [
     state.setState,
@@ -27,20 +26,15 @@ export const WriteStudy = () => {
   };
 
   const onGroupSelect = (item: Group) => {
-    setGroupId(item.id);
-  };
-
-  const handleClose = () => {
-    setGroupId('');
-    setIsOpen(false);
-    console.error(isOpen);
+    setSettings({ groupId: item.id });
   };
 
   const handleSave = () => {
     setState('write');
-    handleClose();
-    navigate(Route.StudyWrite);
-    console.error(groupId);
+    const group = settings.groupId ? `/${settings.groupId}` : '';
+    const route = `${Route.StudyWrite}/${settings.cardsNumber}${group}`;
+    console.error(route);
+    navigate(route);
   };
 
   return (
@@ -57,7 +51,7 @@ export const WriteStudy = () => {
         isOpen={isOpen}
         saveTitle='Study'
         onSave={() => handleSave()}
-        onClose={handleClose}
+        onClose={() => setIsOpen(false)}
       >
         <div className='flex flex-col gap-2'>
           <TextField
@@ -68,6 +62,7 @@ export const WriteStudy = () => {
           />
           <Autocomplete
             placeholder='Enter group name'
+            value={settings.groupId}
             items={groups}
             onSelect={onGroupSelect}
             filterableValue={(item) => item.name}

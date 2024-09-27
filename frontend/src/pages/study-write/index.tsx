@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { cardService, Card, WriteCard, useCardStore } from '@entities/card';
 import { Route } from '@shared/types';
@@ -6,6 +6,7 @@ import { useStateStore } from '@shared/stores';
 
 export const StudyWrite = () => {
   const navigate = useNavigate();
+  const { groupId, count } = useParams();
   const [cards, setCards] = useState<Card[]>([]);
   const currentCard = useRef<Card>();
 
@@ -13,11 +14,11 @@ export const StudyWrite = () => {
   const [state, setState] = useStateStore((store) => [store.state, store.setState]);
 
   useEffect(() => {
-    if (state !== 'main') {
+    if (state !== 'write' || !count) {
       navigate(Route.Root);
       return;
     }
-    cardService.getCardsToStudy().then((data) => {
+    cardService.getCardsToStudy(count, groupId).then((data) => {
       const [current, ...newCards] = data;
       currentCard.current = current;
       setCards(newCards);

@@ -29,6 +29,6 @@ export const useStateStore = create<State & Action>((set, get) => ({
   },
   setSettings: (settings) => {
     const currentSettings = get().settings;
-    set(() => ({ settings: { ...currentSettings, settings } }));
+    set(() => ({ settings: { ...currentSettings, ...settings } }));
   },
 }));

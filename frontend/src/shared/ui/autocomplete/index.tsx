@@ -3,6 +3,7 @@ import { TextField, TextFieldProps } from '../text-field';
 
 interface Props<T> extends Omit<TextFieldProps, 'onSelect'> {
   items: T[];
+  value?: string;
   onSelect: (item: T) => void;
   renderItem?: (item: T) => React.ReactNode;
   filterableValue: (item: T) => string;
@@ -10,6 +11,7 @@ interface Props<T> extends Omit<TextFieldProps, 'onSelect'> {
 }
 
 export const Autocomplete = <T extends unknown>({
+  value,
   items,
   onSelect,
   renderItem,
@@ -20,6 +22,18 @@ export const Autocomplete = <T extends unknown>({
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [filteredItems, setFilteredItems] = useState<T[]>(items);
+
+  useEffect(() => {
+    if (!value) {
+      setQuery('');
+      return;
+    }
+    const foundItem = items.find((item) => keyValue(item) === value);
+    if (!foundItem) {
+      return;
+    }
+    setQuery(filterableValue(foundItem));
+  }, [value]);
 
   useEffect(() => {
     setFilteredItems(
