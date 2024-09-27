@@ -33,7 +33,6 @@ export const WriteStudy = () => {
     setState('write');
     const group = settings.groupId ? `/${settings.groupId}` : '';
     const route = `${Route.StudyWrite}/${settings.cardsNumber}${group}`;
-    console.error(route);
     navigate(route);
   };
 
