@@ -69,7 +69,7 @@ class CardService {
   }
 
   async getWriteCards(data: GetWriteCardDto, userId: string): Promise<CardDto[]> {
-    const cards = await cardRepository.getWriteCards(Number(data.count), userId);
+    const cards = await cardRepository.getWriteCards(Number(data.count), userId, data.groupId);
     return cards.map((card) => ({
       id: card.id,
       progress: card.progress,
