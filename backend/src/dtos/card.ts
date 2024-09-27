@@ -21,4 +21,5 @@ export type UpdateCardStatsDto = {
 
 export type GetWriteCardDto = {
   count: string;
+  groupId: string;
 };
