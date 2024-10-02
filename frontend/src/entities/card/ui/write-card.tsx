@@ -12,7 +12,7 @@ interface Props extends Word {
 const keysBySymbols = (symbols: string, id: string) =>
   symbols.split('').map((symbol, index) => `${id}-${symbol}-${index}`);
 
-export const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
+export const WriteCard: FC<Props> = ({ id, symbols, translation, transcription, onNext }) => {
   const updateCardStats = useCardStore((state) => state.updateStats);
 
   const writers = useRef<HanziWriter[]>([]);
@@ -43,6 +43,7 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
       HanziWriter.create(`hanzi-input-${index}`, sym, {
         width: fieldSize,
         height: fieldSize,
+        showCharacter: false,
         showOutline: false,
         showHintAfterMisses: 3,
         drawingWidth: 20,
@@ -88,6 +89,9 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, onNext }) => {
     <div ref={ref} className='md:w-[500px] p-4 flex flex-col bg-secondary-900 rounded-2xl gap-4'>
       <div className='w-full bg-secondary-700 text-center text-white rounded p-2 text-xl'>
         {translation}
+        <span className='ml-2 rounded text-secondary-500 bg-secondary-500 hover:bg-secondary-700'>
+          ({transcription})
+        </span>
       </div>
       <div className='flex justify-around items-center'>
         <Button variant='text' onClick={() => dec()} disabled={currentIndex === 0}>
