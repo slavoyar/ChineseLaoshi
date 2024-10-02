@@ -4,6 +4,7 @@ import { useCardStore, Word } from '@entities/card';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { useCounter, useDebounceValue, useResizeObserver } from '@siberiacancode/reactuse';
+import { useStateStore } from '@shared/stores';
 
 interface Props extends Word {
   onNext: () => void;
@@ -14,6 +15,7 @@ const keysBySymbols = (symbols: string, id: string) =>
 
 export const WriteCard: FC<Props> = ({ id, symbols, translation, transcription, onNext }) => {
   const updateCardStats = useCardStore((state) => state.updateStats);
+  const settings = useStateStore((state) => state.settings);
 
   const writers = useRef<HanziWriter[]>([]);
   const { value: currentIndex, inc, dec, reset } = useCounter(0);
@@ -45,7 +47,7 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, transcription, 
         height: fieldSize,
         showCharacter: false,
         showOutline: false,
-        showHintAfterMisses: 3,
+        showHintAfterMisses: settings.toggleHints ? 3 : false,
         drawingWidth: 20,
         strokeColor: '#31363F',
         strokeFadeDuration: 0,

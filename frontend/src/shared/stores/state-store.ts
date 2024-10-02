@@ -5,10 +5,12 @@ type StateType = 'main' | 'write';
 interface StudySettings {
   cardsNumber: number;
   groupId?: string;
+  toggleHints: boolean;
 }
 
 const DEFAULT_SETTINGS: StudySettings = {
-  cardsNumber: 20,
+  cardsNumber: 5,
+  toggleHints: true,
 };
 
 interface State {
