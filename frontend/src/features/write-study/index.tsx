@@ -2,7 +2,7 @@ import { Group, useGroupStore } from '@entities/group';
 import { PenWrite } from '@shared/icons/pen-write';
 import { useStateStore } from '@shared/stores';
 import { Route } from '@shared/types';
-import { CreateDialog, TextField } from '@shared/ui';
+import { Checkbox, CreateDialog, TextField } from '@shared/ui';
 import { Autocomplete } from '@shared/ui/autocomplete';
 import { ChangeEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -36,6 +36,10 @@ export const WriteStudy = () => {
     navigate(route);
   };
 
+  const onToggleHint = (value: boolean) => {
+    setSettings({ toggleHints: value });
+  };
+
   return (
     <>
       <div
@@ -66,6 +70,11 @@ export const WriteStudy = () => {
             onSelect={onGroupSelect}
             filterableValue={(item) => item.name}
             keyValue={(item) => item.id}
+          />
+          <Checkbox
+            value={settings.toggleHints}
+            label='Toggle hints'
+            onChange={(e) => onToggleHint(e.currentTarget.checked)}
           />
         </div>
       </CreateDialog>
