@@ -69,7 +69,7 @@ export const Autocomplete = <T extends unknown>({
         {...props}
       />
       {filteredItems.length > 0 && isFocused && (
-        <ul className='w-full absolute max-h-[200px] bg-secondary-600 rounded p-2'>
+        <ul className='w-full absolute max-h-[200px] bg-secondary-600 rounded p-2 overflow-auto'>
           {filteredItems.map((item) => (
             <li
               key={keyValue(item)}
