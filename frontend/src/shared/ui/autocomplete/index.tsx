@@ -1,4 +1,5 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { useClickOutside } from '@siberiacancode/reactuse';
 import { TextField, TextFieldProps } from '../text-field';
 
 interface Props<T> extends Omit<TextFieldProps, 'onSelect'> {
@@ -19,6 +20,7 @@ export const Autocomplete = <T extends unknown>({
   keyValue,
   ...props
 }: Props<T>) => {
+  const listRef = useRef(null);
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [filteredItems, setFilteredItems] = useState<T[]>(items);
@@ -52,11 +54,9 @@ export const Autocomplete = <T extends unknown>({
     onSelect(item);
   };
 
-  const handleBlur = () => {
-    setTimeout(() => {
-      setIsFocused(false);
-    }, 100);
-  };
+  useClickOutside(listRef, () => {
+    setIsFocused(false);
+  });
 
   return (
     <div className='relative'>
@@ -65,11 +65,13 @@ export const Autocomplete = <T extends unknown>({
         value={query}
         onChange={handleInputChange}
         onFocus={() => setIsFocused(true)}
-        onBlur={() => handleBlur}
         {...props}
       />
       {filteredItems.length > 0 && isFocused && (
-        <ul className='w-full absolute max-h-[200px] bg-secondary-600 rounded p-2 overflow-auto'>
+        <ul
+          ref={listRef}
+          className='w-full absolute max-h-[200px] bg-secondary-600 rounded p-2 overflow-auto z-[1000]'
+        >
           {filteredItems.map((item) => (
             <li
               key={keyValue(item)}
