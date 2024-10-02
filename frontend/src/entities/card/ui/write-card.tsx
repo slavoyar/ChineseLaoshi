@@ -34,7 +34,7 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, transcription, 
   const onQuizComplete = ({ character }: { character: string }) => {
     setGuessedSymbols((prev) => [...prev, `${id}-${character}-${currentIndex}`]);
     if (currentIndex < symbols.length - 1) {
-      inc();
+      setTimeout(() => inc(), 500);
     }
   };
 
