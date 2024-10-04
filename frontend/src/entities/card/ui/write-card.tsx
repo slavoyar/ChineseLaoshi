@@ -54,6 +54,12 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, transcription, 
         drawingFadeDuration: 0,
       })
     );
+
+    // TODO: Refactor if possible
+    writers.current[0].quiz({
+      onComplete: onQuizComplete,
+    });
+
     return () => {
       writers.current.forEach((item) => {
         item.target.node.remove();
