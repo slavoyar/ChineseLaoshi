@@ -7,7 +7,7 @@ import { Autocomplete } from '@shared/ui/autocomplete';
 import { ChangeEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export const WriteStudy = () => {
+export const StartWritePractice = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const [setState, setSettings, settings] = useStateStore((state) => [
