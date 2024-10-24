@@ -29,7 +29,6 @@ export const WritePractice = () => {
   const onNext = () => {
     const [current, ...newCards] = cards;
     currentCard.current = current;
-    console.log(current, newCards);
     if (!currentCard.current) {
       // TODO: add notification for lesson end
       setState('main');
