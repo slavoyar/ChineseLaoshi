@@ -1,16 +1,18 @@
 import { create } from 'zustand';
 
-type StateType = 'main' | 'write';
+type StateType = 'main' | 'write' | 'prescription';
 
 interface StudySettings {
   cardsNumber: number;
   groupId?: string;
   toggleHints: boolean;
+  prescriptionMode: boolean;
 }
 
 const DEFAULT_SETTINGS: StudySettings = {
   cardsNumber: 5,
   toggleHints: true,
+  prescriptionMode: true,
 };
 
 interface State {
