@@ -10,8 +10,8 @@ interface Round {
   withOutline: boolean;
 }
 
-const HINT_ROUNDS = 1;
-const ROUNDS = 1;
+const HINT_ROUNDS = 5;
+const ROUNDS = 5;
 
 let rounds: Round[] = [];
 
