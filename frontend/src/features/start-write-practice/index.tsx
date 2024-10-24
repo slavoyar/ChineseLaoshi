@@ -7,7 +7,7 @@ import { Autocomplete } from '@shared/ui/autocomplete';
 import { ChangeEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export const WriteStudy = () => {
+export const StartWritePractice = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const [setState, setSettings, settings] = useStateStore((state) => [
@@ -30,14 +30,18 @@ export const WriteStudy = () => {
   };
 
   const handleSave = () => {
-    setState('write');
+    setState(settings.prescriptionMode ? 'prescription' : 'write');
     const group = settings.groupId ? `/${settings.groupId}` : '';
-    const route = `${Route.StudyWrite}/${settings.cardsNumber}${group}`;
+    const route = `${Route.WritePractice}/${settings.cardsNumber}${group}`;
     navigate(route);
   };
 
   const onToggleHint = (value: boolean) => {
     setSettings({ toggleHints: value });
+  };
+
+  const onToggleMode = (value: boolean) => {
+    setSettings({ prescriptionMode: value });
   };
 
   return (
@@ -75,6 +79,11 @@ export const WriteStudy = () => {
             value={settings.toggleHints}
             label='Toggle hints'
             onChange={(e) => onToggleHint(e.currentTarget.checked)}
+          />
+          <Checkbox
+            value={settings.toggleHints}
+            label='Presciption mode'
+            onChange={(e) => onToggleMode(e.currentTarget.checked)}
           />
         </div>
       </CreateDialog>

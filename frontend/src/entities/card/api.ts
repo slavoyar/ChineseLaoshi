@@ -5,7 +5,7 @@ import { Card } from './model';
 const URL = '/api/cards';
 
 class CardService extends BaseService<Card> {
-  getCardsToStudy(count: string, groupId?: string): Promise<Card[]> {
+  getCardsWritePractice(count: string, groupId?: string): Promise<Card[]> {
     const group = groupId ? `&groupId=${groupId}` : '';
     return axios.get<Card[], Card[]>(`${this.url}/study/write?count=${count}${group}`);
   }
