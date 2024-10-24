@@ -1,19 +1,33 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import HanziWriter from 'hanzi-writer';
+import { useCounter, useDebounceValue, useResizeObserver } from '@siberiacancode/reactuse';
 import { useCardStore, Word } from '@entities/card';
 import { Button } from '@shared/ui';
-import { cn } from '@shared/utils';
-import { useCounter, useDebounceValue, useResizeObserver } from '@siberiacancode/reactuse';
 import { useStateStore } from '@shared/stores';
+import { cn } from '@shared/utils';
 
 interface Props extends Word {
+  isNextDisabled?: boolean;
+  updateStats?: boolean;
+  showOutline?: boolean;
   onNext: () => void;
+  onComplete?: () => void;
 }
 
 const keysBySymbols = (symbols: string, id: string) =>
   symbols.split('').map((symbol, index) => `${id}-${symbol}-${index}`);
 
-export const WriteCard: FC<Props> = ({ id, symbols, translation, transcription, onNext }) => {
+export const WriteCard = ({
+  id,
+  symbols,
+  translation,
+  transcription,
+  isNextDisabled = false,
+  updateStats = true,
+  showOutline = false,
+  onNext,
+  onComplete,
+}: Props) => {
   const updateCardStats = useCardStore((state) => state.updateStats);
   const settings = useStateStore((state) => state.settings);
 
@@ -38,6 +52,9 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, transcription, 
     if (currentIndex < symbols.length - 1) {
       setTimeout(() => inc(), 500);
     }
+    if (guessedSymbols.length === symbols.length - 1 && onComplete) {
+      onComplete();
+    }
   };
 
   useEffect(() => {
@@ -46,7 +63,7 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, transcription, 
         width: fieldSize,
         height: fieldSize,
         showCharacter: false,
-        showOutline: false,
+        showOutline,
         showHintAfterMisses: settings.toggleHints ? 3 : false,
         drawingWidth: 20,
         strokeColor: '#31363F',
@@ -89,8 +106,10 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, transcription, 
   const iconClass = (cond: boolean) => (cond ? 'text-primary-100' : 'text-secondary-700');
 
   const buttonHandler = async (guessed: boolean) => {
-    await updateCardStats(id, guessed);
     onNext();
+    if (updateStats) {
+      await updateCardStats(id, guessed);
+    }
   };
 
   return (
@@ -126,7 +145,7 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, transcription, 
           className='w-full'
           variant='primary'
           title='Enter all hieroglyphs'
-          disabled={guessedSymbols.length !== symbols.length}
+          disabled={guessedSymbols.length !== symbols.length || isNextDisabled}
           onClick={() => buttonHandler(true)}
         >
           Next
