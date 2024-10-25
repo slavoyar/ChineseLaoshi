@@ -22,7 +22,8 @@ export const PrescriptionPractice = ({ card, onNext }: Props) => {
     rounds = Array(HINT_ROUNDS + ROUNDS)
       .fill({ withOutline: false })
       .map((_, index) => ({ withOutline: index < HINT_ROUNDS }));
-  }, []);
+    setRound(0);
+  }, [card]);
 
   return (
     <>
@@ -36,7 +37,7 @@ export const PrescriptionPractice = ({ card, onNext }: Props) => {
               translation={card.word.translation}
               transcription={card.word.transcription}
               showOutline={item.withOutline}
-              isNextDisabled={round !== rounds.length - 1}
+              isNextDisabled={index !== rounds.length - 1}
               updateStats={false}
               onNext={() => {
                 if (index === rounds.length - 1) {
