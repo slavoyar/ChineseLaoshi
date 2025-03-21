@@ -1,24 +1,24 @@
 .dialog-overlay {
-    @apply fixed top-0 left-0 w-full h-full backdrop-blur-xl flex items-center justify-center;
-    z-index: 1000;
+  @apply fixed left-0 top-0 flex h-full w-full items-center justify-center backdrop-blur-xl;
+  z-index: 1000;
 }
 
 .dialog {
-    @apply bg-secondary-800 max-h-[90%] min-w-[20%] py-4 px-8 rounded-xl;
+  @apply bg-secondary-800 max-h-[90%] min-w-[20%] rounded-xl px-8 py-4;
 }
 
 .dialog-header {
-    @apply flex justify-between text-white py-2 items-center;
+  @apply flex items-center justify-between py-2 text-white;
 }
 
 .dialog-header h2 {
-    @apply text-2xl select-none;
+  @apply select-none text-2xl;
 }
 
 .dialog-body {
-    @apply py-2;
+  @apply py-2;
 }
 
 .dialog-footer {
-    @apply py-2;
+  @apply py-2;
 }

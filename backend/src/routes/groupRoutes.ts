@@ -1,11 +1,6 @@
 ﻿import express from 'express';
 
-import {
-  createGroup,
-  deleteGroup,
-  getAllGroups,
-  updateGroup,
-} from '../controllers/groupController';
+import { createGroup, deleteGroup, getAllGroups, updateGroup } from '../controllers/groupController';
 
 const router = express.Router();
 

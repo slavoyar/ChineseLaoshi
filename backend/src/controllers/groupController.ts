@@ -15,7 +15,7 @@ export const getAllGroups = async (req: Request, res: Response, next: NextFuncti
 export const createGroup = async (
   req: Request<Record<string, string>, GroupDto, CreateGroupDto>,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const { user } = req;
   if (!user) {
@@ -26,10 +26,7 @@ export const createGroup = async (
   res.json(group);
 };
 
-export const updateGroup = async (
-  req: Request<Record<string, string>, GroupDto, UpdateGroupDto>,
-  res: Response,
-) => {
+export const updateGroup = async (req: Request<Record<string, string>, GroupDto, UpdateGroupDto>, res: Response) => {
   const group = await groupService.updateGroup(req.body);
   res.json(group);
 };

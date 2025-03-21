@@ -1,9 +1,9 @@
 import { useGroupStore } from '@entities/group';
-import { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Route } from '@shared/types';
 import { Groups } from '@widgets/groups';
 import { StudyModes } from '@widgets/study-modes';
+import { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const GAP = 24;
 const DEFAULT_OFFSET = 200;
@@ -20,7 +20,7 @@ export const Main = () => {
   }, []);
 
   return (
-    <div className='md:w-6/12 m-auto h-full flex flex-col gap-6'>
+    <div className='m-auto flex h-full flex-col gap-6 md:w-6/12'>
       <StudyModes ref={studyModesRef} />
       <Groups
         style={{

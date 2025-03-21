@@ -15,15 +15,12 @@ export const Groups = (props: HTMLAttributes<HTMLDivElement>) => {
   };
 
   return (
-    <div
-      className='md:p-10 p-5 bg-secondary-900 rounded-2xl flex flex-col md:gap-10 gap-5 h-fit max-h-full'
-      {...props}
-    >
+    <div className='bg-secondary-900 flex h-fit max-h-full flex-col gap-5 rounded-2xl p-5 md:gap-10 md:p-10' {...props}>
       <div className='flex items-center justify-between'>
         <div className='text-2xl text-white'>Folders</div>
         <AddGroup />
       </div>
-      <div className='overflow-auto h-full p-2'>
+      <div className='h-full overflow-auto p-2'>
         <GroupList
           content={(item) => (
             <div>

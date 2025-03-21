@@ -1,9 +1,9 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import { ReactNode, useEffect, useRef, useState } from 'react';
-import { cardService, Card, WriteCard, useCardStore } from '@entities/card';
-import { Route } from '@shared/types';
+import { Card, cardService, useCardStore, WriteCard } from '@entities/card';
 import { useStateStore } from '@shared/stores';
+import { Route } from '@shared/types';
 import { PrescriptionPractice } from '@widgets/prescription-practice';
+import { ReactNode, useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export const WritePractice = () => {
   const navigate = useNavigate();
@@ -57,9 +57,5 @@ export const WritePractice = () => {
     }
   };
 
-  return (
-    <div className='flex h-full items-center justify-center'>
-      {currentCard.current && getWidget()}
-    </div>
-  );
+  return <div className='flex h-full items-center justify-center'>{currentCard.current && getWidget()}</div>;
 };

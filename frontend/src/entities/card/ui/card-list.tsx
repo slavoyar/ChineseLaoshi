@@ -1,5 +1,6 @@
-import { FC } from 'react';
 import { useCardStore } from '@entities/card';
+import { FC } from 'react';
+
 import { CardItem } from './card-item';
 
 interface Props {
@@ -12,9 +13,7 @@ export const CardList: FC<Props> = ({ groupId, onDelete }) => {
 
   return (
     <div className='flex flex-col gap-2 py-2'>
-      {cardsPerGroup[groupId]?.map((card) => (
-        <CardItem key={card.id} card={card} onDelete={onDelete} />
-      ))}
+      {cardsPerGroup[groupId]?.map((card) => <CardItem key={card.id} card={card} onDelete={onDelete} />)}
     </div>
   );
 };

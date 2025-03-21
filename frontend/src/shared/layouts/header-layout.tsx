@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useAuthStore } from '@shared/stores';
+import { Route } from '@shared/types';
 import { Header } from '@shared/ui';
 import { useResizeObserver } from '@siberiacancode/reactuse';
-import { useAuthStore } from '@shared/stores';
+import { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Route } from '@shared/types';
 
 export const HeaderLayout = () => {
   const [height, setHeight] = useState(0);
@@ -25,10 +25,10 @@ export const HeaderLayout = () => {
   }, [username]);
 
   return (
-    <div className='w-full h-full'>
+    <div className='h-full w-full'>
       <Header ref={ref} username={username} />
       <div
-        className='w-full absolute md:px-5 p-2'
+        className='absolute w-full p-2 md:px-5'
         style={{
           height: `calc(100% - ${height}px)`,
           top: `${height}px`,

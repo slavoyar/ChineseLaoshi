@@ -13,7 +13,7 @@ export const getAllGroupCards = async (req: Request, res: Response) => {
 export const createCard = async (
   req: Request<{ groupId: string }, Card, CreateCardDto>,
   res: Response<Card>,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const { groupId } = req.params;
   const { id: wordId, symbols, transcription, translation } = req.body;
@@ -36,11 +36,7 @@ export const createCard = async (
   }
 };
 
-export const updateCard = async (
-  req: Request<void, void, UpdateCardDto>,
-  res: Response,
-  next: NextFunction,
-) => {
+export const updateCard = async (req: Request<void, void, UpdateCardDto>, res: Response, next: NextFunction) => {
   try {
     await cardService.updateCard(req.body);
     res.sendStatus(200);
@@ -49,11 +45,7 @@ export const updateCard = async (
   }
 };
 
-export const deleteCard = async (
-  req: Request<{ cardId: string }>,
-  res: Response,
-  next: NextFunction,
-) => {
+export const deleteCard = async (req: Request<{ cardId: string }>, res: Response, next: NextFunction) => {
   const { cardId } = req.params;
   try {
     await cardService.deleteCard(cardId);
@@ -63,18 +55,12 @@ export const deleteCard = async (
   }
 };
 
-export const updateCardStats = async (
-  req: Request<void, void, UpdateCardStatsDto>,
-  res: Response,
-) => {
+export const updateCardStats = async (req: Request<void, void, UpdateCardStatsDto>, res: Response) => {
   await cardService.updateCardStats(req.body);
   res.sendStatus(200);
 };
 
-export const getWriteCards = async (
-  req: Request<void, CardDto[], void, GetWriteCardDto>,
-  res: Response,
-) => {
+export const getWriteCards = async (req: Request<void, CardDto[], void, GetWriteCardDto>, res: Response) => {
   const cards = await cardService.getWriteCards(req.query, req.user.id);
   res.json(cards);
 };

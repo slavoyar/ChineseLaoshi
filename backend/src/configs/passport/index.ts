@@ -20,7 +20,7 @@ passport.use(
     } catch (err) {
       return done(err);
     }
-  }),
+  })
 );
 
 passport.serializeUser((user, done) => {

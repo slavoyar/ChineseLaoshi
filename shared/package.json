@@ -1,0 +1,11 @@
+{
+  "name": "@chinese-laoshi/shared",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "types": "types.ts",
+  "private": true,
+  "dependencies": {
+    "typia": "^8.0.3"
+  }
+}

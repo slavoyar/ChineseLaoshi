@@ -46,10 +46,7 @@ class CardService {
       return { id: card.id, progress: card.progress, word };
     }
 
-    const [card, word] = await Promise.all([
-      cardRepository.getCardById(cardId),
-      wordRepository.updateWord(wordData),
-    ]);
+    const [card, word] = await Promise.all([cardRepository.getCardById(cardId), wordRepository.updateWord(wordData)]);
     return { id: card!.id, progress: card!.progress, word };
   }
 

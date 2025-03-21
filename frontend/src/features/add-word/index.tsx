@@ -1,8 +1,8 @@
-import { Button, CreateDialog, TextField } from '@shared/ui';
-import { FC, useEffect, useState } from 'react';
 import { useCardStore } from '@entities/card';
 import { useGroupStore } from '@entities/group';
+import { Button, CreateDialog, TextField } from '@shared/ui';
 import pinyin from 'pinyin';
+import { FC, useEffect, useState } from 'react';
 
 interface AddWordProps {
   groupId: string;
@@ -47,12 +47,7 @@ export const AddWord: FC<AddWordProps> = ({ groupId }) => {
         <i className='fa fa-add mr-1' />
         Add word
       </Button>
-      <CreateDialog
-        onSave={saveHandler}
-        isOpen={isOpen}
-        title='Create word'
-        onClose={() => setIsOpen(false)}
-      >
+      <CreateDialog onSave={saveHandler} isOpen={isOpen} title='Create word' onClose={() => setIsOpen(false)}>
         <div className='flex flex-col gap-2'>
           <TextField
             value={symbols}

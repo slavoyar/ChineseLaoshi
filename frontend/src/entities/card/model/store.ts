@@ -1,6 +1,6 @@
-import { create } from 'zustand';
 import { Card, Word } from '@entities/card';
 import cardService from '@entities/card/api';
+import { create } from 'zustand';
 
 interface State {
   cardsPerGroup: Record<string, Card[]>;
@@ -28,9 +28,7 @@ const useCardStore = create<State & Action>((set, get) => ({
   delete: async (id: string) => {
     await cardService.delete(id);
     const { cardsPerGroup } = get();
-    const groupId = Object.keys(cardsPerGroup).find((group) =>
-      cardsPerGroup[group].some((item) => item.id === id)
-    );
+    const groupId = Object.keys(cardsPerGroup).find((group) => cardsPerGroup[group].some((item) => item.id === id));
     if (!groupId) {
       return;
     }

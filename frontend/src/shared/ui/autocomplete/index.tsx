@@ -1,5 +1,6 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useClickOutside } from '@siberiacancode/reactuse';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
+
 import { TextField, TextFieldProps } from '../text-field';
 
 interface Props<T> extends Omit<TextFieldProps, 'onSelect'> {
@@ -11,7 +12,7 @@ interface Props<T> extends Omit<TextFieldProps, 'onSelect'> {
   keyValue: (item: T) => string;
 }
 
-export const Autocomplete = <T extends unknown>({
+export const Autocomplete = <T,>({
   value,
   items,
   onSelect,
@@ -38,9 +39,7 @@ export const Autocomplete = <T extends unknown>({
   }, [value]);
 
   useEffect(() => {
-    setFilteredItems(
-      items.filter((item) => filterableValue(item).toLowerCase().includes(query.toLowerCase()))
-    );
+    setFilteredItems(items.filter((item) => filterableValue(item).toLowerCase().includes(query.toLowerCase())));
   }, [query]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -60,22 +59,13 @@ export const Autocomplete = <T extends unknown>({
 
   return (
     <div className='relative'>
-      <TextField
-        type='text'
-        value={query}
-        onChange={handleInputChange}
-        onFocus={() => setIsFocused(true)}
-        {...props}
-      />
+      <TextField type='text' value={query} onChange={handleInputChange} onFocus={() => setIsFocused(true)} {...props} />
       {filteredItems.length > 0 && isFocused && (
-        <ul
-          ref={listRef}
-          className='w-full absolute max-h-[200px] bg-secondary-600 rounded p-2 overflow-auto z-[1000]'
-        >
+        <ul ref={listRef} className='bg-secondary-600 absolute z-[1000] max-h-[200px] w-full overflow-auto rounded p-2'>
           {filteredItems.map((item) => (
             <li
               key={keyValue(item)}
-              className='text-white hover:bg-secondary-500 cursor-pointer rounded p-2'
+              className='hover:bg-secondary-500 cursor-pointer rounded p-2 text-white'
               onClick={() => onItemSelect(item)}
             >
               {renderItem ? renderItem(item) : filterableValue(item)}

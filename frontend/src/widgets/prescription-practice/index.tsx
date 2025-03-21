@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { Card, WriteCard } from '@entities/card';
+import { useEffect, useState } from 'react';
 
 interface Props {
   card: Card;

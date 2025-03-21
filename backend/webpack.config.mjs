@@ -1,7 +1,12 @@
-const path = require('path');
-const nodeExternals = require('webpack-node-externals');
+import path from 'path';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import nodeExternals from 'webpack-node-externals';
 
-module.exports = {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+export default {
   entry: './src/index.ts', // Entry point of your application
   output: {
     filename: 'index.js', // Output bundle file
@@ -20,15 +25,7 @@ module.exports = {
       '@services': path.resolve(__dirname, 'src/services/'),
     },
   },
-  module: {
-    rules: [
-      {
-        test: /\.ts$/, // Apply this rule to TypeScript files
-        use: 'ts-loader', // Use ts-loader to compile TypeScript
-        exclude: /node_modules/,
-      },
-    ],
-  },
+  module: {},
   target: 'node', // Specify that this build is for Node.js
   externals: [nodeExternals()], // Exclude node_modules from the bundle
 };

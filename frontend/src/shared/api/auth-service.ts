@@ -4,7 +4,6 @@ import axios from 'axios';
 const URL = '/api/auth';
 
 class AuthService {
-  // eslint-disable-next-line class-methods-use-this
   login = (username: string, password: string) =>
     axios.post(
       `${URL}/login`,
@@ -12,7 +11,6 @@ class AuthService {
       { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
     );
 
-  // eslint-disable-next-line class-methods-use-this
   register = (data: CreateUserDto) => axios.post(`${URL}/register`, data);
 }
 

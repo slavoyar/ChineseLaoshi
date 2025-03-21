@@ -26,9 +26,9 @@
       "@features/*": ["./src/features/*"],
       "@shared/*": ["./src/shared/*"],
       "@pages/*": ["./src/pages/*"],
-      "@widgets/*": ["./src/widgets/*"],
-    },
+      "@widgets/*": ["./src/widgets/*"]
+    }
   },
-  "include": ["src/**/*.ts","src/**/*.tsx", "*.config.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "*.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

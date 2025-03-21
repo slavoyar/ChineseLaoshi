@@ -1,6 +1,5 @@
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-// @ts-ignore
+import { defineConfig } from 'vite';
 import eslint from 'vite-plugin-eslint';
 import tsconfigPaths from 'vite-tsconfig-paths';
 

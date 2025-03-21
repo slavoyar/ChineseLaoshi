@@ -1,5 +1,6 @@
 import { BaseService } from '@shared/api';
 import axios from 'axios';
+
 import { Card } from './model';
 
 const URL = '/api/cards';

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+
 import groupService from '../api';
 import { Group } from './types';
 

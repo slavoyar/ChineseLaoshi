@@ -1,4 +1,4 @@
-import { errors, ErrorCode } from './errors';
+import { ErrorCode, errors } from './errors';
 
 export class CustomError extends Error {
   public code: string;
@@ -17,8 +17,6 @@ export class CustomError extends Error {
 
 export const isCustomError = (err: unknown): err is CustomError => {
   return (
-    !!(err as CustomError).message &&
-    !!(err as CustomError).code &&
-    !isNaN(Number((err as CustomError).statusCode))
+    !!(err as CustomError).message && !!(err as CustomError).code && !isNaN(Number((err as CustomError).statusCode))
   );
 };

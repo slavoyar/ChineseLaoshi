@@ -1,7 +1,7 @@
-import { create } from 'zustand';
 import { authService } from '@shared/api';
-import { persist } from 'zustand/middleware';
 import { CreateUserDto } from '@shared/types';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface State {
   username: string;
