@@ -1,6 +1,6 @@
 import { CustomError } from '@configs/errors';
 import { prisma } from '@configs/prisma';
-import type { Word } from '@prisma/client';
+import type { CreateWordDto, Id, WordDto } from '@shared/types';
 
 class WordRepository {
   searchWord(query: string) {
@@ -19,7 +19,7 @@ class WordRepository {
     }
   }
 
-  createWord(data: Omit<Word, 'id'>) {
+  createWord(data: CreateWordDto) {
     try {
       return prisma.word.create({ data });
     } catch {
@@ -27,7 +27,7 @@ class WordRepository {
     }
   }
 
-  updateWord(data: Partial<Word>) {
+  updateWord(data: Partial<WordDto>) {
     try {
       return prisma.word.update({ where: { id: data.id }, data });
     } catch {
@@ -35,7 +35,7 @@ class WordRepository {
     }
   }
 
-  async deleteWord(id: string) {
+  async deleteWord(id: Id) {
     try {
       await prisma.word.delete({ where: { id } });
     } catch {

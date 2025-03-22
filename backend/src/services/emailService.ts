@@ -1,11 +1,12 @@
 import { generateTemplate, transporter } from '@configs/mailer';
 import { userRepository } from '@repositories';
+import type { Email } from '@shared/common';
 import { sign } from 'jsonwebtoken';
 
 const { MAILER_USER, JWT_SECRET_KEY } = process.env;
 
 class EmailService {
-  async resetPassword(email: string) {
+  async resetPassword(email: Email) {
     const user = await userRepository.getByEmail(email);
     const token = sign({ userId: user.id }, JWT_SECRET_KEY, { expiresIn: '15m' });
     const template = generateTemplate('reset', { locale: 'en', token });

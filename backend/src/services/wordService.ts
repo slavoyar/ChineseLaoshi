@@ -1,7 +1,8 @@
 import { wordRepository } from '@repositories';
+import type { WordDto } from '@shared/types';
 
 class WordService {
-  search(query: string) {
+  search(query: string): Promise<WordDto[]> {
     return wordRepository.searchWord(query);
   }
 }

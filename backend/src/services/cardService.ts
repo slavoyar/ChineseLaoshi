@@ -1,30 +1,39 @@
 import { CustomError } from '@configs/errors';
-import type { CardDto, CreateCardDto, GetWriteCardDto, UpdateCardDto, UpdateCardStatsDto } from '@dtos';
-import type { Card, Word } from '@prisma/client';
 import { cardRepository, groupRepository, wordRepository } from '@repositories';
+import type {
+  CardDto,
+  CreateCardDto,
+  GetWriteCardDto,
+  Id,
+  UpdateCardStatsDto,
+  UpdateCardWordDto,
+} from '@shared/types';
+import typia from 'typia';
 
 const STEP_DIFF = 0.02;
 const MAX_STEP = 0.2;
 const MIN_STEP = 0.05;
 
 class CardService {
-  async getCardsByGroupId(groupId: string): Promise<CardDto[]> {
+  async getCardsByGroupId(groupId: Id): Promise<CardDto[]> {
     const cards = await cardRepository.getCardsByGroupId(groupId);
-    return cards.map((card) => ({ id: card.id, word: card.word, progress: card.progress }));
+    return cards;
   }
 
-  async createCard(data: CreateCardDto): Promise<Card> {
-    if (!data.id) {
-      const dataWithoutId = { ...data, groupId: undefined, id: undefined };
-      const word = await wordRepository.createWord(dataWithoutId);
-      data.id = word.id;
+  async createCard(data: CreateCardDto): Promise<CardDto> {
+    let wordId;
+    if (!typia.is<{ id: Id }>(data.word)) {
+      const word = await wordRepository.createWord(data.word);
+      wordId = word.id;
+    } else {
+      wordId = data.word.id;
     }
-    const card = await cardRepository.createCard({ wordId: data.id, groupId: data.groupId });
+    const card = await cardRepository.createCard(data.groupId, wordId);
     await groupRepository.incrementWordCount(data.groupId);
     return card;
   }
 
-  async deleteCard(id: string): Promise<void> {
+  async deleteCard(id: Id): Promise<void> {
     const cardsCount = await cardRepository.getCardsCount(id);
     if (cardsCount === 1) {
       const card = await cardRepository.getCardById(id);
@@ -33,21 +42,23 @@ class CardService {
     await cardRepository.deleteCard(id);
   }
 
-  async updateCard({ cardId, ...wordData }: UpdateCardDto): Promise<CardDto> {
-    if (!wordData.id) {
+  async updateCard(data: UpdateCardWordDto): Promise<CardDto> {
+    if (!data.word.id) {
       throw new CustomError('entityUpdateError');
     }
-    const cardCount = await cardRepository.getCardsCount(wordData.id);
+    const cardCount = await cardRepository.getCardsCount(data.word.id);
 
     if (cardCount !== 1) {
-      const dataWithoutId = { ...wordData, groupId: undefined, id: undefined } as Omit<Word, 'id'>;
-      const word = await wordRepository.createWord(dataWithoutId);
-      const card = await cardRepository.updateCard({ id: cardId, wordId: word.id });
-      return { id: card.id, progress: card.progress, word };
+      const word = await wordRepository.createWord(data.word);
+      const card = await cardRepository.updateCard({ id: data.id, word });
+      return { ...card, word };
     }
 
-    const [card, word] = await Promise.all([cardRepository.getCardById(cardId), wordRepository.updateWord(wordData)]);
-    return { id: card!.id, progress: card!.progress, word };
+    const [card, word] = await Promise.all([
+      cardRepository.getCardById(data.id),
+      wordRepository.updateWord(data.word),
+    ]);
+    return { ...card, word };
   }
 
   async updateCardStats({ id, guessed }: UpdateCardStatsDto): Promise<void> {
@@ -65,13 +76,9 @@ class CardService {
     });
   }
 
-  async getWriteCards(data: GetWriteCardDto, userId: string): Promise<CardDto[]> {
+  async getWriteCards(data: GetWriteCardDto, userId: Id): Promise<CardDto[]> {
     const cards = await cardRepository.getWriteCards(Number(data.count), userId, data.groupId);
-    return cards.map((card) => ({
-      id: card.id,
-      progress: card.progress,
-      word: card.word,
-    }));
+    return cards;
   }
 }
 

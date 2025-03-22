@@ -1,8 +1,20 @@
 ﻿import { CustomError } from '@configs/errors';
-import type { CardDto, CreateCardDto, GetWriteCardDto, UpdateCardDto, UpdateCardStatsDto } from '@dtos';
-import type { Card } from '@prisma/client';
 import { cardService } from '@services';
+import type {
+  CardDto,
+  CreateCardDto,
+  GetWriteCardDto,
+  Id,
+  UpdateCardStatsDto,
+  UpdateCardWordDto,
+} from '@shared/types';
 import type { NextFunction, Request, Response } from 'express';
+import typia from 'typia';
+
+type CreateCardRequest = Request<{ groupId: Id }, CardDto, CreateCardDto>;
+type UpdateCardRequest = Request<void, void, UpdateCardWordDto>;
+type UpdateCardStatsRequest = Request<void, void, UpdateCardStatsDto>;
+type GetWriteCardsRequest = Request<void, CardDto[], void, GetWriteCardDto>;
 
 export const getAllGroupCards = async (req: Request, res: Response) => {
   const { groupId } = req.params;
@@ -10,57 +22,35 @@ export const getAllGroupCards = async (req: Request, res: Response) => {
   res.status(200).json(cards);
 };
 
-export const createCard = async (
-  req: Request<{ groupId: string }, Card, CreateCardDto>,
-  res: Response<Card>,
-  next: NextFunction
-) => {
+export const createCard = async (req: CreateCardRequest, res: Response<CardDto>, next: NextFunction) => {
   const { groupId } = req.params;
-  const { id: wordId, symbols, transcription, translation } = req.body;
-  if (!wordId && (!translation || !transcription || !symbols)) {
-    return next(new CustomError('entityCreateError'));
+
+  if (typia.is<CreateCardDto['word']>(req.body.word) === false) {
+    return next(new CustomError('validationError'));
   }
 
-  try {
-    const card = await cardService.createCard({
-      id: wordId,
-      symbols,
-      translation,
-      transcription,
-      groupId,
-    });
-
-    res.json(card);
-  } catch (error) {
-    next(error);
-  }
+  const card = await cardService.createCard({ ...req.body, groupId });
+  res.json(card);
 };
 
-export const updateCard = async (req: Request<void, void, UpdateCardDto>, res: Response, next: NextFunction) => {
-  try {
-    await cardService.updateCard(req.body);
-    res.sendStatus(200);
-  } catch (error) {
-    next(error);
-  }
+export const updateCard = async (req: UpdateCardRequest, res: Response) => {
+  typia.assertGuard<UpdateCardWordDto>(req.body);
+  await cardService.updateCard(req.body);
+  res.sendStatus(200);
 };
 
-export const deleteCard = async (req: Request<{ cardId: string }>, res: Response, next: NextFunction) => {
+export const deleteCard = async (req: Request<{ cardId: string }>, res: Response) => {
   const { cardId } = req.params;
-  try {
-    await cardService.deleteCard(cardId);
-    res.sendStatus(200);
-  } catch (error) {
-    next(error);
-  }
+  await cardService.deleteCard(cardId);
+  res.sendStatus(200);
 };
 
-export const updateCardStats = async (req: Request<void, void, UpdateCardStatsDto>, res: Response) => {
+export const updateCardStats = async (req: UpdateCardStatsRequest, res: Response) => {
   await cardService.updateCardStats(req.body);
   res.sendStatus(200);
 };
 
-export const getWriteCards = async (req: Request<void, CardDto[], void, GetWriteCardDto>, res: Response) => {
+export const getWriteCards = async (req: GetWriteCardsRequest, res: Response) => {
   const cards = await cardService.getWriteCards(req.query, req.user.id);
   res.json(cards);
 };

@@ -1,9 +1,9 @@
 import { CustomError } from '@configs/errors';
 import { prisma } from '@configs/prisma';
-import type { CreateGroupDto, UpdateGroupDto } from '@dtos';
+import type { CreateGroupDto, Id, UpdateGroupDto } from '@shared/types';
 
 class GroupRepository {
-  getGroupsByUserId(userId: string) {
+  getGroupsByUserId(userId: Id) {
     try {
       return prisma.group.findMany({ where: { userId } });
     } catch {
@@ -11,9 +11,9 @@ class GroupRepository {
     }
   }
 
-  createGroup(data: CreateGroupDto) {
+  createGroup(data: CreateGroupDto, userId: Id) {
     try {
-      return prisma.group.create({ data });
+      return prisma.group.create({ data: { ...data, userId } });
     } catch {
       throw new CustomError('entityCreateError');
     }
@@ -27,7 +27,7 @@ class GroupRepository {
     }
   }
 
-  async deleteGroup(id: string) {
+  async deleteGroup(id: Id) {
     try {
       await prisma.group.delete({ where: { id } });
     } catch {
@@ -35,7 +35,7 @@ class GroupRepository {
     }
   }
 
-  async incrementWordCount(id: string) {
+  async incrementWordCount(id: Id) {
     try {
       await prisma.group.update({ where: { id }, data: { wordCount: { increment: 1 } } });
     } catch {
@@ -43,7 +43,7 @@ class GroupRepository {
     }
   }
 
-  async decrementWordCount(id: string) {
+  async decrementWordCount(id: Id) {
     try {
       await prisma.group.update({ where: { id }, data: { wordCount: { decrement: 1 } } });
     } catch {

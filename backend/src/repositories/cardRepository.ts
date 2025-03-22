@@ -1,10 +1,9 @@
 import { CustomError } from '@configs/errors';
 import { prisma } from '@configs/prisma';
-import type { CreateCard, UpdateCard } from '@dtos';
-import { type Card } from '@prisma/client';
+import type { Id, UpdateCard } from '@shared/types';
 
 class CardRepository {
-  async getCardById(id: string): Promise<Card> {
+  async getCardById(id: Id) {
     try {
       const card = await prisma.card.findFirst({ where: { id } });
       if (!card) {
@@ -16,7 +15,7 @@ class CardRepository {
     }
   }
 
-  getCardsCount(wordId: string) {
+  getCardsCount(wordId: Id) {
     try {
       return prisma.card.count({ where: { wordId } });
     } catch {
@@ -24,7 +23,7 @@ class CardRepository {
     }
   }
 
-  getCardsByGroupId(groupId: string) {
+  getCardsByGroupId(groupId: Id) {
     try {
       return prisma.card.findMany({ where: { groupId }, include: { word: true } });
     } catch {
@@ -32,9 +31,9 @@ class CardRepository {
     }
   }
 
-  createCard(data: CreateCard) {
+  createCard(groupId: Id, wordId: Id) {
     try {
-      return prisma.card.create({ data, include: { word: true } });
+      return prisma.card.create({ data: { groupId, wordId }, include: { word: true } });
     } catch {
       throw new CustomError('entityCreateError');
     }
@@ -42,14 +41,15 @@ class CardRepository {
 
   updateCard(data: UpdateCard) {
     try {
-      const dataWithoutId = { ...data, id: undefined };
-      return prisma.card.update({ where: { id: data.id }, data: dataWithoutId });
+      const wordId = data.word?.id;
+      const dataWithoutWord = { ...data, word: undefined, wordId };
+      return prisma.card.update({ where: { id: data.id }, data: dataWithoutWord });
     } catch {
       throw new CustomError('entityUpdateError');
     }
   }
 
-  async deleteCard(id: string) {
+  async deleteCard(id: Id) {
     try {
       await prisma.card.delete({ where: { id } });
     } catch {
@@ -57,7 +57,7 @@ class CardRepository {
     }
   }
 
-  async deleteCardByGroupId(groupId: string) {
+  async deleteCardByGroupId(groupId: Id) {
     try {
       await prisma.card.deleteMany({ where: { groupId } });
     } catch {
@@ -65,7 +65,7 @@ class CardRepository {
     }
   }
 
-  getWriteCards(count: number, userId: string, groupId?: string) {
+  getWriteCards(count: number, userId: Id, groupId?: Id) {
     try {
       return prisma.card.findMany({
         include: { word: true, group: true },

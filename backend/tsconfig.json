@@ -1,7 +1,4 @@
 {
-  "ts-node": {
-    "require": ["tsconfig-paths/register"]
-  },
   "compilerOptions": {
     "target": "es2020",
     "module": "ESNext",
@@ -17,7 +14,7 @@
     "typeRoots": ["./node_modules/@types", "types"],
     "baseUrl": "./",
     "paths": {
-      "@middlewares/*": ["./src/middlewares/*"],
+      "@shared/*": ["../shared/*"],
       "@*": ["./src/*"]
     },
     "plugins": [
