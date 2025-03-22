@@ -1,4 +1,4 @@
-import { Group } from '@prisma/client';
+import type { Group } from '@prisma/client';
 
 export type GroupDto = Pick<Group, 'id' | 'name' | 'wordCount'>;
 

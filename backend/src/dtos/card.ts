@@ -1,4 +1,4 @@
-import { Card, Word } from '@prisma/client';
+import type { Card, Word } from '@prisma/client';
 
 export type CardDto = {
   id: string;

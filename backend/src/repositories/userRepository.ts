@@ -1,7 +1,7 @@
 import { CustomError } from '@configs/errors';
 import { prisma } from '@configs/prisma';
-import { CreateUserDto, UpdateUserDto } from '@dtos';
-import { User } from '@prisma/client';
+import type { CreateUserDto, UpdateUserDto } from '@dtos';
+import { type User } from '@prisma/client';
 
 class UserRepository {
   async getById(id: string): Promise<User> {

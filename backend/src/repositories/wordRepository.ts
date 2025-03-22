@@ -1,6 +1,6 @@
 import { CustomError } from '@configs/errors';
 import { prisma } from '@configs/prisma';
-import { Word } from '@prisma/client';
+import type { Word } from '@prisma/client';
 
 class WordRepository {
   searchWord(query: string) {

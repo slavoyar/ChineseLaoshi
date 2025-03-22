@@ -1,10 +1,10 @@
 import { CustomError } from '@configs/errors';
 import passport from '@configs/passport';
-import { CreateUserDto } from '@dtos';
+import type { CreateUserDto } from '@dtos';
 import { userService } from '@services';
 import { emailService } from '@services/emailService';
-import bcrypt from 'bcrypt';
-import { NextFunction, Request, Response } from 'express';
+import bcrypt from 'bcryptjs';
+import type { NextFunction, Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
 
 const SALT_ROUNDS = Number(process.env.SALT_ROUNDS);

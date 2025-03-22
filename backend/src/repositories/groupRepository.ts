@@ -1,6 +1,6 @@
 import { CustomError } from '@configs/errors';
 import { prisma } from '@configs/prisma';
-import { CreateGroupDto, UpdateGroupDto } from '@dtos';
+import type { CreateGroupDto, UpdateGroupDto } from '@dtos';
 
 class GroupRepository {
   getGroupsByUserId(userId: string) {

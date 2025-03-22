@@ -1,7 +1,7 @@
 import { CustomError } from '@configs/errors';
 import { prisma } from '@configs/prisma';
-import { CreateCard, UpdateCard } from '@dtos';
-import { Card } from '@prisma/client';
+import type { CreateCard, UpdateCard } from '@dtos';
+import { type Card } from '@prisma/client';
 
 class CardRepository {
   async getCardById(id: string): Promise<Card> {

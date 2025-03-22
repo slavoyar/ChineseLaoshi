@@ -1,7 +1,7 @@
-import { User } from '@prisma/client';
+import type { User } from '@prisma/client';
 import { userRepository } from '@repositories';
 
-import { CreateUserDto, UpdateUserDto, UserDto } from '../dtos';
+import type { CreateUserDto, UpdateUserDto, UserDto } from '../dtos';
 
 class UserService {
   async getUserById(id: string): Promise<UserDto> {

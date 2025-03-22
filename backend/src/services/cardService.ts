@@ -1,6 +1,6 @@
 import { CustomError } from '@configs/errors';
-import { CardDto, CreateCardDto, GetWriteCardDto, UpdateCardDto, UpdateCardStatsDto } from '@dtos';
-import { Card, Word } from '@prisma/client';
+import type { CardDto, CreateCardDto, GetWriteCardDto, UpdateCardDto, UpdateCardStatsDto } from '@dtos';
+import type { Card, Word } from '@prisma/client';
 import { cardRepository, groupRepository, wordRepository } from '@repositories';
 
 const STEP_DIFF = 0.02;

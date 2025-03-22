@@ -1,8 +1,8 @@
 ﻿import { CustomError } from '@configs/errors';
-import { CardDto, CreateCardDto, GetWriteCardDto, UpdateCardDto, UpdateCardStatsDto } from '@dtos';
-import { Card } from '@prisma/client';
+import type { CardDto, CreateCardDto, GetWriteCardDto, UpdateCardDto, UpdateCardStatsDto } from '@dtos';
+import type { Card } from '@prisma/client';
 import { cardService } from '@services';
-import { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 
 export const getAllGroupCards = async (req: Request, res: Response) => {
   const { groupId } = req.params;

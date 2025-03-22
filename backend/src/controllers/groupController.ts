@@ -1,7 +1,7 @@
 ﻿import { CustomError } from '@configs/errors';
-import { CreateGroupDto, GroupDto, UpdateGroupDto } from '@dtos';
+import type { CreateGroupDto, GroupDto, UpdateGroupDto } from '@dtos';
 import { groupService } from '@services';
-import { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 
 export const getAllGroups = async (req: Request, res: Response, next: NextFunction) => {
   const { user } = req;

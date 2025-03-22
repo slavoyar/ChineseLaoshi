@@ -1,6 +1,6 @@
 import { cardRepository, groupRepository } from '@repositories';
 
-import { CreateGroupDto, GroupDto, UpdateGroupDto } from '../dtos';
+import type { CreateGroupDto, GroupDto, UpdateGroupDto } from '../dtos';
 
 class GroupService {
   async getGroupsByUserId(userId: string): Promise<GroupDto[]> {

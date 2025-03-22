@@ -1,5 +1,4 @@
-import path from 'path';
-import { dirname } from 'path';
+import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import nodeExternals from 'webpack-node-externals';
 
@@ -11,10 +10,16 @@ export default {
   output: {
     filename: 'index.js', // Output bundle file
     path: path.resolve(__dirname, 'dist'), // Output directory
-    libraryTarget: 'commonjs2', // CommonJS2 for Node.js applications
+    libraryTarget: 'module',
+  },
+  mode: 'production',
+  experiments: {
+    outputModule: true,
   },
   resolve: {
     extensions: ['.ts', '.js'], // Resolve these file extensions
+    fullySpecified: false,
+    extensionAlias: { '.js': ['.ts', '.js'] },
     alias: {
       '@configs': path.resolve(__dirname, 'src/configs/'),
       '@conrollers': path.resolve(__dirname, 'src/controllers/'),
@@ -25,7 +30,15 @@ export default {
       '@services': path.resolve(__dirname, 'src/services/'),
     },
   },
-  module: {},
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        loader: 'ts-loader',
+      },
+    ],
+  },
   target: 'node', // Specify that this build is for Node.js
   externals: [nodeExternals()], // Exclude node_modules from the bundle
 };
