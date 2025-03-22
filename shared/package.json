@@ -5,7 +5,10 @@
   "main": "index.js",
   "types": "types.ts",
   "private": true,
-  "dependencies": {
-    "typia": "^8.0.3"
+  "devDependencies": {
+    "ts-patch": "^3.3.0"
+  },
+  "scripts": {
+    "prepare": "ts-patch install"
   }
 }
