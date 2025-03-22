@@ -7,6 +7,8 @@ export interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   autoFocus?: boolean;
 }
 
-export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(({ variant = 'primary', ...props }, ref) => (
-  <input ref={ref} className={`input input--${variant}`} {...props} />
-));
+export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
+  ({ variant = 'primary', ...props }, ref) => (
+    <input ref={ref} className={`input input--${variant}`} {...props} />
+  )
+);

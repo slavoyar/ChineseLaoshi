@@ -36,8 +36,17 @@ export const SignUp = () => {
   return (
     <div className='m-auto grid h-full grid-cols-1 place-content-center gap-4 px-2 sm:w-full lg:w-3/12'>
       <h1 className='text-center text-2xl uppercase text-white'>Sign Up</h1>
-      <TextField placeholder='Username' value={username} onInput={(e) => setUsername(e.currentTarget.value)} />
-      <TextField placeholder='Email' type='email' value={email} onInput={(e) => setEmail(e.currentTarget.value)} />
+      <TextField
+        placeholder='Username'
+        value={username}
+        onInput={(e) => setUsername(e.currentTarget.value)}
+      />
+      <TextField
+        placeholder='Email'
+        type='email'
+        value={email}
+        onInput={(e) => setEmail(e.currentTarget.value)}
+      />
       <TextField
         placeholder='Password'
         value={password}

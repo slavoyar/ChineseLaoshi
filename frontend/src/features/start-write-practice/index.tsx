@@ -1,4 +1,5 @@
-import { Group, useGroupStore } from '@entities/group';
+import { GroupDto } from '@chinese-laoshi/shared';
+import { useGroupStore } from '@entities/group';
 import { PenWrite } from '@shared/icons/pen-write';
 import { useStateStore } from '@shared/stores';
 import { Route } from '@shared/types';
@@ -25,7 +26,7 @@ export const StartWritePractice = () => {
     setSettings({ cardsNumber });
   };
 
-  const onGroupSelect = (item: Group) => {
+  const onGroupSelect = (item: GroupDto) => {
     setSettings({ groupId: item.id });
   };
 

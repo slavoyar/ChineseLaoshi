@@ -1,14 +1,15 @@
+import { Id } from '@chinese-laoshi/shared';
 import { useCardStore } from '@entities/card';
 import { useGroupStore } from '@entities/group';
 import { Button, CreateDialog, TextField } from '@shared/ui';
 import pinyin from 'pinyin';
-import { FC, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-interface AddWordProps {
-  groupId: string;
+interface Props {
+  groupId: Id;
 }
 
-export const AddWord: FC<AddWordProps> = ({ groupId }) => {
+export const AddWord = ({ groupId }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [transcription, setTranscription] = useState('');
   const [translation, setTranslation] = useState('');

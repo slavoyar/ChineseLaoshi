@@ -1,4 +1,5 @@
-import { Card, cardService, useCardStore, WriteCard } from '@entities/card';
+import { CardDto } from '@chinese-laoshi/shared';
+import { cardService, useCardStore, WriteCard } from '@entities/card';
 import { useStateStore } from '@shared/stores';
 import { Route } from '@shared/types';
 import { PrescriptionPractice } from '@widgets/prescription-practice';
@@ -8,8 +9,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 export const WritePractice = () => {
   const navigate = useNavigate();
   const { groupId, count } = useParams();
-  const [cards, setCards] = useState<Card[]>([]);
-  const currentCard = useRef<Card>();
+  const [cards, setCards] = useState<CardDto[]>([]);
+  const currentCard = useRef<CardDto>();
 
   const reset = useCardStore((state) => state.reset);
   const [state, setState] = useStateStore((store) => [store.state, store.setState]);

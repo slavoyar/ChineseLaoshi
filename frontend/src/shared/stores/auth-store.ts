@@ -1,5 +1,5 @@
+import { CreateUserDto } from '@chinese-laoshi/shared';
 import { authService } from '@shared/api';
-import { CreateUserDto } from '@shared/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 

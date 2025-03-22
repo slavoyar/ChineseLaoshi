@@ -39,7 +39,9 @@ export const Autocomplete = <T,>({
   }, [value]);
 
   useEffect(() => {
-    setFilteredItems(items.filter((item) => filterableValue(item).toLowerCase().includes(query.toLowerCase())));
+    setFilteredItems(
+      items.filter((item) => filterableValue(item).toLowerCase().includes(query.toLowerCase()))
+    );
   }, [query]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -59,9 +61,18 @@ export const Autocomplete = <T,>({
 
   return (
     <div className='relative'>
-      <TextField type='text' value={query} onChange={handleInputChange} onFocus={() => setIsFocused(true)} {...props} />
+      <TextField
+        type='text'
+        value={query}
+        onChange={handleInputChange}
+        onFocus={() => setIsFocused(true)}
+        {...props}
+      />
       {filteredItems.length > 0 && isFocused && (
-        <ul ref={listRef} className='bg-secondary-600 absolute z-[1000] max-h-[200px] w-full overflow-auto rounded p-2'>
+        <ul
+          ref={listRef}
+          className='bg-secondary-600 absolute z-[1000] max-h-[200px] w-full overflow-auto rounded p-2'
+        >
           {filteredItems.map((item) => (
             <li
               key={keyValue(item)}

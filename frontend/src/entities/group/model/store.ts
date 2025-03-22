@@ -1,10 +1,10 @@
+import { GroupDto } from '@chinese-laoshi/shared';
 import { create } from 'zustand';
 
 import groupService from '../api';
-import { Group } from './types';
 
 interface State {
-  groups: Group[];
+  groups: GroupDto[];
 }
 
 interface Action {

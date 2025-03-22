@@ -1,6 +1,6 @@
 import { useGroupStore } from '@entities/group';
 import { Route } from '@shared/types';
-import Groups from '@widgets/groups';
+import { Groups } from '@widgets/groups';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 

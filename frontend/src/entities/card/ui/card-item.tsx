@@ -1,16 +1,16 @@
-import { Card, useCardStore } from '@entities/card';
+import { CardDto, Id } from '@chinese-laoshi/shared';
+import { useCardStore } from '@entities/card';
 import { getColorByPercent } from '@entities/card/utils';
 import { getPercentFromRatio } from '@shared/utils';
-import { FC } from 'react';
 
 interface Props {
-  card: Card;
+  card: CardDto;
   onDelete: () => void;
 }
 
-export const CardItem: FC<Props> = ({ card, onDelete }) => {
+export const CardItem = ({ card, onDelete }: Props) => {
   const deleteCard = useCardStore((state) => state.delete);
-  const onDeleteHandler = async (id: string) => {
+  const onDeleteHandler = async (id: Id) => {
     await deleteCard(id);
     onDelete();
   };
@@ -23,7 +23,8 @@ export const CardItem: FC<Props> = ({ card, onDelete }) => {
         </div>
         <div>
           {card.word.symbols}
-          <span className='text-secondary-200 px-1'>({card.word.transcription})</span>- {card.word.translation}
+          <span className='text-secondary-200 px-1'>({card.word.transcription})</span>-{' '}
+          {card.word.translation}
         </div>
       </div>
       <i

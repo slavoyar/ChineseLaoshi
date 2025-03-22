@@ -1,34 +1,36 @@
-import { Card, Word } from '@entities/card';
+import { CardDto, Id, WordDto } from '@chinese-laoshi/shared';
 import cardService from '@entities/card/api';
 import { create } from 'zustand';
 
 interface State {
-  cardsPerGroup: Record<string, Card[]>;
+  cardsPerGroup: Record<Id, CardDto[]>;
 }
 
 interface Action {
-  fetch: (id: string) => Promise<void>;
-  create: (id: string, data: Omit<Word, 'id'>) => Promise<void>;
-  delete: (id: string) => Promise<void>;
-  updateStats: (id: string, guessed: boolean) => Promise<void>;
+  fetch: (id: Id) => Promise<void>;
+  create: (id: Id, data: Omit<WordDto, 'id'>) => Promise<void>;
+  delete: (id: Id) => Promise<void>;
+  updateStats: (id: Id, guessed: boolean) => Promise<void>;
   reset: () => void;
 }
 
 const useCardStore = create<State & Action>((set, get) => ({
   cardsPerGroup: {},
-  fetch: async (id: string) => {
+  fetch: async (id: Id) => {
     const response = await cardService.getList(id);
     set((state) => ({ cardsPerGroup: { ...state.cardsPerGroup, [id]: response } }));
   },
-  create: async (id: string, data: Omit<Word, 'id'>) => {
+  create: async (id: Id, data: Omit<WordDto, 'id'>) => {
     const response = await cardService.post(data, id);
     const cards = [...get().cardsPerGroup[id], response];
     set((state) => ({ cardsPerGroup: { ...state.cardsPerGroup, [id]: cards } }));
   },
-  delete: async (id: string) => {
+  delete: async (id: Id) => {
     await cardService.delete(id);
     const { cardsPerGroup } = get();
-    const groupId = Object.keys(cardsPerGroup).find((group) => cardsPerGroup[group].some((item) => item.id === id));
+    const groupId = Object.keys(cardsPerGroup).find((group) =>
+      cardsPerGroup[group].some((item) => item.id === id)
+    );
     if (!groupId) {
       return;
     }
@@ -39,15 +41,13 @@ const useCardStore = create<State & Action>((set, get) => ({
       },
     }));
   },
-  updateStats: async (id: string, guessed: boolean) => {
+  updateStats: async (id: Id, guessed: boolean) => {
     const card = await cardService.updateCardStats(id, guessed);
 
     set((state) => ({
       cardsPerGroup: {
         ...state.cardsPerGroup,
-        [card.groupId]: state.cardsPerGroup[card.groupId]?.map((item) =>
-          item.id === id ? { ...item, writeRatio: card.writeRatio } : item
-        ),
+        [card.groupId]: state.cardsPerGroup[card.groupId]?.map((item) => (item.id === id ? card : item)),
       },
     }));
   },

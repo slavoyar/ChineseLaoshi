@@ -1,9 +1,8 @@
+import { GroupDto } from '@chinese-laoshi/shared';
 import { BaseService } from '@shared/api';
 
-import { Group } from './model/types';
-
 const URL = '/api/groups';
-class GroupService extends BaseService<Group> {}
+class GroupService extends BaseService<GroupDto> {}
 
 const groupService = new GroupService(URL);
 

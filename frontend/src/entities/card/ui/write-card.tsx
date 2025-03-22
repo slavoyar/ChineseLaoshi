@@ -1,4 +1,5 @@
-import { useCardStore, Word } from '@entities/card';
+import { Id, WordDto } from '@chinese-laoshi/shared';
+import { useCardStore } from '@entities/card';
 import { useStateStore } from '@shared/stores';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
@@ -6,7 +7,7 @@ import { useCounter, useDebounceValue, useResizeObserver } from '@siberiacancode
 import HanziWriter from 'hanzi-writer';
 import { useEffect, useRef, useState } from 'react';
 
-interface Props extends Word {
+interface Props extends WordDto {
   isNextDisabled?: boolean;
   updateStats?: boolean;
   showOutline?: boolean;
@@ -14,7 +15,7 @@ interface Props extends Word {
   onComplete?: () => void;
 }
 
-const keysBySymbols = (symbols: string, id: string) =>
+const keysBySymbols = (symbols: string, id: Id) =>
   symbols.split('').map((symbol, index) => `${id}-${symbol}-${index}`);
 
 export const WriteCard = ({
@@ -126,7 +127,11 @@ export const WriteCard = ({
         </Button>
         <div className='bg-secondary-500 max-h-[300px] max-w-[300px] rounded'>
           {keysBySymbols(symbols, id).map((key, index) => (
-            <div id={`hanzi-input-${index}`} key={key} className={cn(index === currentIndex ? 'block' : 'hidden')} />
+            <div
+              id={`hanzi-input-${index}`}
+              key={key}
+              className={cn(index === currentIndex ? 'block' : 'hidden')}
+            />
           ))}
         </div>
         <Button variant='text' disabled={currentIndex === symbols.length - 1} onClick={() => inc()}>

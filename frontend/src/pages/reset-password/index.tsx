@@ -33,7 +33,12 @@ export const ResetPassword = () => {
   return (
     <div className='m-auto grid h-full grid-cols-1 place-content-center gap-4 px-2 sm:w-full lg:w-3/12'>
       <h1 className='text-center text-2xl uppercase text-white'>Enter email</h1>
-      <TextField placeholder='Email' value={email} type='email' onInput={(e) => setEmail(e.currentTarget.value)} />
+      <TextField
+        placeholder='Email'
+        value={email}
+        type='email'
+        onInput={(e) => setEmail(e.currentTarget.value)}
+      />
       <Button variant='primary' disabled={!email} onClick={() => handleClick()}>
         Reset password
       </Button>

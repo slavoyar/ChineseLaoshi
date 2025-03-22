@@ -12,7 +12,16 @@ interface Props<T> extends Omit<HTMLAttributes<HTMLDivElement>, 'content'> {
   onOpen?: (item: T) => void;
 }
 
-export const Accordion = <T,>({ sections, rowKey, header, content, onDelete, onOpen, actions, ...props }: Props<T>) => {
+export const Accordion = <T,>({
+  sections,
+  rowKey,
+  header,
+  content,
+  onDelete,
+  onOpen,
+  actions,
+  ...props
+}: Props<T>) => {
   const [openedKey, setOpenedKey] = useState<Key>();
 
   const toggleSection = (section: T) => {

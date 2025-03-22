@@ -1,3 +1,4 @@
+import { Id } from '@chinese-laoshi/shared';
 import axios from 'axios';
 
 export class BaseService<Data> {
@@ -7,27 +8,27 @@ export class BaseService<Data> {
     this.url = url;
   }
 
-  private getUrlWithId(id?: string) {
+  private getUrlWithId(id?: Id) {
     return id ? `${this.url}/${id}` : this.url;
   }
 
-  get<Response = Data>(id?: string) {
+  get<Response = Data>(id?: Id) {
     return axios.get<Response, Response>(this.getUrlWithId(id));
   }
 
-  getList<Response = Data[]>(id?: string) {
+  getList<Response = Data[]>(id?: Id) {
     return axios.get<Response, Response>(this.getUrlWithId(id));
   }
 
-  post<Request = Omit<Data, 'id'>, Response = Data>(data: Request, id?: string) {
+  post<Request = Omit<Data, 'id'>, Response = Data>(data: Request, id?: Id) {
     return axios.post<Request, Response>(this.getUrlWithId(id), data);
   }
 
-  put<Request = Data, Response = Data>(data: Request, id?: string) {
+  put<Request = Data, Response = Data>(data: Request, id?: Id) {
     return axios.put<Request, Response>(this.getUrlWithId(id), data);
   }
 
-  delete(id: string) {
+  delete(id: Id) {
     return axios.delete(`${this.url}/${id}`);
   }
 }

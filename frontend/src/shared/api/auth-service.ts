@@ -1,4 +1,4 @@
-import { CreateUserDto } from '@shared/types';
+import { CreateUserDto } from '@chinese-laoshi/shared';
 import axios from 'axios';
 
 const URL = '/api/auth';
