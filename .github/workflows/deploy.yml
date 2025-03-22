@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - production
-      - develop
 
 env:
   IMAGE_NAME: chinese-laoshi
@@ -33,8 +32,8 @@ jobs:
         uses: easingthemes/ssh-deploy@main
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          ARGS: "-rltgoDzvO --delete" # Optional: rsync options for more control
-          SOURCE: "frontend/dist/"
+          ARGS: '-rltgoDzvO --delete' # Optional: rsync options for more control
+          SOURCE: 'frontend/dist/'
           REMOTE_HOST: ${{ secrets.SERVER_HOST }}
           REMOTE_USER: ${{ secrets.SERVER_USER }}
           TARGET: ${{ secrets.FRONTEND_PATH }}

@@ -1,11 +1,10 @@
-﻿import { Word } from '@prisma/client';
+﻿import type { Word } from '@prisma/client';
 import { wordService } from '@services';
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 
-export const searchWord = async (
-  req: Request<void, Word[], void, { search: string }>,
-  res: Response,
-) => {
+type SearchWordRequest = Request<void, Word[], void, { search: string }>;
+
+export const searchWord = async (req: SearchWordRequest, res: Response) => {
   const words = wordService.search(req.query.search);
   res.json(words);
 };

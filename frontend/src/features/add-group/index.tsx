@@ -1,6 +1,6 @@
+import { useGroupStore } from '@entities/group';
 import { Button, CreateDialog, TextField } from '@shared/ui';
 import { KeyboardEvent, useState } from 'react';
-import { useGroupStore } from '@entities/group';
 
 export const AddGroup = () => {
   const [isOpen, setIsOpen] = useState(false);

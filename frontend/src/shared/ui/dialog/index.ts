@@ -1,2 +1,2 @@
-export * from './dialog';
 export * from './create-dialog';
+export * from './dialog';

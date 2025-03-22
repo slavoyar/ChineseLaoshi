@@ -1,5 +1,6 @@
 ﻿{
   "watch": ["src"],
   "ext": "ts",
-  "exec": "ts-node --transpileOnly src/index.ts"
+  "ignore": ["node_modules", "dist"],
+  "exec": "ts-node -P tsconfig.dev.json --transpileOnly src/index.ts"
 }

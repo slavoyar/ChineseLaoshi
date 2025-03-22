@@ -1,14 +1,15 @@
-import { Button, CreateDialog, TextField } from '@shared/ui';
-import { FC, useEffect, useState } from 'react';
+import { Id } from '@chinese-laoshi/shared';
 import { useCardStore } from '@entities/card';
 import { useGroupStore } from '@entities/group';
+import { Button, CreateDialog, TextField } from '@shared/ui';
 import pinyin from 'pinyin';
+import { useEffect, useState } from 'react';
 
-interface AddWordProps {
-  groupId: string;
+interface Props {
+  groupId: Id;
 }
 
-export const AddWord: FC<AddWordProps> = ({ groupId }) => {
+export const AddWord = ({ groupId }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [transcription, setTranscription] = useState('');
   const [translation, setTranslation] = useState('');
@@ -47,12 +48,7 @@ export const AddWord: FC<AddWordProps> = ({ groupId }) => {
         <i className='fa fa-add mr-1' />
         Add word
       </Button>
-      <CreateDialog
-        onSave={saveHandler}
-        isOpen={isOpen}
-        title='Create word'
-        onClose={() => setIsOpen(false)}
-      >
+      <CreateDialog onSave={saveHandler} isOpen={isOpen} title='Create word' onClose={() => setIsOpen(false)}>
         <div className='flex flex-col gap-2'>
           <TextField
             value={symbols}

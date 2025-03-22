@@ -31,6 +31,10 @@ export const errors = {
     message: 'Error during email send',
     statusCode: 500,
   },
+  validationError: {
+    message: 'Validation error',
+    statusCode: 500,
+  },
 } as const;
 
 export type ErrorCode = keyof typeof errors;

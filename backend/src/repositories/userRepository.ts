@@ -1,10 +1,9 @@
 import { CustomError } from '@configs/errors';
 import { prisma } from '@configs/prisma';
-import { CreateUserDto, UpdateUserDto } from '@dtos';
-import { User } from '@prisma/client';
+import type { CreateUserDto, Email, Id, UpdateUserDto } from '@shared/types';
 
 class UserRepository {
-  async getById(id: string): Promise<User> {
+  async getById(id: Id) {
     const user = await prisma.user.findFirst({ where: { id } });
     if (!user) {
       throw new CustomError('entityNotFoundError');
@@ -12,7 +11,7 @@ class UserRepository {
     return user;
   }
 
-  async getByEmail(email: string): Promise<User> {
+  async getByEmail(email: Email) {
     const user = await prisma.user.findFirst({ where: { email } });
     if (!user) {
       throw new CustomError('entityNotFoundError');
@@ -28,12 +27,11 @@ class UserRepository {
     }
   }
 
-  update(data: UpdateUserDto) {
+  update(data: UpdateUserDto, userId: Id) {
     try {
-      const withoutId = { ...data, id: undefined };
       return prisma.user.update({
-        where: { id: data.id },
-        data: withoutId,
+        where: { id: userId },
+        data,
       });
     } catch {
       throw new CustomError('entityUpdateError');

@@ -1,7 +1,6 @@
-import { User } from '@prisma/client';
+import type { User } from '@prisma/client';
 import { userRepository } from '@repositories';
-
-import { CreateUserDto, UpdateUserDto, UserDto } from '../dtos';
+import type { CreateUserDto, Id, UpdateUserDto, UserDto } from '@shared/types';
 
 class UserService {
   async getUserById(id: string): Promise<UserDto> {
@@ -17,12 +16,12 @@ class UserService {
     return userRepository.create(data);
   }
 
-  updateUser(data: UpdateUserDto): Promise<User> {
-    return userRepository.update(data);
+  updateUser(data: UpdateUserDto, userId: Id): Promise<User> {
+    return userRepository.update(data, userId);
   }
 
-  updatePassword(id: string, password: string) {
-    return userRepository.update({ id, password });
+  updatePassword(id: Id, password: string) {
+    return userRepository.update({ password }, id);
   }
 }
 

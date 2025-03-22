@@ -1,7 +1,7 @@
-import { create } from 'zustand';
+import { CreateUserDto } from '@chinese-laoshi/shared';
 import { authService } from '@shared/api';
+import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { CreateUserDto } from '@shared/types';
 
 interface State {
   username: string;

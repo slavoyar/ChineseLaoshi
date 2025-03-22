@@ -1,6 +1,7 @@
-import { useGroupStore, Group } from '@entities/group';
+import { Group, useGroupStore } from '@entities/group';
 import { Accordion } from '@shared/ui';
 import { FC, ReactNode } from 'react';
+
 import { GroupHeader } from './group-header';
 
 interface Props {

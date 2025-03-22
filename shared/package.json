@@ -1,0 +1,14 @@
+{
+  "name": "@chinese-laoshi/shared",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "types": "types.ts",
+  "private": true,
+  "devDependencies": {
+    "ts-patch": "^3.3.0"
+  },
+  "scripts": {
+    "prepare": "ts-patch install"
+  }
+}

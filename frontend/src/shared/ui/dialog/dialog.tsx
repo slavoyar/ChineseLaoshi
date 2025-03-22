@@ -1,5 +1,7 @@
 import './styles.css';
+
 import { FC } from 'react';
+
 import { DialogProps } from './types';
 
 export const Dialog: FC<DialogProps> = ({ isOpen, onClose, title, footer, children, ...props }) => {
@@ -10,10 +12,7 @@ export const Dialog: FC<DialogProps> = ({ isOpen, onClose, title, footer, childr
       <div {...props} className={`dialog ${props.className}`}>
         <div className='dialog-header'>
           <h2>{title}</h2>
-          <i
-            className='fa fa-close hover:bg-secondary-600 p-1 rounded cursor-pointer'
-            onClick={onClose}
-          />
+          <i className='fa fa-close hover:bg-secondary-600 cursor-pointer rounded p-1' onClick={onClose} />
         </div>
         <div className='dialog-body'>{children}</div>
         <div className='dialog-footer'>{footer}</div>

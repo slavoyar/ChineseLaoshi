@@ -2,6 +2,7 @@ import { Route } from '@shared/types';
 import { Button, TextField } from '@shared/ui';
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+
 import { updatePassword as updatePasswordAsync } from './api';
 
 export const UpdatePassword = () => {
@@ -40,8 +41,8 @@ export const UpdatePassword = () => {
   };
 
   return (
-    <div className='lg:w-3/12 sm:w-full px-2 h-full grid grid-cols-1 gap-4 m-auto place-content-center'>
-      <h1 className='text-white text-2xl text-center uppercase'>Update password</h1>
+    <div className='m-auto grid h-full grid-cols-1 place-content-center gap-4 px-2 sm:w-full lg:w-3/12'>
+      <h1 className='text-center text-2xl uppercase text-white'>Update password</h1>
       <TextField
         placeholder='Password'
         value={password}

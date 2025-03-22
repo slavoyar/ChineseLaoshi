@@ -1,4 +1,5 @@
-import { Group, useGroupStore } from '@entities/group';
+import { GroupDto } from '@chinese-laoshi/shared';
+import { useGroupStore } from '@entities/group';
 import { PenWrite } from '@shared/icons/pen-write';
 import { useStateStore } from '@shared/stores';
 import { Route } from '@shared/types';
@@ -25,7 +26,7 @@ export const StartWritePractice = () => {
     setSettings({ cardsNumber });
   };
 
-  const onGroupSelect = (item: Group) => {
+  const onGroupSelect = (item: GroupDto) => {
     setSettings({ groupId: item.id });
   };
 
@@ -47,11 +48,11 @@ export const StartWritePractice = () => {
   return (
     <>
       <div
-        className='flex flex-col gap-2 items-start justify-center w-fit p-4 bg-secondary-900 rounded-xl hover:bg-secondary-800 cursor-pointer'
+        className='bg-secondary-900 hover:bg-secondary-800 flex w-fit cursor-pointer flex-col items-start justify-center gap-2 rounded-xl p-4'
         onClick={() => setIsOpen(true)}
       >
         <PenWrite />
-        <div className='text-white text-center w-full'>Handwriting</div>
+        <div className='w-full text-center text-white'>Handwriting</div>
       </div>
       <CreateDialog
         title='Writing mode settings'

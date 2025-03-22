@@ -1,15 +1,16 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import { ReactNode, useEffect, useRef, useState } from 'react';
-import { cardService, Card, WriteCard, useCardStore } from '@entities/card';
-import { Route } from '@shared/types';
+import { CardDto } from '@chinese-laoshi/shared';
+import { cardService, useCardStore, WriteCard } from '@entities/card';
 import { useStateStore } from '@shared/stores';
+import { Route } from '@shared/types';
 import { PrescriptionPractice } from '@widgets/prescription-practice';
+import { ReactNode, useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export const WritePractice = () => {
   const navigate = useNavigate();
   const { groupId, count } = useParams();
-  const [cards, setCards] = useState<Card[]>([]);
-  const currentCard = useRef<Card>();
+  const [cards, setCards] = useState<CardDto[]>([]);
+  const currentCard = useRef<CardDto>();
 
   const reset = useCardStore((state) => state.reset);
   const [state, setState] = useStateStore((store) => [store.state, store.setState]);
@@ -57,9 +58,5 @@ export const WritePractice = () => {
     }
   };
 
-  return (
-    <div className='flex h-full items-center justify-center'>
-      {currentCard.current && getWidget()}
-    </div>
-  );
+  return <div className='flex h-full items-center justify-center'>{currentCard.current && getWidget()}</div>;
 };

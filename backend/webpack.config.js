@@ -1,15 +1,25 @@
-const path = require('path');
-const nodeExternals = require('webpack-node-externals');
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import nodeExternals from 'webpack-node-externals';
 
-module.exports = {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+export default {
   entry: './src/index.ts', // Entry point of your application
   output: {
     filename: 'index.js', // Output bundle file
     path: path.resolve(__dirname, 'dist'), // Output directory
-    libraryTarget: 'commonjs2', // CommonJS2 for Node.js applications
+    libraryTarget: 'module',
+  },
+  mode: 'production',
+  experiments: {
+    outputModule: true,
   },
   resolve: {
     extensions: ['.ts', '.js'], // Resolve these file extensions
+    fullySpecified: false,
+    extensionAlias: { '.js': ['.ts', '.js'] },
     alias: {
       '@configs': path.resolve(__dirname, 'src/configs/'),
       '@conrollers': path.resolve(__dirname, 'src/controllers/'),
@@ -23,9 +33,9 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.ts$/, // Apply this rule to TypeScript files
-        use: 'ts-loader', // Use ts-loader to compile TypeScript
+        test: /\.ts$/,
         exclude: /node_modules/,
+        loader: 'ts-loader',
       },
     ],
   },

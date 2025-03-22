@@ -1,4 +1,6 @@
-﻿import { errorMiddleware, loggerMiddleware } from '@middlewares';
+﻿import 'express-async-errors';
+
+import { errorMiddleware, loggerMiddleware } from '@middlewares';
 import dotenv from 'dotenv';
 import express from 'express';
 import session from 'express-session';
@@ -20,7 +22,7 @@ app.use(
     secret: process.env.SESSION_SECRET_KEY,
     resave: false,
     saveUninitialized: false,
-  }),
+  })
 );
 
 app.use(passport.initialize());

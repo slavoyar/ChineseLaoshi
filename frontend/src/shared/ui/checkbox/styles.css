@@ -7,7 +7,7 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  @apply text-white pl-7;
+  @apply pl-7 text-white;
 }
 
 /* Hide the browser's default checkbox */

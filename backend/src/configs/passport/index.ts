@@ -1,5 +1,5 @@
 ﻿import { prisma } from '@configs/prisma';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 
@@ -20,7 +20,7 @@ passport.use(
     } catch (err) {
       return done(err);
     }
-  }),
+  })
 );
 
 passport.serializeUser((user, done) => {

@@ -1,5 +1,6 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useClickOutside } from '@siberiacancode/reactuse';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
+
 import { TextField, TextFieldProps } from '../text-field';
 
 interface Props<T> extends Omit<TextFieldProps, 'onSelect'> {
@@ -11,7 +12,7 @@ interface Props<T> extends Omit<TextFieldProps, 'onSelect'> {
   keyValue: (item: T) => string;
 }
 
-export const Autocomplete = <T extends unknown>({
+export const Autocomplete = <T,>({
   value,
   items,
   onSelect,
@@ -70,12 +71,12 @@ export const Autocomplete = <T extends unknown>({
       {filteredItems.length > 0 && isFocused && (
         <ul
           ref={listRef}
-          className='w-full absolute max-h-[200px] bg-secondary-600 rounded p-2 overflow-auto z-[1000]'
+          className='bg-secondary-600 absolute z-[1000] max-h-[200px] w-full overflow-auto rounded p-2'
         >
           {filteredItems.map((item) => (
             <li
               key={keyValue(item)}
-              className='text-white hover:bg-secondary-500 cursor-pointer rounded p-2'
+              className='hover:bg-secondary-500 cursor-pointer rounded p-2 text-white'
               onClick={() => onItemSelect(item)}
             >
               {renderItem ? renderItem(item) : filterableValue(item)}

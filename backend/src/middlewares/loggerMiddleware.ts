@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 
 export const loggerMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const startTime = Date.now();
@@ -9,9 +9,7 @@ export const loggerMiddleware = (req: Request, res: Response, next: NextFunction
     const endTime = Date.now();
     const elapsedTime = endTime - startTime;
 
-    console.log(
-      `[${new Date().toISOString()}] ${req.method} ${req.url} ${res.statusCode} - ${elapsedTime}ms`,
-    );
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url} ${res.statusCode} - ${elapsedTime}ms`);
 
     return originalSend.apply(res, args);
   };

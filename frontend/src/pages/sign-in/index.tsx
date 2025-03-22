@@ -1,8 +1,8 @@
+import { useAuthStore } from '@shared/stores';
+import { Route } from '@shared/types';
 import { Button, TextField } from '@shared/ui';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Route } from '@shared/types';
-import { useAuthStore } from '@shared/stores';
 
 export const SignIn = () => {
   const [username, setUsername] = useState('');
@@ -23,8 +23,8 @@ export const SignIn = () => {
   };
 
   return (
-    <div className='lg:w-3/12 sm:w-full px-2 h-full grid grid-cols-1 gap-4 m-auto place-content-center'>
-      <h1 className='text-white text-2xl text-center uppercase'>Sign In</h1>
+    <div className='m-auto grid h-full grid-cols-1 place-content-center gap-4 px-2 sm:w-full lg:w-3/12'>
+      <h1 className='text-center text-2xl uppercase text-white'>Sign In</h1>
       <TextField
         placeholder='Username'
         value={username}
