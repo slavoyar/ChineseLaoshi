@@ -1,5 +1,4 @@
-﻿import { CustomError } from '@configs/errors';
-import { cardService } from '@services/cardService';
+﻿import { cardService } from '@services/cardService';
 import type {
   CardDto,
   CreateCardDto,
@@ -7,48 +6,72 @@ import type {
   UpdateCardStatsDto,
   UpdateCardWordDto,
 } from '@shared/schemas';
-import typia from 'typia';
 
 import { createRouter, Ok, type Params } from './createRouter';
 
 const { router, createRoute } = createRouter('/cards');
 
-createRoute<{ groupId: string }>('get', '/:groupId', async (req) => {
-  const { groupId } = req.params;
-  const cards = await cardService.getCardsByGroupId(groupId);
-  return Ok(cards);
-});
-
-createRoute<Params, GetWriteCardDto, CardDto[]>('get', '/study/write', async (req) => {
-  const cards = await cardService.getWriteCards(req.body, req.user.id);
-  return Ok(cards);
-});
-
-createRoute<{ groupId: string }, CreateCardDto>('post', '/:groupId', async (req) => {
-  const { groupId } = req.params;
-
-  if (typia.is<CreateCardDto['word']>(req.body.word) === false) {
-    throw new CustomError('validationError');
+createRoute<{ groupId: string }>(
+  async (req) => {
+    const { groupId } = req.params;
+    const cards = await cardService.getCardsByGroupId(groupId);
+    return Ok(cards);
+  },
+  {
+    endpoint: '/:groupId',
   }
+);
 
-  const card = await cardService.createCard({ ...req.body, groupId });
-  return Ok(card);
-});
+createRoute<Params, GetWriteCardDto, CardDto[]>(
+  async (req) => {
+    const cards = await cardService.getWriteCards(req.body, req.user.id);
+    return Ok(cards);
+  },
+  {
+    method: 'post',
+    endpoint: '/study/write',
+  }
+);
 
-createRoute<Params, UpdateCardStatsDto>('post', '/', async (req) => {
-  await cardService.updateCardStats(req.body);
-  return Ok();
-});
+createRoute<{ groupId: string }, CreateCardDto>(
+  async (req) => {
+    const { groupId } = req.params;
 
-createRoute<Params, UpdateCardWordDto>('put', '/', async (req) => {
-  await cardService.updateCard(req.body);
-  return Ok();
-});
+    const card = await cardService.createCard({ ...req.body, groupId });
+    return Ok(card);
+  },
+  {
+    method: 'post',
+    endpoint: '/:groupId',
+  }
+);
 
-createRoute<{ cardId: string }>('delete', '/:cardId', async (req) => {
-  const { cardId } = req.params;
-  await cardService.deleteCard(cardId);
-  return Ok();
-});
+createRoute<Params, UpdateCardStatsDto>(
+  async (req) => {
+    await cardService.updateCardStats(req.body);
+    return Ok();
+  },
+  { method: 'post' }
+);
+
+createRoute<Params, UpdateCardWordDto>(
+  async (req) => {
+    await cardService.updateCard(req.body);
+    return Ok();
+  },
+  { method: 'put' }
+);
+
+createRoute<{ cardId: string }>(
+  async (req) => {
+    const { cardId } = req.params;
+    await cardService.deleteCard(cardId);
+    return Ok();
+  },
+  {
+    method: 'delete',
+    endpoint: '/:cardId',
+  }
+);
 
 export default router;
