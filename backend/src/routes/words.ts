@@ -1,4 +1,4 @@
-﻿import { wordService } from '@services/wordService';
+﻿import { wordService } from '@services';
 
 import { createRouter, Ok } from './createRouter';
 

@@ -1,7 +1,6 @@
 ﻿import { CustomError } from '@configs/errors';
 import passport from '@configs/passport';
-import { emailService } from '@services/emailService';
-import { userService } from '@services/userService';
+import { emailService, userService } from '@services';
 import type { Email } from '@shared/common';
 import type { CreateUserDto } from '@shared/schemas';
 import bcrypt from 'bcryptjs';

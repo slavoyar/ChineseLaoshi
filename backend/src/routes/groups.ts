@@ -1,5 +1,5 @@
 ﻿import { authMiddleware } from '@middlewares';
-import { groupService } from '@services/groupService';
+import { groupService } from '@services';
 import type { CreateGroupDto, UpdateGroupDto } from '@shared/types';
 
 import { createRouter, Ok, type Params } from './createRouter';

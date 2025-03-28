@@ -1,4 +1,4 @@
-﻿import { cardService } from '@services/cardService';
+﻿import { cardService } from '@services';
 import type {
   CardDto,
   CreateCardDto,
