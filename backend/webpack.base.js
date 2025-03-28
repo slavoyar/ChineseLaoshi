@@ -12,7 +12,6 @@ export default {
     path: path.resolve(__dirname, 'dist'), // Output directory
     libraryTarget: 'module',
   },
-  mode: 'production',
   experiments: {
     outputModule: true,
   },
