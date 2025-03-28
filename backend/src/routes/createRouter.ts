@@ -28,7 +28,7 @@ export function createRouter(url: string) {
   const router = Router();
   function createRoute<Parameters extends Params = Params, Body = unknown, Result = unknown, Query = Params>(
     cb: (req: Request<Parameters, Result, Body, Query>) => Promise<ControllerResult<Result>>,
-    options: Partial<RouteOptions>
+    options?: Partial<RouteOptions>
   ) {
     const { method, endpoint, middlewares } = { ...defaultOptions, ...options };
     router[method](url + endpoint, validationMiddleware<Body>, ...middlewares, async (req, res) => {
