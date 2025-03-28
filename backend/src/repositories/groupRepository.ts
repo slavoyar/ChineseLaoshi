@@ -1,5 +1,6 @@
 import { CustomError } from '@configs/errors';
 import { prisma } from '@configs/prisma';
+import type { PrismaClient } from '@prisma/client/extension';
 import type { CreateGroupDto, Id, UpdateGroupDto } from '@shared/types';
 
 class GroupRepository {
@@ -27,25 +28,25 @@ class GroupRepository {
     }
   }
 
-  async deleteGroup(id: Id) {
+  deleteGroup(id: Id) {
     try {
-      await prisma.group.delete({ where: { id } });
+      return prisma.group.delete({ where: { id } });
     } catch {
       throw new CustomError('entityDeleteError');
     }
   }
 
-  async incrementWordCount(id: Id) {
+  incrementWordCount(id: Id, client: PrismaClient = prisma) {
     try {
-      await prisma.group.update({ where: { id }, data: { wordCount: { increment: 1 } } });
+      return client.group.update({ where: { id }, data: { wordCount: { increment: 1 } } });
     } catch {
       throw new CustomError('entityDeleteError');
     }
   }
 
-  async decrementWordCount(id: Id) {
+  decrementWordCount(id: Id) {
     try {
-      await prisma.group.update({ where: { id }, data: { wordCount: { decrement: 1 } } });
+      return prisma.group.update({ where: { id }, data: { wordCount: { decrement: 1 } } });
     } catch {
       throw new CustomError('entityDeleteError');
     }

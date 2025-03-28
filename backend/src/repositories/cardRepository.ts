@@ -1,5 +1,6 @@
 import { CustomError } from '@configs/errors';
 import { prisma } from '@configs/prisma';
+import type { PrismaClient } from '@prisma/client/extension';
 import type { Id, UpdateCard } from '@shared/types';
 
 class CardRepository {
@@ -7,7 +8,7 @@ class CardRepository {
     try {
       const card = await prisma.card.findFirst({ where: { id } });
       if (!card) {
-        throw new Error('no card');
+        throw new CustomError('entityNotFoundError');
       }
       return card;
     } catch {
@@ -31,35 +32,35 @@ class CardRepository {
     }
   }
 
-  createCard(groupId: Id, wordId: Id) {
+  createCard(groupId: Id, wordId: Id, client: PrismaClient = prisma) {
     try {
-      return prisma.card.create({ data: { groupId, wordId }, include: { word: true } });
+      return client.card.create({ data: { groupId, wordId }, include: { word: true } });
     } catch {
       throw new CustomError('entityCreateError');
     }
   }
 
-  updateCard(data: UpdateCard) {
+  updateCard(data: UpdateCard, client: PrismaClient = prisma) {
     try {
       const wordId = data.word?.id;
       const dataWithoutWord = { ...data, word: undefined, wordId };
-      return prisma.card.update({ where: { id: data.id }, data: dataWithoutWord });
+      return client.card.update({ where: { id: data.id }, data: dataWithoutWord });
     } catch {
       throw new CustomError('entityUpdateError');
     }
   }
 
-  async deleteCard(id: Id) {
+  deleteCard(id: Id) {
     try {
-      await prisma.card.delete({ where: { id } });
+      return prisma.card.delete({ where: { id } });
     } catch {
       throw new CustomError('entityDeleteError');
     }
   }
 
-  async deleteCardByGroupId(groupId: Id) {
+  deleteCardByGroupId(groupId: Id) {
     try {
-      await prisma.card.deleteMany({ where: { groupId } });
+      return prisma.card.deleteMany({ where: { groupId } });
     } catch {
       throw new CustomError('entityDeleteError');
     }

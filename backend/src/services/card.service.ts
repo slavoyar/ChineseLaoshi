@@ -1,4 +1,5 @@
 import { CustomError } from '@configs/errors';
+import { prisma } from '@configs/prisma';
 import { cardRepository, groupRepository, wordRepository } from '@repositories';
 import type {
   CardDto,
@@ -21,16 +22,18 @@ class CardService {
   }
 
   async createCard(data: CreateCardDto): Promise<CardDto> {
-    let wordId;
-    if (!typia.is<{ id: Id }>(data.word)) {
-      const word = await wordRepository.createWord(data.word);
-      wordId = word.id;
-    } else {
-      wordId = data.word.id;
-    }
-    const card = await cardRepository.createCard(data.groupId, wordId);
-    await groupRepository.incrementWordCount(data.groupId);
-    return card;
+    return prisma.$transaction(async (tx) => {
+      let wordId;
+      if (!typia.is<{ id: Id }>(data.word)) {
+        const word = await wordRepository.createWord(data.word, tx);
+        wordId = word.id;
+      } else {
+        wordId = data.word.id;
+      }
+      const card = await cardRepository.createCard(data.groupId, wordId, tx);
+      await groupRepository.incrementWordCount(data.groupId, tx);
+      return card;
+    });
   }
 
   async deleteCard(id: Id): Promise<void> {
@@ -49,15 +52,18 @@ class CardService {
     const cardCount = await cardRepository.getCardsCount(data.word.id);
 
     if (cardCount !== 1) {
-      const word = await wordRepository.createWord(data.word);
-      const card = await cardRepository.updateCard({ id: data.id, word });
-      return { ...card, word };
+      return prisma.$transaction(async (tx) => {
+        const word = await wordRepository.createWord(data.word, tx);
+        const card = await cardRepository.updateCard({ id: data.id, word }, tx);
+        return { ...card, word };
+      });
     }
 
     const [card, word] = await Promise.all([
       cardRepository.getCardById(data.id),
       wordRepository.updateWord(data.word),
     ]);
+
     return { ...card, word };
   }
 
@@ -76,9 +82,8 @@ class CardService {
     });
   }
 
-  async getWriteCards(data: GetWriteCardDto, userId: Id): Promise<CardDto[]> {
-    const cards = await cardRepository.getWriteCards(Number(data.count), userId, data.groupId);
-    return cards;
+  getWriteCards(data: GetWriteCardDto, userId: Id): Promise<CardDto[]> {
+    return cardRepository.getWriteCards(Number(data.count), userId, data.groupId);
   }
 }
 
