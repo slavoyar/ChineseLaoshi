@@ -4,19 +4,27 @@ import type { CreateUserDto, Email, Id, UpdateUserDto } from '@shared/types';
 
 class UserRepository {
   async getById(id: Id) {
-    const user = await prisma.user.findFirst({ where: { id } });
-    if (!user) {
+    try {
+      const user = await prisma.user.findFirst({ where: { id } });
+      if (!user) {
+        throw new CustomError('entityNotFoundError');
+      }
+      return user;
+    } catch {
       throw new CustomError('entityNotFoundError');
     }
-    return user;
   }
 
   async getByEmail(email: Email) {
-    const user = await prisma.user.findFirst({ where: { email } });
-    if (!user) {
+    try {
+      const user = await prisma.user.findFirst({ where: { email } });
+      if (!user) {
+        throw new CustomError('entityNotFoundError');
+      }
+      return user;
+    } catch {
       throw new CustomError('entityNotFoundError');
     }
-    return user;
   }
 
   create(data: CreateUserDto) {

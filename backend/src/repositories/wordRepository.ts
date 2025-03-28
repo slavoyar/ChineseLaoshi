@@ -1,5 +1,6 @@
 import { CustomError } from '@configs/errors';
 import { prisma } from '@configs/prisma';
+import type { PrismaClient } from '@prisma/client/extension';
 import type { CreateWordDto, Id, WordDto } from '@shared/types';
 
 class WordRepository {
@@ -19,9 +20,9 @@ class WordRepository {
     }
   }
 
-  createWord(data: CreateWordDto) {
+  createWord(data: CreateWordDto, client: PrismaClient = prisma) {
     try {
-      return prisma.word.create({ data });
+      return client.word.create({ data });
     } catch {
       throw new CustomError('entityCreateError');
     }
@@ -35,9 +36,9 @@ class WordRepository {
     }
   }
 
-  async deleteWord(id: Id) {
+  deleteWord(id: Id) {
     try {
-      await prisma.word.delete({ where: { id } });
+      return prisma.word.delete({ where: { id } });
     } catch {
       throw new CustomError('entityDeleteError');
     }
