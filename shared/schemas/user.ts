@@ -12,7 +12,7 @@ export const CreateUserSchema = Type.Object({
   password: Type.String(),
 });
 
-export const UpdateUserSchema = Type.Partial(Type.Omit(CreateUserSchema, ['password']));
+export const UpdateUserSchema = Type.Partial(CreateUserSchema);
 
 export type UserDto = Static<typeof UserSchema>;
 export type CreateUserDto = Static<typeof CreateUserSchema>;

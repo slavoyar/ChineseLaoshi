@@ -1,4 +1,4 @@
-import { Static, Type } from '@sinclair/typebox';
+import { type Static, Type } from '@sinclair/typebox';
 
 export const GroupSchema = Type.Object({
   id: Type.String({ format: 'uuid' }),
