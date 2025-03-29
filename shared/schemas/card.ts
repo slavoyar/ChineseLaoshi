@@ -14,7 +14,7 @@ export const CardSchema = Type.Object({
 });
 
 export const CreateCardSchema = Type.Object({
-  word: Type.Union([WordSchema, Type.Pick(WordSchema, ['id'])]),
+  word: Type.Union([Type.Omit(WordSchema, ['id']), Type.Pick(WordSchema, ['id'])]),
   groupId: Type.String({ format: 'uuid' }),
 });
 
@@ -23,7 +23,7 @@ export const UpdateCardWordSchema = Type.Object({
   word: WordSchema,
 });
 
-export const UpdateCardSchema = Type.Omit(Type.Required(Type.Partial(CardSchema), ['id']), ['groupId']);
+export const UpdateCardSchema = Type.Omit(Type.Partial(CardSchema), ['groupId']);
 
 export const UpdateCardStatsSchema = Type.Object({
   id: Type.String({ format: 'uuid' }),
@@ -39,5 +39,5 @@ export type CardDto = Static<typeof CardSchema>;
 export type CreateCardDto = Static<typeof CreateCardSchema>;
 export type UpdateCardWordDto = Static<typeof UpdateCardWordSchema>;
 export type UpdateCard = Static<typeof UpdateCardSchema>;
-export type UpdateCardStats = Static<typeof UpdateCardStatsSchema>;
+export type UpdateCardStatsDto = Static<typeof UpdateCardStatsSchema>;
 export type GetWriteCardDto = Static<typeof GetWriteCardSchema>;

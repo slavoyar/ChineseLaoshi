@@ -17,11 +17,6 @@
       "@shared/*": ["../shared/*"],
       "@*": ["./src/*"]
     },
-    "plugins": [
-      {
-        "transform": "typia/lib/transform"
-      }
-    ],
     "strictNullChecks": true
   },
   "include": ["types/**/*.d.ts", "./src/**/*.ts"],

@@ -1,10 +1,10 @@
 import { CustomError } from '@configs/errors';
 import { prisma } from '@configs/prisma';
 import type { PrismaClient } from '@prisma/client/extension';
-import type { CreateGroupDto, Id, UpdateGroupDto } from '@shared/types';
+import type { CreateGroupDto, UpdateGroupDto } from '@shared/types';
 
 class GroupRepository {
-  getGroupsByUserId(userId: Id) {
+  getGroupsByUserId(userId: string) {
     try {
       return prisma.group.findMany({ where: { userId } });
     } catch {
@@ -12,7 +12,7 @@ class GroupRepository {
     }
   }
 
-  createGroup(data: CreateGroupDto, userId: Id) {
+  createGroup(data: CreateGroupDto, userId: string) {
     try {
       return prisma.group.create({ data: { ...data, userId } });
     } catch {
@@ -28,7 +28,7 @@ class GroupRepository {
     }
   }
 
-  deleteGroup(id: Id) {
+  deleteGroup(id: string) {
     try {
       return prisma.group.delete({ where: { id } });
     } catch {
@@ -36,7 +36,7 @@ class GroupRepository {
     }
   }
 
-  incrementWordCount(id: Id, client: PrismaClient = prisma) {
+  incrementWordCount(id: string, client: PrismaClient = prisma) {
     try {
       return client.group.update({ where: { id }, data: { wordCount: { increment: 1 } } });
     } catch {
@@ -44,7 +44,7 @@ class GroupRepository {
     }
   }
 
-  decrementWordCount(id: Id) {
+  decrementWordCount(id: string) {
     try {
       return prisma.group.update({ where: { id }, data: { wordCount: { decrement: 1 } } });
     } catch {

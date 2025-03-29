@@ -1,7 +1,7 @@
 import { CustomError } from '@configs/errors';
 import { prisma } from '@configs/prisma';
 import type { PrismaClient } from '@prisma/client/extension';
-import type { CreateWordDto, Id, WordDto } from '@shared/types';
+import type { CreateWordDto, WordDto } from '@shared/types';
 
 class WordRepository {
   searchWord(query: string) {
@@ -36,7 +36,7 @@ class WordRepository {
     }
   }
 
-  deleteWord(id: Id) {
+  deleteWord(id: string) {
     try {
       return prisma.word.delete({ where: { id } });
     } catch {
