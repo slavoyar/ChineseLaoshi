@@ -1,11 +1,15 @@
-import type { Id } from '../common';
+import { Static, Type } from '@sinclair/typebox';
 
-export type GroupDto = {
-  id: Id;
-  name: string;
-  wordCount: number;
-};
+export const GroupSchema = Type.Object({
+  id: Type.String({ format: 'uuid' }),
+  name: Type.String(),
+  wordCount: Type.Number(),
+});
 
-export type CreateGroupDto = Pick<GroupDto, 'name'>;
+export const CreateGroupSchema = Type.Pick(GroupSchema, ['name']);
 
-export type UpdateGroupDto = Pick<GroupDto, 'name' | 'id'>;
+export const UpdateGroupSchema = Type.Pick(GroupSchema, ['id', 'name']);
+
+export type GroupDto = Static<typeof GroupSchema>;
+export type CreateGroupDto = Static<typeof CreateGroupSchema>;
+export type UpdateGroupDto = Static<typeof UpdateGroupSchema>;
