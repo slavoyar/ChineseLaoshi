@@ -10,10 +10,6 @@ export default {
   output: {
     filename: 'index.js',
     path: path.resolve(__dirname, 'dist'), // Output directory
-    libraryTarget: 'module',
-  },
-  experiments: {
-    outputModule: true,
   },
   resolve: {
     extensions: ['.ts', '.js'], // Resolve these file extensions

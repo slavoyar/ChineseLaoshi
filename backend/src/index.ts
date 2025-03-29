@@ -30,8 +30,6 @@ app.use(passport.session());
 
 app.use('/api', routes);
 
-app.use(errorMiddleware);
-
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

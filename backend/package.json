@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Backend for Chinese Laoshi",
   "main": "./src/index.ts",
-  "type": "module",
   "scripts": {
     "lint": "eslint src/**/*.ts --fix",
     "dev": "webpack --config webpack.dev.js & nodemon dist/index.js",

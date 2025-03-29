@@ -12,7 +12,7 @@ const { JWT_SECRET_KEY } = process.env;
 
 const { router, createRoute } = createRouter('/auth');
 
-router.post('/login', (req, res, next) => {
+router.post('/auth/login', (req, res, next) => {
   passport.authenticate('local', (err: unknown, user: Express.User, info: { message: string }) => {
     if (err) {
       return next(err);
