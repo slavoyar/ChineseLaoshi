@@ -1,13 +1,13 @@
 import { cardRepository, groupRepository } from '@repositories';
-import type { CreateGroupDto, GroupDto, Id, UpdateGroupDto } from '@shared/types';
+import type { CreateGroupDto, GroupDto, UpdateGroupDto } from '@shared/types';
 
 class GroupService {
-  async getGroupsByUserId(userId: Id): Promise<GroupDto[]> {
+  async getGroupsByUserId(userId: string): Promise<GroupDto[]> {
     const groups = await groupRepository.getGroupsByUserId(userId);
     return groups.map((group) => ({ id: group.id, name: group.name, wordCount: group.wordCount }));
   }
 
-  async createGroup(data: CreateGroupDto, userId: Id): Promise<GroupDto> {
+  async createGroup(data: CreateGroupDto, userId: string): Promise<GroupDto> {
     const group = await groupRepository.createGroup(data, userId);
     return { id: group.id, name: group.name, wordCount: group.wordCount };
   }
@@ -17,7 +17,7 @@ class GroupService {
     return { id: group.id, name: group.name, wordCount: group.wordCount };
   }
 
-  async deleteGroup(id: Id): Promise<void> {
+  async deleteGroup(id: string): Promise<void> {
     await cardRepository.deleteCardByGroupId(id);
     await groupRepository.deleteGroup(id);
   }

@@ -1,8 +1,9 @@
 import type { TObject } from '@sinclair/typebox';
 import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 import type { NextFunction, Request, Response } from 'express';
 
-const ajv = new Ajv();
+const ajv = addFormats(new Ajv());
 
 export const createValidationMiddleware =
   (schema: TObject) => (req: Request, res: Response, next: NextFunction) => {

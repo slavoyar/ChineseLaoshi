@@ -1,6 +1,6 @@
 import { createValidationMiddleware } from '@middlewares';
 import type { Record } from '@prisma/client/runtime/library';
-import type { TObject, TProperties } from '@sinclair/typebox';
+import type { TObject } from '@sinclair/typebox';
 import { type Request, type RequestHandler, Router } from 'express';
 
 export type Params = Record<string, string>;
