@@ -33,10 +33,11 @@ export function createRouter(url: string) {
     options?: Partial<RouteOptions>
   ) {
     const { method, endpoint, middlewares } = { ...defaultOptions, ...options };
+    const localMiddlewares = [...middlewares];
     if (options?.schema) {
-      middlewares.unshift(createValidationMiddleware(options.schema));
+      localMiddlewares.unshift(createValidationMiddleware(options.schema));
     }
-    router[method](url + endpoint, ...middlewares, async (req, res) => {
+    router[method](url + endpoint, ...localMiddlewares, async (req, res) => {
       const result = await cb(req as Request<Parameters, Result, Body, Query>);
       return res.status(result.status).json(result.data);
     });
