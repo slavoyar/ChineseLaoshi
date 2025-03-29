@@ -32,7 +32,7 @@ export const UpdateCardStatsSchema = Type.Object({
 
 export const GetWriteCardSchema = Type.Object({
   count: Type.String(),
-  groupId: Type.String({ format: 'uuid' }),
+  groupId: Type.Optional(Type.String({ format: 'uuid' })),
 });
 
 export type CardDto = Static<typeof CardSchema>;
