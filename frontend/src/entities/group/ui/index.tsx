@@ -1,18 +1,19 @@
-import { Group, useGroupStore } from '@entities/group';
+import { GroupDto } from '@chinese-laoshi/shared';
+import { useGroupStore } from '@entities/group';
 import { Accordion } from '@shared/ui';
-import { FC, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import { GroupHeader } from './group-header';
 
 interface Props {
-  content: (item: Group) => ReactNode;
-  onGroupOpen: (item: Group) => void;
+  content: (item: GroupDto) => ReactNode;
+  onGroupOpen: (item: GroupDto) => void;
 }
 
-export const GroupList: FC<Props> = ({ content, onGroupOpen }) => {
+export const GroupList = ({ content, onGroupOpen }: Props) => {
   const [groups, deleteGroup] = useGroupStore((state) => [state.groups, state.delete]);
 
-  const deleteHandler = async (item: Group) => {
+  const deleteHandler = async (item: GroupDto) => {
     await deleteGroup(item.id);
   };
 
