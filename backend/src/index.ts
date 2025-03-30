@@ -1,6 +1,6 @@
 ﻿import 'express-async-errors';
 
-import { errorMiddleware, loggerMiddleware } from '@middlewares';
+import { loggerMiddleware } from '@middlewares';
 import dotenv from 'dotenv';
 import express from 'express';
 import session from 'express-session';
