@@ -24,7 +24,7 @@ export const Groups = (props: HTMLAttributes<HTMLDivElement>) => {
         <div className='text-2xl text-white'>Folders</div>
         <AddGroup />
       </div>
-      <div className='h-full overflow-auto p-2'>
+      <div className='h-full overflow-auto'>
         <GroupList
           content={(item) => (
             <div>
