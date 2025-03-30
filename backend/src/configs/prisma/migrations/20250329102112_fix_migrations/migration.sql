@@ -4,9 +4,10 @@ CREATE TABLE "Card" (
     "groupId" TEXT NOT NULL,
     "wordId" TEXT NOT NULL,
     "showCount" INTEGER NOT NULL DEFAULT 0,
-    "writeCount" INTEGER NOT NULL DEFAULT 0,
-    "guessRatio" DOUBLE PRECISION NOT NULL DEFAULT 0,
-    "writeRatio" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "progress" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "step" DOUBLE PRECISION NOT NULL DEFAULT 0.1,
+    "isWinStreak" BOOLEAN NOT NULL DEFAULT true,
+    "streak" INTEGER NOT NULL DEFAULT 0,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Card_pkey" PRIMARY KEY ("id")
@@ -26,6 +27,7 @@ CREATE TABLE "Group" (
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "username" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -43,6 +45,9 @@ CREATE TABLE "Word" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- AddForeignKey
 ALTER TABLE "Card" ADD CONSTRAINT "Card_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Group"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

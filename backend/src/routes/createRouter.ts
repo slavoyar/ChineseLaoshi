@@ -1,5 +1,6 @@
-import { validationMiddleware } from '@middlewares';
+import { createValidationMiddleware } from '@middlewares';
 import type { Record } from '@prisma/client/runtime/library';
+import type { TObject } from '@sinclair/typebox';
 import { type Request, type RequestHandler, Router } from 'express';
 
 export type Params = Record<string, string>;
@@ -17,6 +18,7 @@ type RouteOptions = {
   method: 'get' | 'post' | 'put' | 'delete';
   endpoint: string;
   middlewares: RequestHandler[];
+  schema?: TObject;
 };
 const defaultOptions: RouteOptions = {
   method: 'get',
@@ -31,7 +33,11 @@ export function createRouter(url: string) {
     options?: Partial<RouteOptions>
   ) {
     const { method, endpoint, middlewares } = { ...defaultOptions, ...options };
-    router[method](url + endpoint, validationMiddleware<Body>, ...middlewares, async (req, res) => {
+    const localMiddlewares = [...middlewares];
+    if (options?.schema) {
+      localMiddlewares.unshift(createValidationMiddleware(options.schema));
+    }
+    router[method](url + endpoint, ...localMiddlewares, async (req, res) => {
       const result = await cb(req as Request<Parameters, Result, Body, Query>);
       return res.status(result.status).json(result.data);
     });

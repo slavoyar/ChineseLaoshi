@@ -1,13 +1,14 @@
-import { cardRepository, groupRepository } from '@repositories';
-import type { CreateGroupDto, GroupDto, Id, UpdateGroupDto } from '@shared/types';
+import { prisma } from '@configs/prisma';
+import { cardRepository, groupRepository, wordRepository } from '@repositories';
+import type { CreateGroupDto, GroupDto, UpdateGroupDto } from '@shared/types';
 
 class GroupService {
-  async getGroupsByUserId(userId: Id): Promise<GroupDto[]> {
+  async getGroupsByUserId(userId: string): Promise<GroupDto[]> {
     const groups = await groupRepository.getGroupsByUserId(userId);
     return groups.map((group) => ({ id: group.id, name: group.name, wordCount: group.wordCount }));
   }
 
-  async createGroup(data: CreateGroupDto, userId: Id): Promise<GroupDto> {
+  async createGroup(data: CreateGroupDto, userId: string): Promise<GroupDto> {
     const group = await groupRepository.createGroup(data, userId);
     return { id: group.id, name: group.name, wordCount: group.wordCount };
   }
@@ -17,9 +18,21 @@ class GroupService {
     return { id: group.id, name: group.name, wordCount: group.wordCount };
   }
 
-  async deleteGroup(id: Id): Promise<void> {
-    await cardRepository.deleteCardByGroupId(id);
-    await groupRepository.deleteGroup(id);
+  async deleteGroup(id: string): Promise<void> {
+    const cards = await cardRepository.getCardsByGroupId(id);
+    const wordIds = cards.map((card) => card.wordId);
+    const wordsInOtherGroups = await wordRepository.getWordsInOtherGroups(id, wordIds);
+
+    const singleUsageWordIds = wordIds.filter(
+      (wordId) => !wordsInOtherGroups.some((word) => word.wordId === wordId)
+    );
+
+    const transactionArray = [cardRepository.deleteCardByGroupId(id), groupRepository.deleteGroup(id)];
+    if (singleUsageWordIds.length) {
+      transactionArray.push(wordRepository.deleteWords(singleUsageWordIds));
+    }
+
+    await prisma.$transaction(transactionArray);
   }
 }
 

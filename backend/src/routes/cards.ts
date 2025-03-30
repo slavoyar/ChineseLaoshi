@@ -1,10 +1,14 @@
 ﻿import { cardService } from '@services';
-import type {
-  CardDto,
-  CreateCardDto,
-  GetWriteCardDto,
-  UpdateCardStatsDto,
-  UpdateCardWordDto,
+import {
+  type CardDto,
+  type CreateCardDto,
+  CreateCardSchema,
+  type GetWriteCardDto,
+  GetWriteCardSchema,
+  type UpdateCardStatsDto,
+  UpdateCardStatsSchema,
+  type UpdateCardWordDto,
+  UpdateCardWordSchema,
 } from '@shared/schemas';
 
 import { createRouter, Ok, type Params } from './createRouter';
@@ -30,6 +34,7 @@ createRoute<Params, GetWriteCardDto, CardDto[]>(
   {
     method: 'post',
     endpoint: '/study/write',
+    schema: GetWriteCardSchema,
   }
 );
 
@@ -43,6 +48,7 @@ createRoute<{ groupId: string }, CreateCardDto>(
   {
     method: 'post',
     endpoint: '/:groupId',
+    schema: CreateCardSchema,
   }
 );
 
@@ -51,7 +57,7 @@ createRoute<Params, UpdateCardStatsDto>(
     await cardService.updateCardStats(req.body);
     return Ok();
   },
-  { method: 'post' }
+  { method: 'post', schema: UpdateCardStatsSchema }
 );
 
 createRoute<Params, UpdateCardWordDto>(
@@ -59,7 +65,7 @@ createRoute<Params, UpdateCardWordDto>(
     await cardService.updateCard(req.body);
     return Ok();
   },
-  { method: 'put' }
+  { method: 'put', schema: UpdateCardWordSchema }
 );
 
 createRoute<{ cardId: string }>(

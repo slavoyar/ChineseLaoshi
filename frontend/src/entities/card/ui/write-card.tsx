@@ -1,4 +1,4 @@
-import { Id, WordDto } from '@chinese-laoshi/shared';
+import { WordDto } from '@chinese-laoshi/shared';
 import { useCardStore } from '@entities/card';
 import { useStateStore } from '@shared/stores';
 import { Button } from '@shared/ui';
@@ -15,7 +15,7 @@ interface Props extends WordDto {
   onComplete?: () => void;
 }
 
-const keysBySymbols = (symbols: string, id: Id) =>
+const keysBySymbols = (symbols: string, id: string) =>
   symbols.split('').map((symbol, index) => `${id}-${symbol}-${index}`);
 
 export const WriteCard = ({

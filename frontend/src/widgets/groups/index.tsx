@@ -1,5 +1,6 @@
+import { GroupDto } from '@chinese-laoshi/shared';
 import { CardList, useCardStore } from '@entities/card';
-import { Group, GroupList, useGroupStore } from '@entities/group';
+import { GroupList, useGroupStore } from '@entities/group';
 import { AddGroup } from '@features/add-group';
 import { AddWord } from '@features/add-word';
 import { HTMLAttributes } from 'react';
@@ -8,7 +9,7 @@ export const Groups = (props: HTMLAttributes<HTMLDivElement>) => {
   const [cardsPerGroup, fetchCards] = useCardStore((state) => [state.cardsPerGroup, state.fetch]);
   const decrementWordCount = useGroupStore((state) => state.decrementWordCount);
 
-  const groupOpenHandler = async (group: Group) => {
+  const groupOpenHandler = async (group: GroupDto) => {
     if (!cardsPerGroup[group.id]) {
       await fetchCards(group.id);
     }
@@ -23,7 +24,7 @@ export const Groups = (props: HTMLAttributes<HTMLDivElement>) => {
         <div className='text-2xl text-white'>Folders</div>
         <AddGroup />
       </div>
-      <div className='h-full overflow-auto p-2'>
+      <div className='h-full overflow-auto'>
         <GroupList
           content={(item) => (
             <div>

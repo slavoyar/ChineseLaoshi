@@ -1,4 +1,3 @@
-import { Id } from '@chinese-laoshi/shared';
 import { useCardStore } from '@entities/card';
 import { useGroupStore } from '@entities/group';
 import { Button, CreateDialog, TextField } from '@shared/ui';
@@ -6,7 +5,7 @@ import pinyin from 'pinyin';
 import { useEffect, useState } from 'react';
 
 interface Props {
-  groupId: Id;
+  groupId: string;
 }
 
 export const AddWord = ({ groupId }: Props) => {
@@ -25,7 +24,7 @@ export const AddWord = ({ groupId }: Props) => {
   }, [isOpen]);
   const saveHandler = async () => {
     try {
-      await createWord(groupId, { transcription, translation, symbols });
+      await createWord(groupId, { word: { transcription, translation, symbols }, groupId });
       incrementWordCount(groupId);
     } finally {
       setIsOpen(false);

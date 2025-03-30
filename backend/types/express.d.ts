@@ -1,6 +1,4 @@
-﻿import type { Id } from '@shared/common';
-
-export interface CustomUser {
+﻿export interface CustomUser {
   username: string;
   password?: string;
   id: string;
@@ -11,7 +9,7 @@ declare global {
     interface User {
       username: string;
       password?: string;
-      id: Id;
+      id: string;
     }
 
     interface Request {

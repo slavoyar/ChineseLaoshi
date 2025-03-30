@@ -8,13 +8,8 @@ const __dirname = dirname(__filename);
 export default {
   entry: './src/index.ts', // Entry point of your application
   output: {
-    filename: 'index.js', // Output bundle file
+    filename: 'index.js',
     path: path.resolve(__dirname, 'dist'), // Output directory
-    libraryTarget: 'module',
-  },
-  mode: 'production',
-  experiments: {
-    outputModule: true,
   },
   resolve: {
     extensions: ['.ts', '.js'], // Resolve these file extensions
@@ -28,6 +23,7 @@ export default {
       '@repositories': path.resolve(__dirname, 'src/repositories/'),
       '@routes': path.resolve(__dirname, 'src/routes/'),
       '@services': path.resolve(__dirname, 'src/services/'),
+      '@shared': path.resolve(__dirname, '../shared/'),
     },
   },
   module: {

@@ -1,33 +1,43 @@
-import type { Id } from '../common';
-import type { WithRequired } from '../utilities';
-import type { WordDto } from './word';
+import { type Static, Type } from '@sinclair/typebox';
 
-export type CardDto = {
-  id: Id;
-  groupId: Id;
-  progress: number;
-  word: WordDto;
-  showCount: number;
-  step: number;
-  isWinStreak: boolean;
-  streak: number;
-};
+import { WordSchema } from './word';
 
-export type CreateCardDto = {
-  word: { id: Id } | Omit<WordDto, 'id'>;
-  groupId: Id;
-};
+export const CardSchema = Type.Object({
+  id: Type.String({ format: 'uuid' }),
+  groupId: Type.String({ format: 'uuid' }),
+  progress: Type.Number(),
+  word: WordSchema,
+  showCount: Type.Number(),
+  step: Type.Number(),
+  isWinStreak: Type.Boolean(),
+  streak: Type.Number(),
+});
 
-export type UpdateCardWordDto = { id: Id; word: WordDto };
+export const CreateCardSchema = Type.Object({
+  word: Type.Union([Type.Omit(WordSchema, ['id']), Type.Pick(WordSchema, ['id'])]),
+  groupId: Type.String({ format: 'uuid' }),
+});
 
-export type UpdateCard = Omit<WithRequired<Partial<CardDto>, 'id'>, 'groupId'>;
+export const UpdateCardWordSchema = Type.Object({
+  id: Type.String({ format: 'uuid' }),
+  word: WordSchema,
+});
 
-export type UpdateCardStatsDto = {
-  id: Id;
-  guessed: boolean;
-};
+export const UpdateCardSchema = Type.Omit(Type.Partial(CardSchema), ['groupId']);
 
-export type GetWriteCardDto = {
-  count: string;
-  groupId: Id;
-};
+export const UpdateCardStatsSchema = Type.Object({
+  id: Type.String({ format: 'uuid' }),
+  guessed: Type.Boolean(),
+});
+
+export const GetWriteCardSchema = Type.Object({
+  count: Type.String(),
+  groupId: Type.Optional(Type.String({ format: 'uuid' })),
+});
+
+export type CardDto = Static<typeof CardSchema>;
+export type CreateCardDto = Static<typeof CreateCardSchema>;
+export type UpdateCardWordDto = Static<typeof UpdateCardWordSchema>;
+export type UpdateCard = Static<typeof UpdateCardSchema>;
+export type UpdateCardStatsDto = Static<typeof UpdateCardStatsSchema>;
+export type GetWriteCardDto = Static<typeof GetWriteCardSchema>;

@@ -26,11 +26,6 @@
       "@pages/*": ["./src/pages/*"],
       "@widgets/*": ["./src/widgets/*"]
     },
-    "plugins": [
-      {
-        "transform": "typia/lib/transform"
-      }
-    ],
     "strictNullChecks": true
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "*.config.ts"],

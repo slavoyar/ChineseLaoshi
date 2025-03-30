@@ -23,7 +23,7 @@ export const SignIn = () => {
   };
 
   return (
-    <div className='m-auto grid h-full grid-cols-1 place-content-center gap-4 px-2 sm:w-full lg:w-3/12'>
+    <div className='m-auto grid h-full grid-cols-1 place-content-center gap-4 px-2 sm:w-full md:w-1/2 lg:w-5/12 xl:w-1/3'>
       <h1 className='text-center text-2xl uppercase text-white'>Sign In</h1>
       <TextField
         placeholder='Username'

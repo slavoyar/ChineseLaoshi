@@ -1,4 +1,4 @@
-import { CardDto, Id } from '@chinese-laoshi/shared';
+import { CardDto } from '@chinese-laoshi/shared';
 import { useCardStore } from '@entities/card';
 import { getColorByPercent } from '@entities/card/utils';
 import { getPercentFromRatio } from '@shared/utils';
@@ -10,7 +10,7 @@ interface Props {
 
 export const CardItem = ({ card, onDelete }: Props) => {
   const deleteCard = useCardStore((state) => state.delete);
-  const onDeleteHandler = async (id: Id) => {
+  const onDeleteHandler = async (id: string) => {
     await deleteCard(id);
     onDelete();
   };

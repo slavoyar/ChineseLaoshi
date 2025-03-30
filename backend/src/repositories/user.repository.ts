@@ -1,9 +1,9 @@
 import { CustomError } from '@configs/errors';
 import { prisma } from '@configs/prisma';
-import type { CreateUserDto, Email, Id, UpdateUserDto } from '@shared/types';
+import type { CreateUserDto, UpdateUserDto } from '@shared/types';
 
 class UserRepository {
-  async getById(id: Id) {
+  async getById(id: string) {
     try {
       const user = await prisma.user.findFirst({ where: { id } });
       if (!user) {
@@ -15,7 +15,7 @@ class UserRepository {
     }
   }
 
-  async getByEmail(email: Email) {
+  async getByEmail(email: string) {
     try {
       const user = await prisma.user.findFirst({ where: { email } });
       if (!user) {
@@ -35,7 +35,7 @@ class UserRepository {
     }
   }
 
-  update(data: UpdateUserDto, userId: Id) {
+  update(data: UpdateUserDto, userId: string) {
     try {
       return prisma.user.update({
         where: { id: userId },

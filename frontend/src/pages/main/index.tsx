@@ -14,13 +14,15 @@ export const Main = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchGroups().catch(() => {
-      navigate(Route.SignIn);
+    fetchGroups().catch((error) => {
+      if (error.status === 401) {
+        navigate(Route.SignIn);
+      }
     });
   }, []);
 
   return (
-    <div className='m-auto flex h-full flex-col gap-6 md:w-6/12'>
+    <div className='m-auto flex h-full flex-col gap-6 md:w-9/12 xl:w-7/12'>
       <StudyModes ref={studyModesRef} />
       <Groups
         style={{

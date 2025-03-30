@@ -1,6 +1,11 @@
 ﻿import { authMiddleware } from '@middlewares';
 import { groupService } from '@services';
-import type { CreateGroupDto, UpdateGroupDto } from '@shared/types';
+import {
+  type CreateGroupDto,
+  CreateGroupSchema,
+  type UpdateGroupDto,
+  UpdateGroupSchema,
+} from '@shared/types';
 
 import { createRouter, Ok, type Params } from './createRouter';
 
@@ -26,6 +31,7 @@ createRoute<Params, CreateGroupDto>(
   {
     method: 'post',
     middlewares: [authMiddleware],
+    schema: CreateGroupSchema,
   }
 );
 
@@ -36,6 +42,7 @@ createRoute<Params, UpdateGroupDto>(
   },
   {
     method: 'put',
+    schema: UpdateGroupSchema,
   }
 );
 

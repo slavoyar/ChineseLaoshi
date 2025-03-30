@@ -8,7 +8,10 @@ class AuthService {
     axios.post(
       `${URL}/login`,
       { username, password },
-      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+      {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        cancelToken: axios.CancelToken.source().token,
+      }
     );
 
   register = (data: CreateUserDto) => axios.post(`${URL}/register`, data);

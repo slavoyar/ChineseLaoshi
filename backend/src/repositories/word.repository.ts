@@ -1,7 +1,7 @@
 import { CustomError } from '@configs/errors';
 import { prisma } from '@configs/prisma';
 import type { PrismaClient } from '@prisma/client/extension';
-import type { CreateWordDto, Id, WordDto } from '@shared/types';
+import type { CreateWordDto, WordDto } from '@shared/types';
 
 class WordRepository {
   searchWord(query: string) {
@@ -36,11 +36,36 @@ class WordRepository {
     }
   }
 
-  deleteWord(id: Id) {
+  deleteWord(id: string, client: PrismaClient = prisma) {
     try {
-      return prisma.word.delete({ where: { id } });
+      return client.word.delete({ where: { id } });
     } catch {
       throw new CustomError('entityDeleteError');
+    }
+  }
+
+  deleteWords(ids: string[]) {
+    try {
+      return prisma.word.deleteMany({ where: { id: { in: ids } } });
+    } catch {
+      throw new CustomError('entityDeleteError');
+    }
+  }
+
+  getWordsInOtherGroups(groupId: string, wordIds: string[]) {
+    try {
+      return prisma.card.groupBy({
+        by: ['wordId'],
+        where: {
+          wordId: { in: wordIds },
+          groupId: { not: groupId }, // Only count words in cards from other groups
+        },
+        _count: {
+          wordId: true,
+        },
+      });
+    } catch {
+      throw new CustomError('entityNotFoundError');
     }
   }
 }

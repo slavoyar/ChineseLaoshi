@@ -1,31 +1,31 @@
-import { CardDto, Id, WordDto } from '@chinese-laoshi/shared';
+import { CardDto, CreateCardDto } from '@chinese-laoshi/shared';
 import cardService from '@entities/card/api';
 import { create } from 'zustand';
 
 interface State {
-  cardsPerGroup: Record<Id, CardDto[]>;
+  cardsPerGroup: Record<string, CardDto[]>;
 }
 
 interface Action {
-  fetch: (id: Id) => Promise<void>;
-  create: (id: Id, data: Omit<WordDto, 'id'>) => Promise<void>;
-  delete: (id: Id) => Promise<void>;
-  updateStats: (id: Id, guessed: boolean) => Promise<void>;
+  fetch: (id: string) => Promise<void>;
+  create: (id: string, data: CreateCardDto) => Promise<void>;
+  delete: (id: string) => Promise<void>;
+  updateStats: (id: string, guessed: boolean) => Promise<void>;
   reset: () => void;
 }
 
 const useCardStore = create<State & Action>((set, get) => ({
   cardsPerGroup: {},
-  fetch: async (id: Id) => {
+  fetch: async (id: string) => {
     const response = await cardService.getList(id);
     set((state) => ({ cardsPerGroup: { ...state.cardsPerGroup, [id]: response } }));
   },
-  create: async (id: Id, data: Omit<WordDto, 'id'>) => {
+  create: async (id: string, data: CreateCardDto) => {
     const response = await cardService.post(data, id);
     const cards = [...get().cardsPerGroup[id], response];
     set((state) => ({ cardsPerGroup: { ...state.cardsPerGroup, [id]: cards } }));
   },
-  delete: async (id: Id) => {
+  delete: async (id: string) => {
     await cardService.delete(id);
     const { cardsPerGroup } = get();
     const groupId = Object.keys(cardsPerGroup).find((group) =>
@@ -41,7 +41,7 @@ const useCardStore = create<State & Action>((set, get) => ({
       },
     }));
   },
-  updateStats: async (id: Id, guessed: boolean) => {
+  updateStats: async (id: string, guessed: boolean) => {
     const card = await cardService.updateCardStats(id, guessed);
 
     set((state) => ({

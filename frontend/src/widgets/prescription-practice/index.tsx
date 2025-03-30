@@ -1,8 +1,9 @@
-import { Card, WriteCard } from '@entities/card';
+import { CardDto } from '@chinese-laoshi/shared';
+import { WriteCard } from '@entities/card';
 import { useEffect, useState } from 'react';
 
 interface Props {
-  card: Card;
+  card: CardDto;
   onNext: () => void;
 }
 
@@ -13,15 +14,16 @@ interface Round {
 const HINT_ROUNDS = 5;
 const ROUNDS = 5;
 
-let rounds: Round[] = [];
-
 export const PrescriptionPractice = ({ card, onNext }: Props) => {
   const [round, setRound] = useState(0);
+  const [rounds, setRounds] = useState<Round[]>([]);
 
   useEffect(() => {
-    rounds = Array(HINT_ROUNDS + ROUNDS)
-      .fill({ withOutline: false })
-      .map((_, index) => ({ withOutline: index < HINT_ROUNDS }));
+    setRounds(
+      new Array(HINT_ROUNDS + ROUNDS)
+        .fill({ withOutline: false })
+        .map((_, index) => ({ withOutline: index < HINT_ROUNDS }))
+    );
     setRound(0);
   }, [card]);
 

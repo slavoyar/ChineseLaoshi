@@ -1,30 +1,33 @@
 import { CustomError } from '@configs/errors';
 import { prisma } from '@configs/prisma';
 import { cardRepository, groupRepository, wordRepository } from '@repositories';
-import type {
-  CardDto,
-  CreateCardDto,
-  GetWriteCardDto,
-  Id,
-  UpdateCardStatsDto,
-  UpdateCardWordDto,
+import {
+  type CardDto,
+  type CreateCardDto,
+  type CreateWordDto,
+  CreateWordSchema,
+  type GetWriteCardDto,
+  type UpdateCardStatsDto,
+  type UpdateCardWordDto,
 } from '@shared/types';
-import typia from 'typia';
+import Ajv from 'ajv';
 
 const STEP_DIFF = 0.02;
 const MAX_STEP = 0.2;
 const MIN_STEP = 0.05;
 
 class CardService {
-  async getCardsByGroupId(groupId: Id): Promise<CardDto[]> {
+  async getCardsByGroupId(groupId: string): Promise<CardDto[]> {
     const cards = await cardRepository.getCardsByGroupId(groupId);
     return cards;
   }
 
   async createCard(data: CreateCardDto): Promise<CardDto> {
+    const ajv = new Ajv();
+    const validateWord = ajv.compile<CreateWordDto>(CreateWordSchema);
     return prisma.$transaction(async (tx) => {
       let wordId;
-      if (!typia.is<{ id: Id }>(data.word)) {
+      if (validateWord(data.word)) {
         const word = await wordRepository.createWord(data.word, tx);
         wordId = word.id;
       } else {
@@ -36,13 +39,16 @@ class CardService {
     });
   }
 
-  async deleteCard(id: Id): Promise<void> {
-    const cardsCount = await cardRepository.getCardsCount(id);
-    if (cardsCount === 1) {
-      const card = await cardRepository.getCardById(id);
-      await wordRepository.deleteWord(card!.wordId);
-    }
-    await cardRepository.deleteCard(id);
+  async deleteCard(id: string): Promise<void> {
+    const card = await cardRepository.getCardById(id);
+    const cardsCount = await cardRepository.getCardsCount(card.wordId);
+    return prisma.$transaction(async (tx) => {
+      await cardRepository.deleteCard(id, tx);
+      if (cardsCount === 1) {
+        await wordRepository.deleteWord(card!.wordId, tx);
+      }
+      await groupRepository.decrementWordCount(card.groupId, tx);
+    });
   }
 
   async updateCard(data: UpdateCardWordDto): Promise<CardDto> {
@@ -82,7 +88,7 @@ class CardService {
     });
   }
 
-  getWriteCards(data: GetWriteCardDto, userId: Id): Promise<CardDto[]> {
+  getWriteCards(data: GetWriteCardDto, userId: string): Promise<CardDto[]> {
     return cardRepository.getWriteCards(Number(data.count), userId, data.groupId);
   }
 }

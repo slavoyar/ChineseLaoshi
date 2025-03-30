@@ -1,8 +1,7 @@
 ﻿import { CustomError } from '@configs/errors';
 import passport from '@configs/passport';
 import { emailService, userService } from '@services';
-import type { Email } from '@shared/common';
-import type { CreateUserDto } from '@shared/schemas';
+import { type CreateUserDto, CreateUserSchema } from '@shared/schemas';
 import bcrypt from 'bcryptjs';
 import { verify } from 'jsonwebtoken';
 
@@ -13,7 +12,7 @@ const { JWT_SECRET_KEY } = process.env;
 
 const { router, createRoute } = createRouter('/auth');
 
-router.post('/login', (req, res, next) => {
+router.post('/auth/login', (req, res, next) => {
   passport.authenticate('local', (err: unknown, user: Express.User, info: { message: string }) => {
     if (err) {
       return next(err);
@@ -47,10 +46,11 @@ createRoute<Params, CreateUserDto>(
   {
     method: 'post',
     endpoint: '/register',
+    schema: CreateUserSchema,
   }
 );
 
-createRoute<Params, { email: Email }>(
+createRoute<Params, { email: string }>(
   async (req) => {
     const { email } = req.body;
     await emailService.resetPassword(email);

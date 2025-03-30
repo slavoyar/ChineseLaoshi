@@ -1,10 +1,10 @@
 import { CustomError } from '@configs/errors';
 import { prisma } from '@configs/prisma';
 import type { PrismaClient } from '@prisma/client/extension';
-import type { Id, UpdateCard } from '@shared/types';
+import type { UpdateCard } from '@shared/types';
 
 class CardRepository {
-  async getCardById(id: Id) {
+  async getCardById(id: string) {
     try {
       const card = await prisma.card.findFirst({ where: { id } });
       if (!card) {
@@ -16,7 +16,7 @@ class CardRepository {
     }
   }
 
-  getCardsCount(wordId: Id) {
+  getCardsCount(wordId: string) {
     try {
       return prisma.card.count({ where: { wordId } });
     } catch {
@@ -24,7 +24,7 @@ class CardRepository {
     }
   }
 
-  getCardsByGroupId(groupId: Id) {
+  getCardsByGroupId(groupId: string) {
     try {
       return prisma.card.findMany({ where: { groupId }, include: { word: true } });
     } catch {
@@ -32,7 +32,7 @@ class CardRepository {
     }
   }
 
-  createCard(groupId: Id, wordId: Id, client: PrismaClient = prisma) {
+  createCard(groupId: string, wordId: string, client: PrismaClient = prisma) {
     try {
       return client.card.create({ data: { groupId, wordId }, include: { word: true } });
     } catch {
@@ -50,15 +50,15 @@ class CardRepository {
     }
   }
 
-  deleteCard(id: Id) {
+  deleteCard(id: string, client: PrismaClient = prisma) {
     try {
-      return prisma.card.delete({ where: { id } });
+      return client.card.delete({ where: { id } });
     } catch {
       throw new CustomError('entityDeleteError');
     }
   }
 
-  deleteCardByGroupId(groupId: Id) {
+  deleteCardByGroupId(groupId: string) {
     try {
       return prisma.card.deleteMany({ where: { groupId } });
     } catch {
@@ -66,7 +66,7 @@ class CardRepository {
     }
   }
 
-  getWriteCards(count: number, userId: Id, groupId?: Id) {
+  getWriteCards(count: number, userId: string, groupId?: string) {
     try {
       return prisma.card.findMany({
         include: { word: true, group: true },

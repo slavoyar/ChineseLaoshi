@@ -1,11 +1,18 @@
+import type { TObject } from '@sinclair/typebox';
+import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 import type { NextFunction, Request, Response } from 'express';
-import typia from 'typia';
 
-export const validationMiddleware = <T>(req: Request, res: Response, next: NextFunction) => {
-  const validation = typia.validate<T>(req.body);
-  if (validation.success) {
-    return next();
-  }
+const ajv = addFormats(new Ajv());
 
-  return res.status(400).json(validation.errors);
-};
+export const createValidationMiddleware =
+  (schema: TObject) => (req: Request, res: Response, next: NextFunction) => {
+    if (!schema) {
+      return next();
+    }
+    const validator = ajv.compile(schema);
+    if (!validator(req.body)) {
+      return res.status(400).json(validator.errors);
+    }
+    next();
+  };

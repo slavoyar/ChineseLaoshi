@@ -1,15 +1,19 @@
-import { tags } from 'typia';
+import { type Static, Type } from '@sinclair/typebox';
 
-import type { Email, Id } from '../common';
+export const UserSchema = Type.Object({
+  id: Type.String(),
+  username: Type.String(),
+  email: Type.String({ format: 'email' }),
+});
 
-export type CreateUserDto = {
-  username: string;
-  email: Email;
-  password: string & tags.Format<'password'>;
-};
+export const CreateUserSchema = Type.Object({
+  username: Type.String(),
+  email: Type.String({ format: 'email' }),
+  password: Type.String(),
+});
 
-export type UserDto = {
-  id: Id;
-} & Omit<CreateUserDto, 'password'>;
+export const UpdateUserSchema = Type.Partial(CreateUserSchema);
 
-export type UpdateUserDto = Partial<CreateUserDto>;
+export type UserDto = Static<typeof UserSchema>;
+export type CreateUserDto = Static<typeof CreateUserSchema>;
+export type UpdateUserDto = Static<typeof UpdateUserSchema>;
