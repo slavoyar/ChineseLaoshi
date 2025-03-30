@@ -1,4 +1,5 @@
-import { cardRepository, groupRepository } from '@repositories';
+import { prisma } from '@configs/prisma';
+import { cardRepository, groupRepository, wordRepository } from '@repositories';
 import type { CreateGroupDto, GroupDto, UpdateGroupDto } from '@shared/types';
 
 class GroupService {
@@ -18,8 +19,20 @@ class GroupService {
   }
 
   async deleteGroup(id: string): Promise<void> {
-    await cardRepository.deleteCardByGroupId(id);
-    await groupRepository.deleteGroup(id);
+    const cards = await cardRepository.getCardsByGroupId(id);
+    const wordIds = cards.map((card) => card.wordId);
+    const wordsInOtherGroups = await wordRepository.getWordsInOtherGroups(id, wordIds);
+
+    const singleUsageWordIds = wordIds.filter(
+      (wordId) => !wordsInOtherGroups.some((word) => word.wordId === wordId)
+    );
+
+    const transactionArray = [cardRepository.deleteCardByGroupId(id), groupRepository.deleteGroup(id)];
+    if (singleUsageWordIds.length) {
+      transactionArray.push(wordRepository.deleteWords(singleUsageWordIds));
+    }
+
+    await prisma.$transaction(transactionArray);
   }
 }
 

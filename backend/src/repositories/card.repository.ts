@@ -50,9 +50,9 @@ class CardRepository {
     }
   }
 
-  deleteCard(id: string) {
+  deleteCard(id: string, client: PrismaClient = prisma) {
     try {
-      return prisma.card.delete({ where: { id } });
+      return client.card.delete({ where: { id } });
     } catch {
       throw new CustomError('entityDeleteError');
     }

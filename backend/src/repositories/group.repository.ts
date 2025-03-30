@@ -44,9 +44,9 @@ class GroupRepository {
     }
   }
 
-  decrementWordCount(id: string) {
+  decrementWordCount(id: string, client: PrismaClient = prisma) {
     try {
-      return prisma.group.update({ where: { id }, data: { wordCount: { decrement: 1 } } });
+      return client.group.update({ where: { id }, data: { wordCount: { decrement: 1 } } });
     } catch {
       throw new CustomError('entityDeleteError');
     }

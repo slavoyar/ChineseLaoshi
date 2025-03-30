@@ -40,12 +40,15 @@ class CardService {
   }
 
   async deleteCard(id: string): Promise<void> {
-    const cardsCount = await cardRepository.getCardsCount(id);
-    if (cardsCount === 1) {
-      const card = await cardRepository.getCardById(id);
-      await wordRepository.deleteWord(card!.wordId);
-    }
-    await cardRepository.deleteCard(id);
+    const card = await cardRepository.getCardById(id);
+    const cardsCount = await cardRepository.getCardsCount(card.wordId);
+    return prisma.$transaction(async (tx) => {
+      await cardRepository.deleteCard(id, tx);
+      if (cardsCount === 1) {
+        await wordRepository.deleteWord(card!.wordId, tx);
+      }
+      await groupRepository.decrementWordCount(card.groupId, tx);
+    });
   }
 
   async updateCard(data: UpdateCardWordDto): Promise<CardDto> {
