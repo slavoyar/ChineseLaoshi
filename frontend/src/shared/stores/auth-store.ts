@@ -1,5 +1,6 @@
 import { CreateUserDto } from '@chinese-laoshi/shared';
 import { authService } from '@shared/api';
+import { toast } from 'react-toastify';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -24,6 +25,7 @@ export const useAuthStore = create(
           set(() => ({ username }));
         } catch {
           set(() => ({ username: '' }));
+          toast.error('Invalid username or password');
         }
       },
       register: async (data: CreateUserDto) => {
