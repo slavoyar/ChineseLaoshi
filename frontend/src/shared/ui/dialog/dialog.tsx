@@ -1,15 +1,14 @@
 import './styles.css';
 
-import { FC } from 'react';
+import { cn } from '@shared/utils';
+import { createPortal } from 'react-dom';
 
 import { DialogProps } from './types';
 
-export const Dialog: FC<DialogProps> = ({ isOpen, onClose, title, footer, children, ...props }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className='dialog-overlay'>
-      <div {...props} className={`dialog ${props.className}`}>
+export const Dialog = ({ isOpen, onClose, title, footer, children, ...props }: DialogProps) => {
+  return createPortal(
+    <div className={cn('dialog-overlay', isOpen ? 'flex' : 'hidden')} onClick={onClose}>
+      <div {...props} className={cn('dialog', props.className ?? '')}>
         <div className='dialog-header'>
           <h2>{title}</h2>
           <i className='fa fa-close hover:bg-secondary-600 cursor-pointer rounded p-1' onClick={onClose} />
@@ -17,6 +16,7 @@ export const Dialog: FC<DialogProps> = ({ isOpen, onClose, title, footer, childr
         <div className='dialog-body'>{children}</div>
         <div className='dialog-footer'>{footer}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

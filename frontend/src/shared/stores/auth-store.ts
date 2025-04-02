@@ -18,7 +18,7 @@ interface Action {
 
 export const useAuthStore = create(
   persist<State & Action>(
-    (set, get) => ({
+    (set) => ({
       username: '',
       isDemo: false,
 
@@ -46,9 +46,6 @@ export const useAuthStore = create(
       },
       signOut: () => {
         set(() => ({ username: '' }));
-        if (!get().isDemo) {
-          toast.success('Logout successful');
-        }
       },
     }),
     { name: 'auth' }
