@@ -1,3 +1,4 @@
+import { DemoUser } from '@shared/consts';
 import { useAuthStore } from '@shared/stores';
 import { Route } from '@shared/types';
 import { Button, TextField } from '@shared/ui';
@@ -13,6 +14,11 @@ export const SignIn = () => {
   const navigate = useNavigate();
   const handleClick = async () => {
     await login(username.trim(), password);
+    navigate(Route.Root);
+  };
+
+  const tryDemoVersion = async () => {
+    await login(DemoUser, 'password');
     navigate(Route.Root);
   };
 
@@ -39,6 +45,9 @@ export const SignIn = () => {
       />
       <Button variant='primary' onClick={() => handleClick()}>
         Sign In
+      </Button>
+      <Button variant='secondary' onClick={tryDemoVersion}>
+        Try demo version
       </Button>
       <div className='text-white'>
         Do not have an account?{' '}

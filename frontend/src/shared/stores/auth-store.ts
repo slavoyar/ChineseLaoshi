@@ -1,5 +1,6 @@
 import { CreateUserDto } from '@chinese-laoshi/shared';
 import { authService } from '@shared/api';
+import { DemoUser } from '@shared/consts';
 import { toast } from 'react-toastify';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -17,15 +18,17 @@ interface Action {
 
 export const useAuthStore = create(
   persist<State & Action>(
-    (set) => ({
+    (set, get) => ({
       username: '',
       isDemo: false,
 
       login: async (username, password) => {
         try {
           await authService.login(username, password);
-          set(() => ({ username, isDemo: username === 'DemoUser' }));
-          toast.success('Login successful', { autoClose: 500 });
+          set(() => ({ username, isDemo: username === DemoUser }));
+          if (username !== DemoUser) {
+            toast.success('Login successful');
+          }
         } catch {
           set(() => ({ username: '' }));
           toast.error('Invalid username or password');
@@ -35,7 +38,7 @@ export const useAuthStore = create(
         try {
           await authService.register(data);
           set(() => ({ username: data.username }));
-          toast.success('Registration successful', { autoClose: 500 });
+          toast.success('Registration successful');
         } catch {
           set(() => ({ username: '' }));
           toast.error('Registration error');
@@ -43,7 +46,9 @@ export const useAuthStore = create(
       },
       signOut: () => {
         set(() => ({ username: '' }));
-        toast.success('Logout successful', { autoClose: 500 });
+        if (!get().isDemo) {
+          toast.success('Logout successful');
+        }
       },
     }),
     { name: 'auth' }
