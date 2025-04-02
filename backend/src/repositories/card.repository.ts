@@ -5,80 +5,48 @@ import type { UpdateCard } from '@shared/types';
 
 class CardRepository {
   async getCardById(id: string) {
-    try {
-      const card = await prisma.card.findFirst({ where: { id } });
-      if (!card) {
-        throw new CustomError('entityNotFoundError');
-      }
-      return card;
-    } catch {
+    const card = await prisma.card.findFirst({ where: { id } });
+    if (!card) {
       throw new CustomError('entityNotFoundError');
     }
+    return card;
   }
 
   getCardsCount(wordId: string) {
-    try {
-      return prisma.card.count({ where: { wordId } });
-    } catch {
-      throw new CustomError('entityNotFoundError');
-    }
+    return prisma.card.count({ where: { wordId } });
   }
 
   getCardsByGroupId(groupId: string) {
-    try {
-      return prisma.card.findMany({ where: { groupId }, include: { word: true } });
-    } catch {
-      throw new CustomError('entityNotFoundError');
-    }
+    return prisma.card.findMany({ where: { groupId }, include: { word: true } });
   }
 
   createCard(groupId: string, wordId: string, client: PrismaClient = prisma) {
-    try {
-      return client.card.create({ data: { groupId, wordId }, include: { word: true } });
-    } catch {
-      throw new CustomError('entityCreateError');
-    }
+    return client.card.create({ data: { groupId, wordId }, include: { word: true } });
   }
 
   updateCard(data: UpdateCard, client: PrismaClient = prisma) {
-    try {
-      const wordId = data.word?.id;
-      const dataWithoutWord = { ...data, word: undefined, wordId };
-      return client.card.update({ where: { id: data.id }, data: dataWithoutWord });
-    } catch {
-      throw new CustomError('entityUpdateError');
-    }
+    const wordId = data.word?.id;
+    const dataWithoutWord = { ...data, word: undefined, wordId };
+    return client.card.update({ where: { id: data.id }, data: dataWithoutWord });
   }
 
   deleteCard(id: string, client: PrismaClient = prisma) {
-    try {
-      return client.card.delete({ where: { id } });
-    } catch {
-      throw new CustomError('entityDeleteError');
-    }
+    return client.card.delete({ where: { id } });
   }
 
   deleteCardByGroupId(groupId: string) {
-    try {
-      return prisma.card.deleteMany({ where: { groupId } });
-    } catch {
-      throw new CustomError('entityDeleteError');
-    }
+    return prisma.card.deleteMany({ where: { groupId } });
   }
 
   getWriteCards(count: number, userId: string, groupId?: string) {
-    try {
-      return prisma.card.findMany({
-        include: { word: true, group: true },
-        where: { group: { userId, id: groupId } },
-        orderBy: {
-          progress: 'asc',
-        },
-        take: count,
-      });
-    } catch {
-      throw new CustomError('entityNotFoundError');
-    }
+    return prisma.card.findMany({
+      include: { word: true, group: true },
+      where: { group: { userId, id: groupId } },
+      orderBy: {
+        progress: 'asc',
+      },
+      take: count,
+    });
   }
 }
 

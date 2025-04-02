@@ -1,5 +1,6 @@
 import { useCardStore } from '@entities/card';
 import { useGroupStore } from '@entities/group';
+import { useAuthStore } from '@shared/stores';
 import { Button, CreateDialog, TextField } from '@shared/ui';
 import pinyin from 'pinyin';
 import { useEffect, useState } from 'react';
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export const AddWord = ({ groupId }: Props) => {
+  const isDemo = useAuthStore((state) => state.isDemo);
   const [isOpen, setIsOpen] = useState(false);
   const [transcription, setTranscription] = useState('');
   const [translation, setTranslation] = useState('');
@@ -43,7 +45,12 @@ export const AddWord = ({ groupId }: Props) => {
 
   return (
     <>
-      <Button variant='text' onClick={() => setIsOpen(true)}>
+      <Button
+        variant='text'
+        disabled={isDemo}
+        title={isDemo ? 'Not available in demo' : ''}
+        onClick={() => setIsOpen(true)}
+      >
         <i className='fa fa-add mr-1' />
         Add word
       </Button>

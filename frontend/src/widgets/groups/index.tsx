@@ -21,7 +21,7 @@ export const Groups = (props: HTMLAttributes<HTMLDivElement>) => {
       {...props}
     >
       <div className='flex items-center justify-between'>
-        <div className='text-2xl text-white'>Folders</div>
+        <div className='text-2xl text-white'>Groups</div>
         <AddGroup />
       </div>
       <div className='h-full overflow-auto'>

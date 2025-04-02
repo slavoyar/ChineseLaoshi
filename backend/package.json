@@ -12,6 +12,9 @@
     "migrate:prod": "prisma migrate deploy --schema src/configs/prisma/schema.prisma",
     "generate": "prisma generate --schema src/configs/prisma/schema.prisma"
   },
+  "prisma": {
+    "seed": "node src/configs/prisma/seed.ts"
+  },
   "dependencies": {
     "@chinese-laoshi/shared": "*",
     "@prisma/client": "^5.15.0",
@@ -21,6 +24,7 @@
     "@types/passport-local": "^1.0.38",
     "ajv-formats": "^3.0.1",
     "bcryptjs": "^3.0.2",
+    "chalk": "^5.4.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
