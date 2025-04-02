@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import type { NextFunction, Request, Response } from 'express';
 
 export const loggerMiddleware = (req: Request, res: Response, next: NextFunction) => {
@@ -9,9 +10,13 @@ export const loggerMiddleware = (req: Request, res: Response, next: NextFunction
     const endTime = Date.now();
     const elapsedTime = endTime - startTime;
 
-    console.log(
-      `[${new Date().toISOString()}] ${req.method} ${req.url} ${res.statusCode} - ${elapsedTime}ms`
-    );
+    const methodColor = chalk.blue(req.method);
+    const urlColor = chalk.green(req.url);
+    const statusColor =
+      res.statusCode >= 400 ? chalk.red(res.statusCode.toString()) : chalk.yellow(res.statusCode.toString());
+    const timeColor = chalk.magenta(`${elapsedTime}ms`);
+
+    console.log(`[${new Date().toISOString()}] ${methodColor} ${urlColor} ${statusColor} - ${timeColor}`);
 
     return originalSend.apply(res, args);
   };
