@@ -5,6 +5,7 @@ import { Route } from '@shared/types';
 import { PrescriptionPractice } from '@widgets/prescription-practice';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export const WritePractice = () => {
   const navigate = useNavigate();
@@ -23,6 +24,10 @@ export const WritePractice = () => {
     cardService.getCardsWritePractice(count, groupId).then((data) => {
       const [current, ...newCards] = data;
       currentCard.current = current;
+      if (!currentCard.current) {
+        resetAndExit();
+        toast.warn('There is no enough cards for this lesson');
+      }
       setCards(newCards);
     });
   }, []);
@@ -31,12 +36,16 @@ export const WritePractice = () => {
     const [current, ...newCards] = cards;
     currentCard.current = current;
     if (!currentCard.current) {
-      // TODO: add notification for lesson end
-      setState('main');
-      reset();
-      navigate(Route.Root);
+      resetAndExit();
+      toast.info('The lesson is finished');
     }
     setCards(newCards);
+  };
+
+  const resetAndExit = () => {
+    setState('main');
+    reset();
+    navigate(Route.Root);
   };
 
   const getWidget = (): ReactNode => {

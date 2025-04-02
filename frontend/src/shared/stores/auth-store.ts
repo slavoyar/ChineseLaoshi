@@ -23,6 +23,7 @@ export const useAuthStore = create(
         try {
           await authService.login(username, password);
           set(() => ({ username }));
+          toast.success('Login successful', { autoClose: 500 });
         } catch {
           set(() => ({ username: '' }));
           toast.error('Invalid username or password');
@@ -32,12 +33,15 @@ export const useAuthStore = create(
         try {
           await authService.register(data);
           set(() => ({ username: data.username }));
+          toast.success('Registration successful', { autoClose: 500 });
         } catch {
           set(() => ({ username: '' }));
+          toast.error('Registration error');
         }
       },
       signOut: () => {
         set(() => ({ username: '' }));
+        toast.success('Logout successful', { autoClose: 500 });
       },
     }),
     { name: 'auth' }
