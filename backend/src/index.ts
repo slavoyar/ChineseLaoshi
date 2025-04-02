@@ -1,6 +1,6 @@
 ﻿import 'express-async-errors';
 
-import { loggerMiddleware } from '@middlewares';
+import { errorMiddleware, loggerMiddleware } from '@middlewares';
 import dotenv from 'dotenv';
 import express from 'express';
 import session from 'express-session';
@@ -29,6 +29,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/api', routes);
+
+app.use(errorMiddleware);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
