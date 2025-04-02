@@ -1,9 +1,11 @@
 import './styles.css';
 
+import { cn } from '@shared/utils';
 import { HTMLAttributes, Key, ReactNode, useState } from 'react';
 
 interface Props<T> extends Omit<HTMLAttributes<HTMLDivElement>, 'content'> {
   sections: T[];
+  isActionsAvailable?: boolean;
   actions?: (item: T) => ReactNode;
   rowKey: (item: T) => Key;
   header: (item: T) => ReactNode;
@@ -20,6 +22,7 @@ export const Accordion = <T,>({
   onDelete,
   onOpen,
   actions,
+  isActionsAvailable,
   ...props
 }: Props<T>) => {
   const [openedKey, setOpenedKey] = useState<Key>();
@@ -49,7 +52,7 @@ export const Accordion = <T,>({
               {`${index + 1}.`} {header(section)}
               <i className={`fa ${isOpened(section) ? 'fa-chevron-down' : 'fa-chevron-right'}`} />
             </div>
-            <div className='flex items-center gap-2'>
+            <div className={cn('flex items-center gap-2', isActionsAvailable ? '' : 'hidden')}>
               {actions && actions(section)}
               <i
                 className='fa fa-close text-error-600 hover:bg-secondary-600 cursor-pointer rounded p-1'

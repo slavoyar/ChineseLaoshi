@@ -6,6 +6,7 @@ import { persist } from 'zustand/middleware';
 
 interface State {
   username: string;
+  isDemo: boolean;
 }
 
 interface Action {
@@ -18,11 +19,12 @@ export const useAuthStore = create(
   persist<State & Action>(
     (set) => ({
       username: '',
+      isDemo: false,
 
       login: async (username, password) => {
         try {
           await authService.login(username, password);
-          set(() => ({ username }));
+          set(() => ({ username, isDemo: username === 'DemoUser' }));
           toast.success('Login successful', { autoClose: 500 });
         } catch {
           set(() => ({ username: '' }));
