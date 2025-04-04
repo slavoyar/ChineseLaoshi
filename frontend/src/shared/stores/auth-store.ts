@@ -37,7 +37,7 @@ export const useAuthStore = create(
       register: async (data: CreateUserDto) => {
         try {
           await authService.register(data);
-          set(() => ({ username: data.username }));
+          set(() => ({ username: data.username, isDemo: false }));
           toast.success('Registration successful');
         } catch {
           set(() => ({ username: '' }));
@@ -45,7 +45,7 @@ export const useAuthStore = create(
         }
       },
       signOut: () => {
-        set(() => ({ username: '' }));
+        set(() => ({ username: '', isDemo: false }));
       },
     }),
     { name: 'auth' }
