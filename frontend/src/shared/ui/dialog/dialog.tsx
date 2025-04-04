@@ -7,7 +7,7 @@ import { DialogProps } from './types';
 
 export const Dialog = ({ isOpen, onClose, title, footer, children, ...props }: DialogProps) => {
   return createPortal(
-    <div className={cn('dialog-overlay', isOpen ? 'flex' : 'hidden')} onClick={onClose}>
+    <div className={cn('dialog-overlay', isOpen ? 'flex' : 'hidden')}>
       <div {...props} className={cn('dialog', props.className ?? '')}>
         <div className='dialog-header'>
           <h2>{title}</h2>
