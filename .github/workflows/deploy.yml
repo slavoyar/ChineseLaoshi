@@ -60,6 +60,10 @@ jobs:
           echo "MAILER_PASSWORD=${{ secrets.MAILER_PASSWORD }}" >> .env
           echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
 
+      - name: Migrate database
+        working-directory: ./backend
+        run: npm run migrate:prod
+
       - name: Log in to container registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u "${{ github.repository_owner }}" --password-stdin
 
