@@ -6,7 +6,7 @@ on:
       - develop
 
 jobs:
-  lint-build-frontend:
+  lint-and-build:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,34 +17,14 @@ jobs:
         uses: actions/setup-node@v2
 
       - name: Install dependencies
-        working-directory: ./frontend
         run: npm install
 
       - name: Lint frontend
-        working-directory: ./frontend
         run: npm run lint
 
       - name: Build frontend
         working-directory: ./frontend
         run: npm run build
-
-  lint-build-backend:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-
-      - name: Install backend dependencies
-        working-directory: ./backend
-        run: npm install
-
-      - name: Lint backend
-        working-directory: ./backend
-        run: npm run lint
 
       - name: Build backend
         working-directory: ./backend

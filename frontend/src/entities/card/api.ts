@@ -1,17 +1,30 @@
+import {
+  CardDto,
+  CreateCardDto,
+  GetWriteCardDto,
+  UpdateCardStatsDto,
+  UpdateCardWordDto,
+} from '@chinese-laoshi/shared';
 import { BaseService } from '@shared/api';
 import axios from 'axios';
-import { Card } from './model';
 
 const URL = '/api/cards';
 
-class CardService extends BaseService<Card> {
-  getCardsToStudy(count: string, groupId?: string): Promise<Card[]> {
-    const group = groupId ? `&groupId=${groupId}` : '';
-    return axios.get<Card[], Card[]>(`${this.url}/study/write?count=${count}${group}`);
+class CardService extends BaseService<CardDto, CreateCardDto, UpdateCardWordDto> {
+  getCardsWritePractice(count: string, groupId?: string): Promise<CardDto[]> {
+    return axios.post<GetWriteCardDto, CardDto[]>(
+      `${this.url}/study/write`,
+      { count, groupId },
+      { cancelToken: this.getCancelToken('getCardsWritePractice') }
+    );
   }
 
-  updateCardStats(id: string, guessed: boolean): Promise<Card> {
-    return axios.post<{ id: string; guessed: boolean }, Card>(this.url, { id, guessed });
+  updateCardStats(id: string, guessed: boolean): Promise<CardDto> {
+    return axios.post<UpdateCardStatsDto, CardDto>(
+      this.url,
+      { id, guessed },
+      { cancelToken: this.getCancelToken('updateCardStats') }
+    );
   }
 }
 

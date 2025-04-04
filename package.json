@@ -1,0 +1,34 @@
+{
+  "name": "chinese-laoshi",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "backend",
+    "frontend",
+    "shared"
+  ],
+  "author": "Yaroslav Zaprudskii",
+  "license": "ISC",
+  "scripts": {
+    "lint:frontend": "eslint ./frontend -c ./frontend/eslint.config.js --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
+    "lint:backend": "eslint ./backend -c ./backend/eslint.config.js --ext ts --report-unused-disable-directives --max-warnings 0 --fix",
+    "lint:shared": "eslint ./shared -c ./shared/eslint.config.js --ext ts --report-unused-disable-directives --max-warnings 0 --fix",
+    "lint": "npm run lint:frontend && npm run lint:backend && npm run lint:shared"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.22.0",
+    "@typescript-eslint/eslint-plugin": "^8.27.0",
+    "@typescript-eslint/parser": "^8.27.0",
+    "eslint": "^9.22.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.27.0"
+  },
+  "dependencies": {
+    "@sinclair/typebox": "^0.34.31",
+    "ajv": "^8.17.1"
+  }
+}

@@ -1,14 +1,14 @@
-import { create } from 'zustand';
-import { Card, Word } from '@entities/card';
+import { CardDto, CreateCardDto } from '@chinese-laoshi/shared';
 import cardService from '@entities/card/api';
+import { create } from 'zustand';
 
 interface State {
-  cardsPerGroup: Record<string, Card[]>;
+  cardsPerGroup: Record<string, CardDto[]>;
 }
 
 interface Action {
   fetch: (id: string) => Promise<void>;
-  create: (id: string, data: Omit<Word, 'id'>) => Promise<void>;
+  create: (id: string, data: CreateCardDto) => Promise<void>;
   delete: (id: string) => Promise<void>;
   updateStats: (id: string, guessed: boolean) => Promise<void>;
   reset: () => void;
@@ -20,7 +20,7 @@ const useCardStore = create<State & Action>((set, get) => ({
     const response = await cardService.getList(id);
     set((state) => ({ cardsPerGroup: { ...state.cardsPerGroup, [id]: response } }));
   },
-  create: async (id: string, data: Omit<Word, 'id'>) => {
+  create: async (id: string, data: CreateCardDto) => {
     const response = await cardService.post(data, id);
     const cards = [...get().cardsPerGroup[id], response];
     set((state) => ({ cardsPerGroup: { ...state.cardsPerGroup, [id]: cards } }));
@@ -47,9 +47,7 @@ const useCardStore = create<State & Action>((set, get) => ({
     set((state) => ({
       cardsPerGroup: {
         ...state.cardsPerGroup,
-        [card.groupId]: state.cardsPerGroup[card.groupId]?.map((item) =>
-          item.id === id ? { ...item, writeRatio: card.writeRatio } : item
-        ),
+        [card.groupId]: state.cardsPerGroup[card.groupId]?.map((item) => (item.id === id ? card : item)),
       },
     }));
   },

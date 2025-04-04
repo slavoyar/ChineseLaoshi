@@ -1,12 +1,12 @@
-import { createBrowserRouter } from 'react-router-dom';
-import { HeaderLayout } from '@shared/layouts';
-import { Route } from '@shared/types';
+import { Main } from '@pages/main';
+import { ResetPassword } from '@pages/reset-password';
 import { SignIn } from '@pages/sign-in';
 import { SignUp } from '@pages/sign-up';
-import { Main } from '@pages/main';
-import { StudyWrite } from '@pages/study-write';
-import { ResetPassword } from '@pages/reset-password';
 import { UpdatePassword } from '@pages/update-password';
+import { WritePractice } from '@pages/write-practice';
+import { HeaderLayout } from '@shared/layouts';
+import { Route } from '@shared/types';
+import { createBrowserRouter } from 'react-router-dom';
 
 const router = createBrowserRouter([
   {
@@ -34,8 +34,8 @@ const router = createBrowserRouter([
         element: <Main />,
       },
       {
-        path: `${Route.StudyWrite}/:count/:groupId?`,
-        element: <StudyWrite />,
+        path: `${Route.WritePractice}/:count/:groupId?`,
+        element: <WritePractice />,
       },
     ],
   },

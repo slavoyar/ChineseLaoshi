@@ -1,36 +1,59 @@
-import { FC } from 'react';
-import { Card, useCardStore } from '@entities/card';
-import { getPercentFromRatio } from '@shared/utils';
+import { CardDto } from '@chinese-laoshi/shared';
+import { useCardStore } from '@entities/card';
 import { getColorByPercent } from '@entities/card/utils';
+import { useDelete } from '@shared/hooks';
+import { useAuthStore } from '@shared/stores';
+import { DeleteDialog } from '@shared/ui';
+import { cn, getPercentFromRatio } from '@shared/utils';
 
 interface Props {
-  card: Card;
+  card: CardDto;
   onDelete: () => void;
 }
 
-export const CardItem: FC<Props> = ({ card, onDelete }) => {
+export const CardItem = ({ card, onDelete }: Props) => {
   const deleteCard = useCardStore((state) => state.delete);
-  const onDeleteHandler = async (id: string) => {
-    await deleteCard(id);
+  const isDemo = useAuthStore((state) => state.isDemo);
+
+  const { isDeleteDialogOpen, closeDeleteDialog, deleteItem, openDeleteDialog } = useDelete<CardDto>();
+  const onDeleteHandler = async () => {
+    closeDeleteDialog();
+    await deleteCard(deleteItem.id);
     onDelete();
   };
   return (
-    <div className='w-full flex rounded-xl bg-secondary-600 px-4 py-2 items-center justify-between'>
-      <div className='flex items-center gap-4'>
-        <div className={`text-center w-10 ${getColorByPercent(card.progress)}`}>
-          <i className='fa fa-circle fa-sm' />
-          <div>{getPercentFromRatio(card.progress)}%</div>
+    <>
+      <div className='bg-secondary-600 flex w-full items-center justify-between rounded-xl px-4 py-2'>
+        <div className='flex items-center gap-4'>
+          <div className={`w-10 text-center ${getColorByPercent(card.progress)}`}>
+            <i className='fa fa-circle fa-sm' />
+            <div>{getPercentFromRatio(card.progress)}%</div>
+          </div>
+          <div>
+            {card.word.symbols}
+            <span className='text-secondary-200 px-1'>({card.word.transcription})</span>-{' '}
+            {card.word.translation}
+          </div>
         </div>
-        <div>
-          {card.word.symbols}
-          <span className='text-secondary-200 px-1'>({card.word.transcription})</span>-{' '}
-          {card.word.translation}
-        </div>
+        <i
+          className={cn(
+            'fa fa-close text-error-600 hover:bg-secondary-500 cursor-pointer rounded p-1',
+            isDemo ? 'hidden' : ''
+          )}
+          onClick={() => openDeleteDialog(card)}
+        />
       </div>
-      <i
-        className='fa fa-close text-error-600 cursor-pointer hover:bg-secondary-500 p-1 rounded'
-        onClick={() => onDeleteHandler(card.id)}
-      />
-    </div>
+      <DeleteDialog
+        title='Delete card'
+        isOpen={isDeleteDialogOpen}
+        onClose={closeDeleteDialog}
+        onDelete={() => onDeleteHandler()}
+      >
+        <div className='text-secondary-200'>
+          Are you sure you want to delete card <span className='text-lg text-white'>{card.word.symbols}</span>
+          ?
+        </div>
+      </DeleteDialog>
+    </>
   );
 };

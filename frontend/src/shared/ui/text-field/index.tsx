@@ -1,5 +1,6 @@
-import { InputHTMLAttributes, forwardRef } from 'react';
 import './style.css';
+
+import { forwardRef, InputHTMLAttributes } from 'react';
 
 export interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   variant?: 'primary';

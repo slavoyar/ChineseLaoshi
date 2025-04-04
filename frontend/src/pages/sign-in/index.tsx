@@ -1,8 +1,9 @@
+import { DemoUser } from '@shared/consts';
+import { useAuthStore } from '@shared/stores';
+import { Route } from '@shared/types';
 import { Button, TextField } from '@shared/ui';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Route } from '@shared/types';
-import { useAuthStore } from '@shared/stores';
 
 export const SignIn = () => {
   const [username, setUsername] = useState('');
@@ -16,6 +17,11 @@ export const SignIn = () => {
     navigate(Route.Root);
   };
 
+  const tryDemoVersion = async () => {
+    await login(DemoUser, 'password');
+    navigate(Route.Root);
+  };
+
   const keyUpHandler = async (key: string) => {
     if (key === 'Enter') {
       await handleClick();
@@ -23,8 +29,8 @@ export const SignIn = () => {
   };
 
   return (
-    <div className='lg:w-3/12 sm:w-full px-2 h-full grid grid-cols-1 gap-4 m-auto place-content-center'>
-      <h1 className='text-white text-2xl text-center uppercase'>Sign In</h1>
+    <div className='m-auto grid h-full grid-cols-1 place-content-center gap-4 px-2 sm:w-full md:w-1/2 lg:w-5/12 xl:w-1/3'>
+      <h1 className='text-center text-2xl uppercase text-white'>Sign In</h1>
       <TextField
         placeholder='Username'
         value={username}
@@ -39,6 +45,9 @@ export const SignIn = () => {
       />
       <Button variant='primary' onClick={() => handleClick()}>
         Sign In
+      </Button>
+      <Button variant='secondary' onClick={tryDemoVersion}>
+        Try demo version
       </Button>
       <div className='text-white'>
         Do not have an account?{' '}

@@ -2,10 +2,7 @@ import { generateEmail } from './reset';
 
 type TemplateName = 'reset' | 'verify';
 
-export const generateTemplate = (
-  name: TemplateName,
-  options: { token: string; locale: string },
-) => {
+export const generateTemplate = (name: TemplateName, options: { token: string; locale: string }) => {
   switch (name) {
     case 'reset':
       return generateEmail(options.locale, options.token);

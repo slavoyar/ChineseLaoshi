@@ -1,19 +1,34 @@
-import { FC, useEffect, useRef, useState } from 'react';
-import HanziWriter from 'hanzi-writer';
-import { useCardStore, Word } from '@entities/card';
+import { WordDto } from '@chinese-laoshi/shared';
+import { useCardStore } from '@entities/card';
+import { useStateStore } from '@shared/stores';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { useCounter, useDebounceValue, useResizeObserver } from '@siberiacancode/reactuse';
-import { useStateStore } from '@shared/stores';
+import HanziWriter from 'hanzi-writer';
+import { useEffect, useRef, useState } from 'react';
 
-interface Props extends Word {
+interface Props extends WordDto {
+  isNextDisabled?: boolean;
+  updateStats?: boolean;
+  showOutline?: boolean;
   onNext: () => void;
+  onComplete?: () => void;
 }
 
 const keysBySymbols = (symbols: string, id: string) =>
   symbols.split('').map((symbol, index) => `${id}-${symbol}-${index}`);
 
-export const WriteCard: FC<Props> = ({ id, symbols, translation, transcription, onNext }) => {
+export const WriteCard = ({
+  id,
+  symbols,
+  translation,
+  transcription,
+  isNextDisabled = false,
+  updateStats = true,
+  showOutline = false,
+  onNext,
+  onComplete,
+}: Props) => {
   const updateCardStats = useCardStore((state) => state.updateStats);
   const settings = useStateStore((state) => state.settings);
 
@@ -38,6 +53,9 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, transcription, 
     if (currentIndex < symbols.length - 1) {
       setTimeout(() => inc(), 500);
     }
+    if (guessedSymbols.length === symbols.length - 1 && onComplete) {
+      onComplete();
+    }
   };
 
   useEffect(() => {
@@ -46,7 +64,7 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, transcription, 
         width: fieldSize,
         height: fieldSize,
         showCharacter: false,
-        showOutline: false,
+        showOutline,
         showHintAfterMisses: settings.toggleHints ? 3 : false,
         drawingWidth: 20,
         strokeColor: '#31363F',
@@ -89,23 +107,25 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, transcription, 
   const iconClass = (cond: boolean) => (cond ? 'text-primary-100' : 'text-secondary-700');
 
   const buttonHandler = async (guessed: boolean) => {
-    await updateCardStats(id, guessed);
     onNext();
+    if (updateStats) {
+      await updateCardStats(id, guessed);
+    }
   };
 
   return (
-    <div ref={ref} className='md:w-[500px] p-4 flex flex-col bg-secondary-900 rounded-2xl gap-4'>
-      <div className='w-full bg-secondary-700 text-center text-white rounded p-2 text-xl'>
+    <div ref={ref} className='bg-secondary-900 flex flex-col gap-4 rounded-2xl p-4 md:w-[500px]'>
+      <div className='bg-secondary-700 w-full rounded p-2 text-center text-xl text-white'>
         {translation}
-        <span className='ml-2 rounded text-secondary-500 bg-secondary-500 hover:bg-secondary-700'>
+        <span className='text-secondary-500 bg-secondary-500 hover:bg-secondary-700 ml-2 rounded'>
           ({transcription})
         </span>
       </div>
-      <div className='flex justify-around items-center'>
+      <div className='flex items-center justify-around'>
         <Button variant='text' onClick={() => dec()} disabled={currentIndex === 0}>
           <i className={cn('fa fa-chevron-left', iconClass(currentIndex > 0))} />
         </Button>
-        <div className='max-w-[300px] max-h-[300px] bg-secondary-500 rounded'>
+        <div className='bg-secondary-500 max-h-[300px] max-w-[300px] rounded'>
           {keysBySymbols(symbols, id).map((key, index) => (
             <div
               id={`hanzi-input-${index}`}
@@ -118,7 +138,7 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, transcription, 
           <i className={cn('fa fa-chevron-right', iconClass(currentIndex < symbols.length - 1))} />
         </Button>
       </div>
-      <div className='w-full flex gap-4'>
+      <div className='flex w-full gap-4'>
         <Button className='w-full' variant='secondary' onClick={() => buttonHandler(false)}>
           Skip
         </Button>
@@ -126,7 +146,7 @@ export const WriteCard: FC<Props> = ({ id, symbols, translation, transcription, 
           className='w-full'
           variant='primary'
           title='Enter all hieroglyphs'
-          disabled={guessedSymbols.length !== symbols.length}
+          disabled={guessedSymbols.length !== symbols.length || isNextDisabled}
           onClick={() => buttonHandler(true)}
         >
           Next

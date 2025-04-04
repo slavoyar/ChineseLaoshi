@@ -1,14 +1,16 @@
-import { Button, CreateDialog, TextField } from '@shared/ui';
-import { FC, useEffect, useState } from 'react';
 import { useCardStore } from '@entities/card';
 import { useGroupStore } from '@entities/group';
+import { useAuthStore } from '@shared/stores';
+import { Button, CreateDialog, TextField } from '@shared/ui';
 import pinyin from 'pinyin';
+import { useEffect, useState } from 'react';
 
-interface AddWordProps {
+interface Props {
   groupId: string;
 }
 
-export const AddWord: FC<AddWordProps> = ({ groupId }) => {
+export const AddWord = ({ groupId }: Props) => {
+  const isDemo = useAuthStore((state) => state.isDemo);
   const [isOpen, setIsOpen] = useState(false);
   const [transcription, setTranscription] = useState('');
   const [translation, setTranslation] = useState('');
@@ -24,7 +26,7 @@ export const AddWord: FC<AddWordProps> = ({ groupId }) => {
   }, [isOpen]);
   const saveHandler = async () => {
     try {
-      await createWord(groupId, { transcription, translation, symbols });
+      await createWord(groupId, { word: { transcription, translation, symbols }, groupId });
       incrementWordCount(groupId);
     } finally {
       setIsOpen(false);
@@ -43,16 +45,16 @@ export const AddWord: FC<AddWordProps> = ({ groupId }) => {
 
   return (
     <>
-      <Button variant='text' onClick={() => setIsOpen(true)}>
+      <Button
+        variant='text'
+        disabled={isDemo}
+        title={isDemo ? 'Not available in demo' : ''}
+        onClick={() => setIsOpen(true)}
+      >
         <i className='fa fa-add mr-1' />
         Add word
       </Button>
-      <CreateDialog
-        onSave={saveHandler}
-        isOpen={isOpen}
-        title='Create word'
-        onClose={() => setIsOpen(false)}
-      >
+      <CreateDialog onSave={saveHandler} isOpen={isOpen} title='Create word' onClose={() => setIsOpen(false)}>
         <div className='flex flex-col gap-2'>
           <TextField
             value={symbols}

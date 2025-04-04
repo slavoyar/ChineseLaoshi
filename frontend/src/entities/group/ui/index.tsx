@@ -1,28 +1,46 @@
-import { useGroupStore, Group } from '@entities/group';
-import { Accordion } from '@shared/ui';
-import { FC, ReactNode } from 'react';
+import { GroupDto } from '@chinese-laoshi/shared';
+import { useGroupStore } from '@entities/group';
+import { useDelete } from '@shared/hooks';
+import { useAuthStore } from '@shared/stores';
+import { Accordion, DeleteDialog } from '@shared/ui';
+import { ReactNode } from 'react';
+
 import { GroupHeader } from './group-header';
 
 interface Props {
-  content: (item: Group) => ReactNode;
-  onGroupOpen: (item: Group) => void;
+  content: (item: GroupDto) => ReactNode;
+  onGroupOpen: (item: GroupDto) => void;
 }
 
-export const GroupList: FC<Props> = ({ content, onGroupOpen }) => {
+export const GroupList = ({ content, onGroupOpen }: Props) => {
   const [groups, deleteGroup] = useGroupStore((state) => [state.groups, state.delete]);
+  const isDemo = useAuthStore((state) => state.isDemo);
+  const { isDeleteDialogOpen, closeDeleteDialog, deleteItem, openDeleteDialog } = useDelete<GroupDto>();
 
-  const deleteHandler = async (item: Group) => {
-    await deleteGroup(item.id);
+  const deleteHandler = async () => {
+    closeDeleteDialog();
+    await deleteGroup(deleteItem.id);
   };
 
   return (
-    <Accordion
-      sections={groups}
-      rowKey={(item) => item.id}
-      header={(item) => <GroupHeader name={item.name} wordCount={item.wordCount} />}
-      content={content}
-      onOpen={onGroupOpen}
-      onDelete={deleteHandler}
-    />
+    <>
+      <Accordion
+        sections={groups}
+        rowKey={(item) => item.id}
+        header={(item) => <GroupHeader name={item.name} wordCount={item.wordCount} />}
+        content={content}
+        onOpen={onGroupOpen}
+        isActionsAvailable={!isDemo}
+        onDelete={openDeleteDialog}
+      />
+      <DeleteDialog
+        title='Delete group'
+        isOpen={isDeleteDialogOpen}
+        onClose={closeDeleteDialog}
+        onDelete={deleteHandler}
+      >
+        <div className='text-secondary-200'>Are you sure you want to delete group '{deleteItem.name}'?</div>
+      </DeleteDialog>
+    </>
   );
 };
