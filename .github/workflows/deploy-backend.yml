@@ -2,6 +2,9 @@ name: Deploy to server
 
 on:
   push:
+    paths:
+      - 'backend/**'
+      - 'shared/**'
     branches:
       - production
 
@@ -10,65 +13,6 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
-  build-and-deploy-frontend:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-
-      - name: Install dependencies
-        working-directory: ./frontend
-        run: npm install
-
-      - name: Build frontend
-        working-directory: ./frontend
-        run: npm run build
-
-      - name: Deploy to remote server
-        uses: easingthemes/ssh-deploy@main
-        with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          ARGS: '-rltgoDzvO --delete' # Optional: rsync options for more control
-          SOURCE: 'frontend/dist/'
-          REMOTE_HOST: ${{ secrets.SERVER_HOST }}
-          REMOTE_USER: ${{ secrets.SERVER_USER }}
-          TARGET: ${{ secrets.FRONTEND_PATH }}
-
-  migrate-database:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '23.9.0'
-
-      - name: Install dependencies
-        working-directory: ./backend
-        run: npm install
-
-      - name: Create .env file
-        working-directory: ./backend
-        run: echo "DB_URL=${{ secrets.DB_URL }}" > .env
-
-      - name: Generate prisma client
-        working-directory: ./backend
-        run: npm run generate
-
-      - name: Migrate database
-        working-directory: ./backend
-        run: npm run migrate:prod
-
-      - name: Seed database
-        working-directory: ./backend
-        run: npx prisma db seed
-
   build-and-deploy-backend:
     runs-on: ubuntu-latest
     permissions:

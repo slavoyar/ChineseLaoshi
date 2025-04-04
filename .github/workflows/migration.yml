@@ -1,0 +1,40 @@
+name: Apply database migrations
+
+on:
+  push:
+    paths:
+      - 'backend/src/config/prisma/**'
+    branches:
+      - production
+
+jobs:
+  migrate-database:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23.9.0'
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm install
+
+      - name: Create .env file
+        working-directory: ./backend
+        run: echo "DB_URL=${{ secrets.DB_URL }}" > .env
+
+      - name: Generate prisma client
+        working-directory: ./backend
+        run: npm run generate
+
+      - name: Migrate database
+        working-directory: ./backend
+        run: npm run migrate:prod
+
+      - name: Seed database
+        working-directory: ./backend
+        run: npx prisma db seed
