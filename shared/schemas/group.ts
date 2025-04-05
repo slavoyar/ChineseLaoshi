@@ -2,7 +2,7 @@ import { type Static, Type } from '@sinclair/typebox';
 
 export const GroupSchema = Type.Object({
   id: Type.String({ format: 'uuid' }),
-  name: Type.String(),
+  name: Type.String({ minLength: 1 }),
   wordCount: Type.Number(),
 });
 
