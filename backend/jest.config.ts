@@ -15,6 +15,7 @@ const config: Config = {
     '@repositories(.*)': '<rootDir>/src/repositories$1',
     '@configs(.*)': '<rootDir>/src/configs$1',
     '@shared(.*)': path.join(__dirname, '..', 'shared', '$1'),
+    '@utils(.*)': '<rootDir>/utils$1',
   },
   transform: {
     '^.+\\.(ts)$': ['ts-jest', { useESM: true }],

@@ -32,6 +32,7 @@ axios.interceptors.response.use(
         processQueue(err);
         isRefreshing = false;
         window.location.href = '/signin';
+        await authService.logout();
         return Promise.reject(err);
       }
     }

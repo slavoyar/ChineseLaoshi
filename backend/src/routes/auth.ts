@@ -12,7 +12,7 @@ import { Response } from 'express';
 
 import { createRouter, Ok, type Params } from './createRouter';
 
-const IS_DEVELOPMENT = process.env.NODE_ENV === 'development';
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 const { router, createRoute } = createRouter('/auth');
 
@@ -63,8 +63,8 @@ createRoute<Params, ResetPasswordDto>(
 const setTokenCookies = (res: Response, user: User) => {
   const tokenPair = userService.createTokenPair(user);
   res
-    .cookie('accessToken', tokenPair.accessToken, { httpOnly: true, secure: !IS_DEVELOPMENT })
-    .cookie('refreshToken', tokenPair.refreshToken, { httpOnly: true, secure: !IS_DEVELOPMENT })
+    .cookie('accessToken', tokenPair.accessToken, { httpOnly: true, secure: IS_PRODUCTION })
+    .cookie('refreshToken', tokenPair.refreshToken, { httpOnly: true, secure: IS_PRODUCTION })
     .sendStatus(200);
 };
 

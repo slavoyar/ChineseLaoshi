@@ -1,31 +1,7 @@
-﻿import 'express-async-errors';
+import app from './app';
 
-import { errorMiddleware, loggerMiddleware, setUserMiddleware } from '@middlewares';
-import cookieParser from 'cookie-parser';
-import dotenv from 'dotenv';
-import express from 'express';
-
-import routes from './routes';
-
-dotenv.config();
-
-const app = express();
 const port = Number(process.env.PORT);
-
-app.use(loggerMiddleware);
-
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-app.use(cookieParser());
-
-app.use(setUserMiddleware);
-
-app.use('/api', routes);
-
-app.use(errorMiddleware);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
-export default app;

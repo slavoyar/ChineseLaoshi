@@ -9,7 +9,7 @@ export const errorMiddleware = (err: unknown, req: Request, res: Response, next:
     return res.status(err.statusCode).json(err);
   }
   if (err instanceof JsonWebTokenError) {
-    return res.status(401).json({ message: 'Unauthorized' });
+    return res.clearCookie('accessToken').status(401).json({ message: 'Unauthorized' });
   }
   res.status(500).json(err);
 };
