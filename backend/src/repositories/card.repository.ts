@@ -51,3 +51,4 @@ class CardRepository {
 }
 
 export const cardRepository = new CardRepository();
+export type CardRepositoryType = typeof cardRepository;

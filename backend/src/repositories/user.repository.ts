@@ -32,3 +32,4 @@ class UserRepository {
 }
 
 export const userRepository = new UserRepository();
+export type UserRepositoryType = typeof userRepository;

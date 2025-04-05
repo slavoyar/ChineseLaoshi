@@ -46,3 +46,4 @@ class WordRepository {
 }
 
 export const wordRepository = new WordRepository();
+export type WordRepositoryType = typeof wordRepository;
