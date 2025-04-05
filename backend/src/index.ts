@@ -1,6 +1,7 @@
 ﻿import 'express-async-errors';
 
-import { errorMiddleware, loggerMiddleware } from '@middlewares';
+import { errorMiddleware, loggerMiddleware, setUserMiddleware } from '@middlewares';
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import express from 'express';
 
@@ -12,8 +13,12 @@ const app = express();
 const port = Number(process.env.PORT);
 
 app.use(loggerMiddleware);
+
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(cookieParser());
+
+app.use(setUserMiddleware);
 
 app.use('/api', routes);
 

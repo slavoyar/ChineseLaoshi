@@ -20,14 +20,6 @@ const loginMiddleware = createValidationMiddleware(LoginSchema);
 const registerMiddleware = createValidationMiddleware(CreateUserSchema);
 const updatePasswordMiddleware = createValidationMiddleware(UpdatePasswordSchema);
 
-const setTokenCookies = (res: Response, user: User) => {
-  const tokenPair = userService.createTokenPair(user);
-  res
-    .cookie('accessToken', tokenPair.accessToken, { httpOnly: true, secure: !IS_DEVELOPMENT })
-    .cookie('refreshToken', tokenPair.refreshToken, { httpOnly: true, secure: !IS_DEVELOPMENT })
-    .sendStatus(200);
-};
-
 router.post('/auth/login', loginMiddleware, async (req, res) => {
   const { username, password } = req.body;
   const user = await userService.getUserByCredentials(username, password);
@@ -45,6 +37,16 @@ router.post('/auth/update-password', updatePasswordMiddleware, async (req, res) 
   setTokenCookies(res, user);
 });
 
+router.post('/auth/logout', async (_, res) => {
+  res.clearCookie('accessToken').clearCookie('refreshToken').sendStatus(200);
+});
+
+router.post('/auth/refresh-token', async (req, res) => {
+  const { refreshToken } = req.cookies;
+  const user = await userService.refreshToken(refreshToken);
+  setTokenCookies(res, user);
+});
+
 createRoute<Params, ResetPasswordDto>(
   async (req) => {
     const { email } = req.body;
@@ -57,5 +59,13 @@ createRoute<Params, ResetPasswordDto>(
     schema: ResetPasswordSchema,
   }
 );
+
+const setTokenCookies = (res: Response, user: User) => {
+  const tokenPair = userService.createTokenPair(user);
+  res
+    .cookie('accessToken', tokenPair.accessToken, { httpOnly: true, secure: !IS_DEVELOPMENT })
+    .cookie('refreshToken', tokenPair.refreshToken, { httpOnly: true, secure: !IS_DEVELOPMENT })
+    .sendStatus(200);
+};
 
 export default router;

@@ -14,9 +14,9 @@ class UserService {
   }
 
   async getUserByCredentials(email: string, password: string) {
-    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
     const user = await userRepository.getByEmail(email);
-    if (user.password !== passwordHash) {
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
       throw new CustomError('loginError');
     }
     return user;
@@ -46,13 +46,25 @@ class UserService {
   }
 
   createTokenPair(user: User) {
-    const accessToken = sign({ userId: user.id, username: user.username }, process.env.JWT_SECRET_KEY, {
-      expiresIn: '1h',
+    const accessToken = sign({ id: user.id, username: user.username }, process.env.JWT_SECRET_KEY, {
+      expiresIn: '15m',
     });
-    const refreshToken = sign({ userId: user.id }, process.env.JWT_SECRET_KEY, {
+    const refreshToken = sign({ id: user.id }, process.env.JWT_SECRET_KEY, {
       expiresIn: '7d',
     });
     return { accessToken, refreshToken };
+  }
+
+  async refreshToken(token: string) {
+    const { payload } = verify(token, JWT_SECRET_KEY, { complete: true });
+    if (typeof payload === 'string') {
+      throw new CustomError('validationError');
+    }
+    const user = await userRepository.getById(payload.userId);
+    if (!user) {
+      throw new CustomError('entityNotFoundError');
+    }
+    return user;
   }
 }
 

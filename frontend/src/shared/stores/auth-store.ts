@@ -46,6 +46,7 @@ export const useAuthStore = create(
       },
       signOut: () => {
         set(() => ({ username: '', isDemo: false }));
+        authService.logout();
       },
     }),
     { name: 'auth' }
