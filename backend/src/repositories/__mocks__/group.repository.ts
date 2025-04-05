@@ -1,4 +1,5 @@
 import { Group, PrismaPromise } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import type { GroupRepositoryType } from '@repositories/group.repository';
 import { getUuid, mockPrismaPromise } from '@utils';
 
@@ -10,7 +11,13 @@ export const groupRepository: GroupRepositoryType = {
   }),
   createGroup: jest.fn((data) => mockPrismaPromise({ ...data, id: getUuid(groups.length + 1) })),
   updateGroup: jest.fn((data) => mockPrismaPromise(data)),
-  deleteGroup: jest.fn((data) => mockPrismaPromise(data)),
+  deleteGroup: jest.fn((id) => {
+    // we expect to get a P2025 error when id is not found
+    if (id === getUuid(404)) {
+      throw new PrismaClientKnownRequestError('P2025', { code: 'P2025', clientVersion: '4.0.0' });
+    }
+    return mockPrismaPromise(id);
+  }),
   incrementWordCount: jest.fn(),
   decrementWordCount: jest.fn(),
 };
