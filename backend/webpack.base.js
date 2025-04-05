@@ -33,6 +33,10 @@ export default {
         exclude: /node_modules/,
         loader: 'ts-loader',
       },
+      {
+        test: /\/__mocks__\/.*\.(ts|js|tsx|jsx)$/,
+        use: 'ignore-loader',
+      },
     ],
   },
   target: 'node', // Specify that this build is for Node.js

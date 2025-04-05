@@ -8,17 +8,16 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "erasableSyntaxOnly": true,
-    "verbatimModuleSyntax": true,
     "strict": true,
     "skipLibCheck": true,
-    "typeRoots": ["./node_modules/@types", "types"],
+    "typeRoots": ["./node_modules/@types", "types", "../node_modules/@types"],
     "baseUrl": "./",
     "paths": {
       "@shared/*": ["../shared/*"],
-      "@*": ["./src/*"]
+      "@*": ["src/*"]
     },
     "strictNullChecks": true
   },
-  "include": ["types/**/*.d.ts", "./src/**/*.ts"],
+  "include": ["types/**/*.d.ts", "./src/**/*.ts", "tests/**/*.ts"],
   "exclude": ["node_modules"]
 }
