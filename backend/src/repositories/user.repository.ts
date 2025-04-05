@@ -12,7 +12,7 @@ class UserRepository {
   }
 
   async getByEmail(email: string) {
-    const user = await prisma.user.findFirst({ where: { email } });
+    const user = await prisma.user.findFirst({ where: { OR: [{ email }, { username: email }] } });
     if (!user) {
       throw new CustomError('entityNotFoundError');
     }

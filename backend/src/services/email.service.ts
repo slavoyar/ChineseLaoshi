@@ -7,7 +7,7 @@ const { MAILER_USER, JWT_SECRET_KEY } = process.env;
 class EmailService {
   async resetPassword(email: string) {
     const user = await userRepository.getByEmail(email);
-    const token = sign({ userId: user.id }, JWT_SECRET_KEY, { expiresIn: '15m' });
+    const token = sign({ userId: user.id, password: user.password }, JWT_SECRET_KEY, { expiresIn: '15m' });
     const template = generateTemplate('reset', { locale: 'en', token });
 
     transporter.sendMail({
