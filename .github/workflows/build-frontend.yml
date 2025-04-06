@@ -1,7 +1,10 @@
-name: Lint and build
+name: Lint, build and test frontend
 
 on:
-  pull_request:
+  push:
+    paths:
+      - 'frontend/**'
+      - 'shared/**'
     branches:
       - '**'
 
@@ -19,13 +22,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Lint frontend
+      - name: Lint all packages
         run: npm run lint
 
       - name: Build frontend
         working-directory: ./frontend
-        run: npm run build
-
-      - name: Build backend
-        working-directory: ./backend
         run: npm run build
