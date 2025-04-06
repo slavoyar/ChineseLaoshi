@@ -24,6 +24,7 @@ createRoute<{ groupId: string }>(
   },
   {
     endpoint: '/:groupId',
+    middlewares: [authMiddleware],
   }
 );
 
@@ -36,10 +37,11 @@ createRoute<Params, GetWriteCardDto, CardDto[]>(
     method: 'post',
     endpoint: '/study/write',
     schema: GetWriteCardSchema,
+    middlewares: [authMiddleware],
   }
 );
 
-createRoute<{ groupId: string }, CreateCardDto>(
+createRoute<Params, CreateCardDto>(
   async (req) => {
     const { groupId } = req.params;
 
@@ -48,7 +50,6 @@ createRoute<{ groupId: string }, CreateCardDto>(
   },
   {
     method: 'post',
-    endpoint: '/:groupId',
     schema: CreateCardSchema,
     middlewares: [authMiddleware],
   }
@@ -59,7 +60,12 @@ createRoute<Params, UpdateCardStatsDto>(
     await cardService.updateCardStats(req.body);
     return Ok();
   },
-  { method: 'post', schema: UpdateCardStatsSchema }
+  {
+    method: 'post',
+    endpoint: '/stats',
+    schema: UpdateCardStatsSchema,
+    middlewares: [authMiddleware],
+  }
 );
 
 createRoute<Params, UpdateCardWordDto>(
@@ -67,7 +73,11 @@ createRoute<Params, UpdateCardWordDto>(
     await cardService.updateCard(req.body);
     return Ok();
   },
-  { method: 'put', schema: UpdateCardWordSchema, middlewares: [authMiddleware] }
+  {
+    method: 'put',
+    schema: UpdateCardWordSchema,
+    middlewares: [authMiddleware],
+  }
 );
 
 createRoute<{ cardId: string }>(

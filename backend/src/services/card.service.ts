@@ -59,7 +59,8 @@ class CardService {
 
     if (cardCount !== 1) {
       return prisma.$transaction(async (tx) => {
-        const word = await wordRepository.createWord(data.word, tx);
+        const wordData = { ...data.word, id: undefined };
+        const word = await wordRepository.createWord(wordData, tx);
         const card = await cardRepository.updateCard({ id: data.id, word }, tx);
         return { ...card, word };
       });
