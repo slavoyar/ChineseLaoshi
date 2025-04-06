@@ -14,7 +14,12 @@ class UserService {
   }
 
   async getUserByCredentials(email: string, password: string) {
-    const user = await userRepository.getByEmail(email);
+    let user;
+    try {
+      user = await userRepository.getByEmail(email);
+    } catch {
+      throw new CustomError('loginError');
+    }
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
       throw new CustomError('loginError');
@@ -60,7 +65,7 @@ class UserService {
     if (typeof payload === 'string') {
       throw new CustomError('validationError');
     }
-    const user = await userRepository.getById(payload.userId);
+    const user = await userRepository.getById(payload.id);
     if (!user) {
       throw new CustomError('entityNotFoundError');
     }

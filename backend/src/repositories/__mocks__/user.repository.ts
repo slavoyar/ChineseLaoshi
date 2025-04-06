@@ -1,18 +1,15 @@
-import { PrismaPromise, User } from '@prisma/client';
 import type { UserRepositoryType } from '@repositories/user.repository';
+import { getUuid, mockPrismaPromise } from '@utils';
 
 import { users } from './user.data';
 
 export const userRepository: UserRepositoryType = {
-  getById: jest.fn(
-    (id) => Promise.resolve(users.find((u) => u.id === id) ?? users[0]) as PrismaPromise<User>
-  ),
+  getById: jest.fn((id) => mockPrismaPromise(users.find((u) => u.id === id))),
   getByEmail: jest.fn((email) => {
     let user = users.find((u) => u.email === email);
     user ??= users.find((u) => u.username === email);
-    user ??= users[0];
-    return Promise.resolve(user) as PrismaPromise<User>;
+    return mockPrismaPromise(user);
   }),
-  create: jest.fn(),
+  create: jest.fn((data) => mockPrismaPromise({ ...data, id: getUuid(users.length + 1) })),
   update: jest.fn(),
 };

@@ -5,7 +5,7 @@ export const errors = {
   },
   loginError: {
     message: 'Wrong username or password',
-    statusCode: 500,
+    statusCode: 401,
   },
   registerError: {
     message: 'Username or email is not unique',

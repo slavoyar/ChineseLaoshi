@@ -7,9 +7,9 @@ export const UserSchema = Type.Object({
 });
 
 export const CreateUserSchema = Type.Object({
-  username: Type.String(),
+  username: Type.String({ minLength: 3 }),
   email: Type.String({ format: 'email' }),
-  password: Type.String(),
+  password: Type.String({ format: 'password', minLength: 8 }),
 });
 
 export const UpdateUserSchema = Type.Partial(CreateUserSchema);
