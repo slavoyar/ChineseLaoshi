@@ -1,7 +1,7 @@
 import { DemoUser } from '@shared/consts';
 import { useAuthStore } from '@shared/stores';
 import { Route } from '@shared/types';
-import { Button, TextField } from '@shared/ui';
+import { AuthLayout, Button, TextField } from '@shared/ui';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -29,7 +29,7 @@ export const SignIn = () => {
   };
 
   return (
-    <div className='m-auto grid h-full grid-cols-1 place-content-center gap-4 px-2 sm:w-full md:w-1/2 lg:w-5/12 xl:w-1/3'>
+    <AuthLayout>
       <h1 className='text-center text-2xl uppercase text-white'>Sign In</h1>
       <TextField
         placeholder='Username'
@@ -58,6 +58,6 @@ export const SignIn = () => {
       <Link className='text-primary-300' to={Route.ResetPassword}>
         Forget password?
       </Link>
-    </div>
+    </AuthLayout>
   );
 };
