@@ -8,10 +8,11 @@ class WordRepository {
       where: {
         OR: [
           { translation: { contains: query } },
-          { translation: { contains: query } },
+          { transcription: { contains: query } },
           { symbols: { contains: query } },
         ],
       },
+      take: 10,
     });
   }
 
