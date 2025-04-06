@@ -24,6 +24,7 @@ export default {
       '@routes': path.resolve(__dirname, 'src/routes/'),
       '@services': path.resolve(__dirname, 'src/services/'),
       '@shared': path.resolve(__dirname, '../shared/'),
+      '@utils': path.resolve(__dirname, 'utils/'),
     },
   },
   module: {
@@ -32,6 +33,10 @@ export default {
         test: /\.ts$/,
         exclude: /node_modules/,
         loader: 'ts-loader',
+      },
+      {
+        test: /\/__mocks__\/.*\.(ts|js|tsx|jsx)$/,
+        use: 'ignore-loader',
       },
     ],
   },

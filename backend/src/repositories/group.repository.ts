@@ -29,3 +29,4 @@ class GroupRepository {
 }
 
 export const groupRepository = new GroupRepository();
+export type GroupRepositoryType = typeof groupRepository;

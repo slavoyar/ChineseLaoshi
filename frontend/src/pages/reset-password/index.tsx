@@ -1,7 +1,7 @@
 import { Route } from '@shared/types';
-import { Button, TextField } from '@shared/ui';
+import { AuthLayout, Button, TextField } from '@shared/ui';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { resetPassword } from './api';
 
@@ -23,15 +23,11 @@ export const ResetPassword = () => {
   };
 
   if (isFetched) {
-    return (
-      <div className='m-auto grid h-full grid-cols-1 place-content-center gap-4 px-2 sm:w-full lg:w-3/12'>
-        Email has been sent to {email}
-      </div>
-    );
+    return <AuthLayout>Email has been sent to {email}</AuthLayout>;
   }
 
   return (
-    <div className='m-auto grid h-full grid-cols-1 place-content-center gap-4 px-2 sm:w-full lg:w-3/12'>
+    <AuthLayout>
       <h1 className='text-center text-2xl uppercase text-white'>Enter email</h1>
       <TextField
         placeholder='Email'
@@ -42,6 +38,12 @@ export const ResetPassword = () => {
       <Button variant='primary' disabled={!email} onClick={() => handleClick()}>
         Reset password
       </Button>
-    </div>
+      <p className='text-sm text-white'>
+        Enter your email and we will send you a link to reset your password
+      </p>
+      <Link className='text-primary-300' to={Route.SignIn}>
+        Back to sign in
+      </Link>
+    </AuthLayout>
   );
 };

@@ -11,11 +11,16 @@ import { createRouter, Ok, type Params } from './createRouter';
 
 const { router, createRoute } = createRouter('/groups');
 
-createRoute(async (req) => {
-  const { user } = req;
-  const groups = await groupService.getGroupsByUserId(user.id);
-  return Ok(groups);
-});
+createRoute(
+  async (req) => {
+    const { user } = req;
+    const groups = await groupService.getGroupsByUserId(user.id);
+    return Ok(groups);
+  },
+  {
+    middlewares: [authMiddleware],
+  }
+);
 
 createRoute<Params, CreateGroupDto>(
   async (req) => {

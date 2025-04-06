@@ -1,5 +1,5 @@
 import { Route } from '@shared/types';
-import { Button, TextField } from '@shared/ui';
+import { AuthLayout, Button, TextField } from '@shared/ui';
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -41,7 +41,7 @@ export const UpdatePassword = () => {
   };
 
   return (
-    <div className='m-auto grid h-full grid-cols-1 place-content-center gap-4 px-2 sm:w-full lg:w-3/12'>
+    <AuthLayout>
       <h1 className='text-center text-2xl uppercase text-white'>Update password</h1>
       <TextField
         placeholder='Password'
@@ -63,6 +63,6 @@ export const UpdatePassword = () => {
       >
         Update password
       </Button>
-    </div>
+    </AuthLayout>
   );
 };

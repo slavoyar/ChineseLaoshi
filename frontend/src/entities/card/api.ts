@@ -21,7 +21,7 @@ class CardService extends BaseService<CardDto, CreateCardDto, UpdateCardWordDto>
 
   updateCardStats(id: string, guessed: boolean): Promise<CardDto> {
     return axios.post<UpdateCardStatsDto, CardDto>(
-      this.url,
+      `${this.url}/stats`,
       { id, guessed },
       { cancelToken: this.getCancelToken('updateCardStats') }
     );

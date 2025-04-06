@@ -1,56 +1,53 @@
-﻿import { CustomError } from '@configs/errors';
-import passport from '@configs/passport';
+﻿import { createValidationMiddleware } from '@middlewares';
+import { User } from '@prisma/client';
 import { emailService, userService } from '@services';
-import { type CreateUserDto, CreateUserSchema } from '@shared/schemas';
-import bcrypt from 'bcryptjs';
-import { verify } from 'jsonwebtoken';
+import {
+  CreateUserSchema,
+  LoginSchema,
+  ResetPasswordDto,
+  ResetPasswordSchema,
+  UpdatePasswordSchema,
+} from '@shared/schemas';
+import { Response } from 'express';
 
 import { createRouter, Ok, type Params } from './createRouter';
 
-const SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
-const { JWT_SECRET_KEY } = process.env;
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 const { router, createRoute } = createRouter('/auth');
 
-router.post('/auth/login', (req, res, next) => {
-  passport.authenticate('local', (err: unknown, user: Express.User, info: { message: string }) => {
-    if (err) {
-      return next(err);
-    }
-    if (!user) {
-      return res.status(401).json({ message: info.message });
-    }
-    req.logIn(user, (error) => {
-      if (error) {
-        return next(error);
-      }
-      return res.json({ message: 'Login successful' });
-    });
-  })(req, res, next);
+const loginMiddleware = createValidationMiddleware(LoginSchema);
+const registerMiddleware = createValidationMiddleware(CreateUserSchema);
+const updatePasswordMiddleware = createValidationMiddleware(UpdatePasswordSchema);
+
+router.post('/auth/login', loginMiddleware, async (req, res) => {
+  const { username, password } = req.body;
+  const user = await userService.getUserByCredentials(username, password);
+  setTokenCookies(res, user);
 });
 
-createRoute<Params, CreateUserDto>(
-  async (req) => {
-    const { username, email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-    const user = await userService.createUser({ username, email, password: hashedPassword });
-    return new Promise((resolve, reject) => {
-      req.logIn(user, (error) => {
-        if (error) {
-          reject(error);
-        }
-        resolve(Ok({ message: 'Registration is successful' }));
-      });
-    });
-  },
-  {
-    method: 'post',
-    endpoint: '/register',
-    schema: CreateUserSchema,
-  }
-);
+router.post('/auth/register', registerMiddleware, async (req, res) => {
+  const user = await userService.createUser(req.body);
+  setTokenCookies(res, user);
+});
 
-createRoute<Params, { email: string }>(
+router.post('/auth/update-password', updatePasswordMiddleware, async (req, res) => {
+  const { token, password } = req.body;
+  const user = await userService.updatePassword(token, password);
+  setTokenCookies(res, user);
+});
+
+router.post('/auth/logout', async (_, res) => {
+  res.clearCookie('accessToken').clearCookie('refreshToken').sendStatus(200);
+});
+
+router.post('/auth/refresh-token', async (req, res) => {
+  const { refreshToken } = req.cookies;
+  const user = await userService.refreshToken(refreshToken);
+  setTokenCookies(res, user);
+});
+
+createRoute<Params, ResetPasswordDto>(
   async (req) => {
     const { email } = req.body;
     await emailService.resetPassword(email);
@@ -59,32 +56,16 @@ createRoute<Params, { email: string }>(
   {
     method: 'post',
     endpoint: '/reset-password',
+    schema: ResetPasswordSchema,
   }
 );
 
-createRoute<Params, { token: string; password: string }>(
-  async (req) => {
-    const { token, password } = req.body;
-    const { payload } = verify(token, JWT_SECRET_KEY, { complete: true });
-    if (typeof payload === 'string') {
-      throw new CustomError('entityUpdateError');
-    }
-    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-    const user = await userService.updatePassword(payload.userId, hashedPassword);
-
-    return new Promise((resolve, reject) => {
-      req.logIn(user, (error) => {
-        if (error) {
-          reject(error);
-        }
-        resolve(Ok({ message: 'Password changed' }));
-      });
-    });
-  },
-  {
-    method: 'post',
-    endpoint: '/update-password',
-  }
-);
+const setTokenCookies = (res: Response, user: User) => {
+  const tokenPair = userService.createTokenPair(user);
+  res
+    .cookie('accessToken', tokenPair.accessToken, { httpOnly: true, secure: IS_PRODUCTION })
+    .cookie('refreshToken', tokenPair.refreshToken, { httpOnly: true, secure: IS_PRODUCTION })
+    .sendStatus(200);
+};
 
 export default router;

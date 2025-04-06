@@ -15,6 +15,10 @@ class AuthService {
     );
 
   register = (data: CreateUserDto) => axios.post(`${URL}/register`, data);
+
+  logout = () => axios.post(`${URL}/logout`);
+
+  refreshToken = () => axios.post(`${URL}/refresh-token`);
 }
 
 export const authService = new AuthService();

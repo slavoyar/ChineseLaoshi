@@ -8,10 +8,11 @@ class WordRepository {
       where: {
         OR: [
           { translation: { contains: query } },
-          { translation: { contains: query } },
+          { transcription: { contains: query } },
           { symbols: { contains: query } },
         ],
       },
+      take: 10,
     });
   }
 
@@ -46,3 +47,4 @@ class WordRepository {
 }
 
 export const wordRepository = new WordRepository();
+export type WordRepositoryType = typeof wordRepository;
