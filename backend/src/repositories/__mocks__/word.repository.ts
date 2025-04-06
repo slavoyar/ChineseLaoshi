@@ -1,8 +1,10 @@
 import type { WordRepositoryType } from '@repositories/word.repository';
-import { mockPrismaPromise } from '@utils';
+import { getUuid, mockPrismaPromise } from '@utils';
+
+import { words } from './word.data';
 
 export const wordRepository: WordRepositoryType = {
-  createWord: jest.fn(),
+  createWord: jest.fn((word) => mockPrismaPromise({ ...word, id: getUuid(words.length + 1) })),
   deleteWord: jest.fn(),
   deleteWords: jest.fn(),
   updateWord: jest.fn(),

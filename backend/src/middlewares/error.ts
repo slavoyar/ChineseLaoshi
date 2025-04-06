@@ -6,7 +6,7 @@ import { JsonWebTokenError } from 'jsonwebtoken';
 const NODE_ENV = process.env.NODE_ENV;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const errorMiddleware = (err: unknown, req: Request, res: Response, next: NextFunction) => {
-  if (NODE_ENV !== 'test') {
+  if (NODE_ENV !== 'test' && err instanceof PrismaClientKnownRequestError) {
     console.error(err);
   }
   if (isCustomError(err)) {
@@ -17,7 +17,7 @@ export const errorMiddleware = (err: unknown, req: Request, res: Response, next:
   }
   if (err instanceof PrismaClientKnownRequestError) {
     if (err.code === 'P2025' || err.code === 'P2016') {
-      return res.status(404).json({ message: 'Not found' });
+      return res.status(404).json({ message: 'Prisma: Not found' });
     }
   }
   res.status(500).json(err);

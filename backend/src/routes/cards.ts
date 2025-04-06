@@ -28,19 +28,6 @@ createRoute<{ groupId: string }>(
   }
 );
 
-createRoute<Params, GetWriteCardDto, CardDto[]>(
-  async (req) => {
-    const cards = await cardService.getWriteCards(req.body, req.user.id);
-    return Ok(cards);
-  },
-  {
-    method: 'post',
-    endpoint: '/study/write',
-    schema: GetWriteCardSchema,
-    middlewares: [authMiddleware],
-  }
-);
-
 createRoute<Params, CreateCardDto>(
   async (req) => {
     const { groupId } = req.params;
@@ -51,6 +38,18 @@ createRoute<Params, CreateCardDto>(
   {
     method: 'post',
     schema: CreateCardSchema,
+    middlewares: [authMiddleware],
+  }
+);
+
+createRoute<Params, UpdateCardWordDto>(
+  async (req) => {
+    await cardService.updateCard(req.body);
+    return Ok();
+  },
+  {
+    method: 'put',
+    schema: UpdateCardWordSchema,
     middlewares: [authMiddleware],
   }
 );
@@ -68,14 +67,15 @@ createRoute<Params, UpdateCardStatsDto>(
   }
 );
 
-createRoute<Params, UpdateCardWordDto>(
+createRoute<Params, GetWriteCardDto, CardDto[]>(
   async (req) => {
-    await cardService.updateCard(req.body);
-    return Ok();
+    const cards = await cardService.getWriteCards(req.body, req.user.id);
+    return Ok(cards);
   },
   {
-    method: 'put',
-    schema: UpdateCardWordSchema,
+    method: 'post',
+    endpoint: '/study/write',
+    schema: GetWriteCardSchema,
     middlewares: [authMiddleware],
   }
 );
