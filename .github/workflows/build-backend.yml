@@ -1,12 +1,12 @@
 name: Lint, build and test backend
 
 on:
-  push:
+  pull_request:
     paths:
       - 'backend/**'
       - 'shared/**'
     branches:
-      - '**'
+      - production
 
 jobs:
   lint-build-and-test:
