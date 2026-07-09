@@ -1,9 +1,7 @@
-import { useAuthStore } from '@shared/stores';
-import { Route } from '@shared/types';
 import { Header } from '@shared/ui';
 import { useResizeObserver } from '@siberiacancode/reactuse';
-import { useEffect, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Outlet } from 'react-router-dom';
 
 export const HeaderLayout = () => {
   const [height, setHeight] = useState(0);
@@ -14,19 +12,9 @@ export const HeaderLayout = () => {
     },
   });
 
-  const username = useAuthStore((state) => state.username);
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!username) {
-      navigate(Route.SignIn);
-    }
-  }, [username]);
-
   return (
     <div className='h-full w-full'>
-      <Header ref={ref} username={username} />
+      <Header ref={ref} />
       <div
         className='absolute w-full p-2 md:px-5'
         style={{

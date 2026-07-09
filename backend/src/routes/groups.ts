@@ -1,5 +1,4 @@
-﻿import { authMiddleware } from '@middlewares';
-import { groupService } from '@services';
+﻿import { groupService } from '@services';
 import {
   type CreateGroupDto,
   CreateGroupSchema,
@@ -11,16 +10,11 @@ import { createRouter, Ok, type Params } from './createRouter';
 
 const { router, createRoute } = createRouter('/groups');
 
-createRoute(
-  async (req) => {
-    const { user } = req;
-    const groups = await groupService.getGroupsByUserId(user.id);
-    return Ok(groups);
-  },
-  {
-    middlewares: [authMiddleware],
-  }
-);
+createRoute(async (req) => {
+  const { user } = req;
+  const groups = await groupService.getGroupsByUserId(user.id);
+  return Ok(groups);
+});
 
 createRoute<Params, CreateGroupDto>(
   async (req) => {
@@ -31,7 +25,6 @@ createRoute<Params, CreateGroupDto>(
   {
     method: 'post',
     schema: CreateGroupSchema,
-    middlewares: [authMiddleware],
   }
 );
 
@@ -43,7 +36,6 @@ createRoute<Params, UpdateGroupDto>(
   {
     method: 'put',
     schema: UpdateGroupSchema,
-    middlewares: [authMiddleware],
   }
 );
 
@@ -55,7 +47,6 @@ createRoute<{ groupId: string }>(
   {
     method: 'delete',
     endpoint: '/:groupId',
-    middlewares: [authMiddleware],
   }
 );
 

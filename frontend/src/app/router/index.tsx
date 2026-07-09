@@ -1,30 +1,10 @@
 import { Main } from '@pages/main';
-import { ResetPassword } from '@pages/reset-password';
-import { SignIn } from '@pages/sign-in';
-import { SignUp } from '@pages/sign-up';
-import { UpdatePassword } from '@pages/update-password';
 import { WritePractice } from '@pages/write-practice';
 import { HeaderLayout } from '@shared/layouts';
 import { Route } from '@shared/types';
 import { createBrowserRouter } from 'react-router-dom';
 
 const router = createBrowserRouter([
-  {
-    path: Route.SignIn,
-    element: <SignIn />,
-  },
-  {
-    path: Route.SignUp,
-    element: <SignUp />,
-  },
-  {
-    path: Route.ResetPassword,
-    element: <ResetPassword />,
-  },
-  {
-    path: Route.UpdatePassword,
-    element: <UpdatePassword />,
-  },
   {
     path: Route.Root,
     element: <HeaderLayout />,

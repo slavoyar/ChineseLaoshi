@@ -2,9 +2,8 @@ import { CardDto } from '@chinese-laoshi/shared';
 import { useCardStore } from '@entities/card';
 import { getColorByPercent } from '@entities/card/utils';
 import { useDelete } from '@shared/hooks';
-import { useAuthStore } from '@shared/stores';
 import { DeleteDialog } from '@shared/ui';
-import { cn, getPercentFromRatio } from '@shared/utils';
+import { getPercentFromRatio } from '@shared/utils';
 
 interface Props {
   card: CardDto;
@@ -13,7 +12,6 @@ interface Props {
 
 export const CardItem = ({ card, onDelete }: Props) => {
   const deleteCard = useCardStore((state) => state.delete);
-  const isDemo = useAuthStore((state) => state.isDemo);
 
   const { isDeleteDialogOpen, closeDeleteDialog, deleteItem, openDeleteDialog } = useDelete<CardDto>();
   const onDeleteHandler = async () => {
@@ -36,10 +34,7 @@ export const CardItem = ({ card, onDelete }: Props) => {
           </div>
         </div>
         <i
-          className={cn(
-            'fa fa-close cursor-pointer rounded p-1 text-error-600 hover:bg-secondary-500',
-            isDemo ? 'hidden' : ''
-          )}
+          className='fa fa-close cursor-pointer rounded p-1 text-error-600 hover:bg-secondary-500'
           onClick={() => openDeleteDialog(card)}
         />
       </div>

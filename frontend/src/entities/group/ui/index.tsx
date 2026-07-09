@@ -1,7 +1,6 @@
 import { GroupDto } from '@chinese-laoshi/shared';
 import { useGroupStore } from '@entities/group';
 import { useDelete } from '@shared/hooks';
-import { useAuthStore } from '@shared/stores';
 import { Accordion, DeleteDialog } from '@shared/ui';
 import { ReactNode } from 'react';
 
@@ -14,7 +13,6 @@ interface Props {
 
 export const GroupList = ({ content, onGroupOpen }: Props) => {
   const [groups, deleteGroup] = useGroupStore((state) => [state.groups, state.delete]);
-  const isDemo = useAuthStore((state) => state.isDemo);
   const { isDeleteDialogOpen, closeDeleteDialog, deleteItem, openDeleteDialog } = useDelete<GroupDto>();
 
   const deleteHandler = async () => {
@@ -30,7 +28,7 @@ export const GroupList = ({ content, onGroupOpen }: Props) => {
         header={(item) => <GroupHeader name={item.name} wordCount={item.wordCount} />}
         content={content}
         onOpen={onGroupOpen}
-        isActionsAvailable={!isDemo}
+        isActionsAvailable
         onDelete={openDeleteDialog}
       />
       <DeleteDialog
