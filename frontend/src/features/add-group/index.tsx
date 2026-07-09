@@ -29,7 +29,7 @@ export const AddGroup = () => {
   return (
     <>
       <Button variant='secondary' onClick={() => setIsOpen(true)}>
-        <i className='fa fa-add mr-1' />
+        <i className='fa fa-add mr-1' aria-hidden='true' />
         Create group
       </Button>
       <CreateDialog
@@ -39,13 +39,17 @@ export const AddGroup = () => {
         title='Create group'
         onClose={handleClose}
       >
-        <TextField
-          autoFocus
-          onKeyUp={handleEnter}
-          placeholder='Enter group name'
-          onInput={(e) => setName(e.currentTarget.value)}
-          value={name}
-        />
+        <label className='flex flex-col gap-1 text-sm text-secondary-200'>
+          Group name
+          <TextField
+            id='create-group-name'
+            autoFocus
+            onKeyUp={handleEnter}
+            placeholder='Enter group name'
+            onInput={(e) => setName(e.currentTarget.value)}
+            value={name}
+          />
+        </label>
       </CreateDialog>
     </>
   );

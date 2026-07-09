@@ -15,7 +15,7 @@ export const HeaderLayout = () => {
   return (
     <div className='h-full w-full'>
       <Header ref={ref} />
-      <div
+      <main
         className='absolute w-full p-2 md:px-5'
         style={{
           height: `calc(100% - ${height}px)`,
@@ -23,7 +23,7 @@ export const HeaderLayout = () => {
         }}
       >
         <Outlet />
-      </div>
+      </main>
     </div>
   );
 };

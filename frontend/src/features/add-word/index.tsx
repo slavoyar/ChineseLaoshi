@@ -44,22 +44,38 @@ export const AddWord = ({ groupId }: Props) => {
   return (
     <>
       <Button variant='text' onClick={() => setIsOpen(true)}>
-        <i className='fa fa-add mr-1' />
+        <i className='fa fa-add mr-1' aria-hidden='true' />
         Add word
       </Button>
       <CreateDialog onSave={saveHandler} isOpen={isOpen} title='Create word' onClose={() => setIsOpen(false)}>
         <div className='flex flex-col gap-2'>
-          <TextField
-            value={symbols}
-            placeholder='Enter hieroglyphs'
-            onInput={(e) => symbolsHandler(e.currentTarget.value)}
-          />
-          <TextField value={transcription} placeholder='Enter transription' disabled />
-          <TextField
-            value={translation}
-            placeholder='Enter translation'
-            onInput={(e) => setTranslation(e.currentTarget.value)}
-          />
+          <label className='flex flex-col gap-1 text-sm text-secondary-200'>
+            Hieroglyphs
+            <TextField
+              id='create-word-symbols'
+              value={symbols}
+              placeholder='Enter hieroglyphs'
+              onInput={(e) => symbolsHandler(e.currentTarget.value)}
+            />
+          </label>
+          <label className='flex flex-col gap-1 text-sm text-secondary-200'>
+            Transcription
+            <TextField
+              id='create-word-transcription'
+              value={transcription}
+              placeholder='Enter transcription'
+              disabled
+            />
+          </label>
+          <label className='flex flex-col gap-1 text-sm text-secondary-200'>
+            Translation
+            <TextField
+              id='create-word-translation'
+              value={translation}
+              placeholder='Enter translation'
+              onInput={(e) => setTranslation(e.currentTarget.value)}
+            />
+          </label>
         </div>
       </CreateDialog>
     </>

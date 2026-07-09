@@ -10,9 +10,13 @@ export const Header = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>
   return (
     <div ref={ref} className='fixed h-[80px] w-full bg-secondary-900' {...props}>
       <div className='m-auto flex h-full items-center justify-between p-4 text-white md:w-9/12 xl:w-7/12'>
-        <div className='cursor-pointer text-2xl font-bold' onClick={() => navigate(Route.Root)}>
+        <button
+          type='button'
+          className='cursor-pointer text-2xl font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500'
+          onClick={() => navigate(Route.Root)}
+        >
           {APP_NAME}
-        </div>
+        </button>
       </div>
     </div>
   );

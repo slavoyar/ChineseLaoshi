@@ -5,6 +5,7 @@ import groupService from '../api';
 
 interface State {
   groups: GroupDto[];
+  isLoading: boolean;
 }
 
 interface Action {
@@ -18,9 +19,15 @@ interface Action {
 
 const useGroupStore = create<State & Action>((set, get) => ({
   groups: [],
+  isLoading: false,
   fetch: async () => {
-    const response = await groupService.getList();
-    set(() => ({ groups: response.map((item) => ({ ...item, cards: [] })) }));
+    set(() => ({ isLoading: true }));
+    try {
+      const response = await groupService.getList();
+      set(() => ({ groups: response.map((item) => ({ ...item, cards: [] })), isLoading: false }));
+    } catch {
+      set(() => ({ isLoading: false }));
+    }
   },
   create: async (name: string) => {
     const response = await groupService.post({ name });

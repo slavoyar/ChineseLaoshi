@@ -1,5 +1,5 @@
 .dialog-overlay {
-  @apply fixed left-0 top-0 h-full w-full items-center justify-center backdrop-blur-xl;
+  @apply fixed left-0 top-0 h-full w-full items-center justify-center bg-black/60;
   z-index: 1000;
 }
 

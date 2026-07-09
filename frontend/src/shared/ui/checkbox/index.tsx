@@ -9,7 +9,7 @@ interface Props extends HTMLAttributes<HTMLInputElement> {
 export const Checkbox = ({ label, value, ...props }: Props) => (
   <label htmlFor={label} className='container'>
     {label}
-    <input id={label} type='checkbox' defaultChecked={value} {...props} />
+    <input id={label} type='checkbox' checked={value} {...props} />
     <span className='checkmark' />
   </label>
 );

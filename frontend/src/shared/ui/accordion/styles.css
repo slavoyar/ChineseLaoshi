@@ -1,9 +1,9 @@
 ﻿.accordion {
-  @apply flex w-full flex-col gap-2 text-white;
+  @apply flex w-full flex-col text-white;
 }
 
 .accordion-item {
-  @apply bg-secondary-800 rounded-xl p-4;
+  @apply border-b border-secondary-600 py-3;
 }
 
 .accordion-header {

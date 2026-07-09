@@ -7,7 +7,11 @@ import { HTMLAttributes } from 'react';
 
 export const Groups = (props: HTMLAttributes<HTMLDivElement>) => {
   const [cardsPerGroup, fetchCards] = useCardStore((state) => [state.cardsPerGroup, state.fetch]);
-  const decrementWordCount = useGroupStore((state) => state.decrementWordCount);
+  const [groups, isLoading, decrementWordCount] = useGroupStore((state) => [
+    state.groups,
+    state.isLoading,
+    state.decrementWordCount,
+  ]);
 
   const groupOpenHandler = async (group: GroupDto) => {
     if (!cardsPerGroup[group.id]) {
@@ -17,23 +21,32 @@ export const Groups = (props: HTMLAttributes<HTMLDivElement>) => {
 
   return (
     <div
-      className='flex h-fit max-h-full flex-col gap-5 rounded-2xl bg-secondary-900 p-5 md:gap-10 md:p-10'
+      className='flex min-h-0 flex-col gap-5 rounded-2xl bg-secondary-900 p-5 md:gap-10 md:p-10'
       {...props}
     >
       <div className='flex items-center justify-between'>
-        <div className='text-2xl text-white'>Groups</div>
+        <h2 className='text-2xl text-white'>Groups</h2>
         <AddGroup />
       </div>
-      <div className='h-full overflow-auto'>
-        <GroupList
-          content={(item) => (
-            <div>
-              <CardList groupId={item.id} onDelete={() => decrementWordCount(item.id)} />
-              <AddWord groupId={item.id} />
-            </div>
-          )}
-          onGroupOpen={groupOpenHandler}
-        />
+      <div className='min-h-0 flex-1 overflow-auto'>
+        {isLoading ? (
+          <p className='text-secondary-200'>Loading groups...</p>
+        ) : groups.length === 0 ? (
+          <div className='flex flex-col items-center gap-4 py-8 text-center text-secondary-200'>
+            <p>No groups yet. Create your first group to start studying.</p>
+            <AddGroup />
+          </div>
+        ) : (
+          <GroupList
+            content={(item) => (
+              <div>
+                <CardList groupId={item.id} onDelete={() => decrementWordCount(item.id)} />
+                <AddWord groupId={item.id} />
+              </div>
+            )}
+            onGroupOpen={groupOpenHandler}
+          />
+        )}
       </div>
     </div>
   );

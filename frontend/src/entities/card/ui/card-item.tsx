@@ -21,10 +21,10 @@ export const CardItem = ({ card, onDelete }: Props) => {
   };
   return (
     <>
-      <div className='flex w-full items-center justify-between rounded-xl bg-secondary-600 px-4 py-2'>
+      <div className='flex w-full items-center justify-between border-b border-secondary-600 px-2 py-3'>
         <div className='flex items-center gap-4'>
           <div className={`w-10 text-center ${getColorByPercent(card.progress)}`}>
-            <i className='fa fa-circle fa-sm' />
+            <i className='fa fa-circle fa-sm' aria-hidden='true' />
             <div>{getPercentFromRatio(card.progress)}%</div>
           </div>
           <div>
@@ -33,10 +33,14 @@ export const CardItem = ({ card, onDelete }: Props) => {
             {card.word.translation}
           </div>
         </div>
-        <i
-          className='fa fa-close cursor-pointer rounded p-1 text-error-600 hover:bg-secondary-500'
+        <button
+          type='button'
+          className='flex min-h-11 min-w-11 items-center justify-center rounded text-error-600 hover:bg-secondary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500'
           onClick={() => openDeleteDialog(card)}
-        />
+          aria-label={`Delete card ${card.word.symbols}`}
+        >
+          <i className='fa fa-close' aria-hidden='true' />
+        </button>
       </div>
       <DeleteDialog
         title='Delete card'

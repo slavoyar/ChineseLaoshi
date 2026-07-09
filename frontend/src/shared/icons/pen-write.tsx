@@ -6,6 +6,7 @@ export const PenWrite = ({ size = 100 }: { size?: number }) => (
     id='Layer_1'
     xmlns='http://www.w3.org/2000/svg'
     viewBox='0 0 512 512'
+    aria-hidden='true'
   >
     <circle style={{ fill: '#45B39C' }} cx='256' cy='256' r='256' />
     <path

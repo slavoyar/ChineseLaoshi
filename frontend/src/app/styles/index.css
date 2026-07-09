@@ -19,7 +19,7 @@ body {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: var(--lightestgrey);
+  @apply bg-secondary-800;
 }
 
 /* Handle */
