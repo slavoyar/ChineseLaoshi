@@ -12,7 +12,9 @@ export const CardList = ({ groupId, onDelete }: Props) => {
 
   return (
     <div className='flex flex-col gap-2 py-2'>
-      {cardsPerGroup[groupId]?.map((card) => <CardItem key={card.id} card={card} onDelete={onDelete} />)}
+      {cardsPerGroup[groupId]?.map((card) => (
+        <CardItem key={card.id} card={card} onDelete={onDelete} />
+      ))}
     </div>
   );
 };

@@ -71,12 +71,12 @@ export const Autocomplete = <T,>({
       {filteredItems.length > 0 && isFocused && (
         <ul
           ref={listRef}
-          className='bg-secondary-600 absolute z-[1000] max-h-[200px] w-full overflow-auto rounded p-2'
+          className='absolute z-[1000] max-h-[200px] w-full overflow-auto rounded bg-secondary-600 p-2'
         >
           {filteredItems.map((item) => (
             <li
               key={keyValue(item)}
-              className='hover:bg-secondary-500 cursor-pointer rounded p-2 text-white'
+              className='cursor-pointer rounded p-2 text-white hover:bg-secondary-500'
               onClick={() => onItemSelect(item)}
             >
               {renderItem ? renderItem(item) : filterableValue(item)}

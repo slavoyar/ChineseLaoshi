@@ -48,7 +48,7 @@ export const StartWritePractice = () => {
   return (
     <>
       <div
-        className='bg-secondary-900 hover:bg-secondary-800 flex w-fit cursor-pointer flex-col items-start justify-center gap-2 rounded-xl p-4'
+        className='flex w-fit cursor-pointer flex-col items-start justify-center gap-2 rounded-xl bg-secondary-900 p-4 hover:bg-secondary-800'
         onClick={() => setIsOpen(true)}
       >
         <PenWrite />

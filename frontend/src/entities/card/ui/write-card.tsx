@@ -114,10 +114,10 @@ export const WriteCard = ({
   };
 
   return (
-    <div ref={ref} className='bg-secondary-900 flex flex-col gap-4 rounded-2xl p-4 md:w-[500px]'>
-      <div className='bg-secondary-700 w-full rounded p-2 text-center text-xl text-white'>
+    <div ref={ref} className='flex flex-col gap-4 rounded-2xl bg-secondary-900 p-4 md:w-[500px]'>
+      <div className='w-full rounded bg-secondary-700 p-2 text-center text-xl text-white'>
         {translation}
-        <span className='text-secondary-500 bg-secondary-500 hover:bg-secondary-700 ml-2 rounded'>
+        <span className='ml-2 rounded bg-secondary-500 text-secondary-500 hover:bg-secondary-700'>
           ({transcription})
         </span>
       </div>
@@ -125,7 +125,7 @@ export const WriteCard = ({
         <Button variant='text' onClick={() => dec()} disabled={currentIndex === 0}>
           <i className={cn('fa fa-chevron-left', iconClass(currentIndex > 0))} />
         </Button>
-        <div className='bg-secondary-500 max-h-[300px] max-w-[300px] rounded'>
+        <div className='max-h-[300px] max-w-[300px] rounded bg-secondary-500'>
           {keysBySymbols(symbols, id).map((key, index) => (
             <div
               id={`hanzi-input-${index}`}

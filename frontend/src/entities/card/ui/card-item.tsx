@@ -23,7 +23,7 @@ export const CardItem = ({ card, onDelete }: Props) => {
   };
   return (
     <>
-      <div className='bg-secondary-600 flex w-full items-center justify-between rounded-xl px-4 py-2'>
+      <div className='flex w-full items-center justify-between rounded-xl bg-secondary-600 px-4 py-2'>
         <div className='flex items-center gap-4'>
           <div className={`w-10 text-center ${getColorByPercent(card.progress)}`}>
             <i className='fa fa-circle fa-sm' />
@@ -31,13 +31,13 @@ export const CardItem = ({ card, onDelete }: Props) => {
           </div>
           <div>
             {card.word.symbols}
-            <span className='text-secondary-200 px-1'>({card.word.transcription})</span>-{' '}
+            <span className='px-1 text-secondary-200'>({card.word.transcription})</span>-{' '}
             {card.word.translation}
           </div>
         </div>
         <i
           className={cn(
-            'fa fa-close text-error-600 hover:bg-secondary-500 cursor-pointer rounded p-1',
+            'fa fa-close cursor-pointer rounded p-1 text-error-600 hover:bg-secondary-500',
             isDemo ? 'hidden' : ''
           )}
           onClick={() => openDeleteDialog(card)}

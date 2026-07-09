@@ -11,7 +11,7 @@ export const Dialog = ({ isOpen, onClose, title, footer, children, ...props }: D
       <div {...props} className={cn('dialog', props.className ?? '')}>
         <div className='dialog-header'>
           <h2>{title}</h2>
-          <i className='fa fa-close hover:bg-secondary-600 cursor-pointer rounded p-1' onClick={onClose} />
+          <i className='fa fa-close cursor-pointer rounded p-1 hover:bg-secondary-600' onClick={onClose} />
         </div>
         <div className='dialog-body'>{children}</div>
         <div className='dialog-footer'>{footer}</div>

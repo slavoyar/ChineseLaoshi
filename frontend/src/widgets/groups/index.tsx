@@ -17,7 +17,7 @@ export const Groups = (props: HTMLAttributes<HTMLDivElement>) => {
 
   return (
     <div
-      className='bg-secondary-900 flex h-fit max-h-full flex-col gap-5 rounded-2xl p-5 md:gap-10 md:p-10'
+      className='flex h-fit max-h-full flex-col gap-5 rounded-2xl bg-secondary-900 p-5 md:gap-10 md:p-10'
       {...props}
     >
       <div className='flex items-center justify-between'>

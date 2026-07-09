@@ -55,7 +55,7 @@ export const Accordion = <T,>({
             <div className={cn('flex items-center gap-2', isActionsAvailable ? '' : 'hidden')}>
               {actions && actions(section)}
               <i
-                className='fa fa-close text-error-600 hover:bg-secondary-600 cursor-pointer rounded p-1'
+                className='fa fa-close cursor-pointer rounded p-1 text-error-600 hover:bg-secondary-600'
                 onClick={() => handleDelete(section)}
               />
             </div>
