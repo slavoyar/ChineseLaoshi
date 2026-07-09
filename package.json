@@ -16,19 +16,19 @@
     "lint": "npm run lint:frontend && npm run lint:backend && npm run lint:shared"
   },
   "devDependencies": {
-    "@eslint/js": "^9.22.0",
-    "@typescript-eslint/eslint-plugin": "^8.27.0",
-    "@typescript-eslint/parser": "^8.27.0",
-    "eslint": "^9.22.0",
-    "eslint-config-prettier": "^10.1.1",
-    "eslint-plugin-prettier": "^5.2.3",
-    "eslint-plugin-simple-import-sort": "^12.1.1",
-    "prettier": "^3.5.3",
-    "typescript": "^5.8.2",
-    "typescript-eslint": "^8.27.0"
+    "@eslint/js": "^9.39.4",
+    "@typescript-eslint/eslint-plugin": "^8.63.0",
+    "@typescript-eslint/parser": "^8.63.0",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.6",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
+    "prettier": "^3.9.4",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.63.0"
   },
   "dependencies": {
-    "@sinclair/typebox": "^0.34.31",
-    "ajv": "^8.17.1"
+    "@sinclair/typebox": "^0.34.50",
+    "ajv": "^8.20.0"
   }
 }
