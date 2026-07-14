@@ -2,8 +2,9 @@ import { CardDto } from '@chinese-laoshi/shared';
 import { useCardStore } from '@entities/card';
 import { getColorByPercent } from '@entities/card/utils';
 import { useDelete } from '@shared/hooks';
+import { useAuthStore } from '@shared/stores';
 import { DeleteDialog } from '@shared/ui';
-import { getPercentFromRatio } from '@shared/utils';
+import { cn, getPercentFromRatio } from '@shared/utils';
 
 interface Props {
   card: CardDto;
@@ -12,6 +13,7 @@ interface Props {
 
 export const CardItem = ({ card, onDelete }: Props) => {
   const deleteCard = useCardStore((state) => state.delete);
+  const isDemo = useAuthStore((state) => state.isDemo);
 
   const { isDeleteDialogOpen, closeDeleteDialog, deleteItem, openDeleteDialog } = useDelete<CardDto>();
   const onDeleteHandler = async () => {
@@ -21,10 +23,10 @@ export const CardItem = ({ card, onDelete }: Props) => {
   };
   return (
     <>
-      <div className='flex w-full items-center justify-between border-b border-secondary-600 px-2 py-3'>
+      <div className='flex w-full items-center justify-between rounded-xl bg-secondary-600 px-4 py-2'>
         <div className='flex items-center gap-4'>
           <div className={`w-10 text-center ${getColorByPercent(card.progress)}`}>
-            <i className='fa fa-circle fa-sm' aria-hidden='true' />
+            <i className='fa fa-circle fa-sm' />
             <div>{getPercentFromRatio(card.progress)}%</div>
           </div>
           <div>
@@ -33,14 +35,13 @@ export const CardItem = ({ card, onDelete }: Props) => {
             {card.word.translation}
           </div>
         </div>
-        <button
-          type='button'
-          className='flex min-h-11 min-w-11 items-center justify-center rounded text-error-600 hover:bg-secondary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500'
+        <i
+          className={cn(
+            'fa fa-close cursor-pointer rounded p-1 text-error-600 hover:bg-secondary-500',
+            isDemo ? 'hidden' : ''
+          )}
           onClick={() => openDeleteDialog(card)}
-          aria-label={`Delete card ${card.word.symbols}`}
-        >
-          <i className='fa fa-close' aria-hidden='true' />
-        </button>
+        />
       </div>
       <DeleteDialog
         title='Delete card'

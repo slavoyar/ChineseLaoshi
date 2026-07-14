@@ -1,4 +1,5 @@
 import { GroupDto } from '@chinese-laoshi/shared';
+import { mockGroupApi, USE_MOCKS } from '@shared/mocks';
 import { create } from 'zustand';
 
 import groupService from '../api';
@@ -23,14 +24,14 @@ const useGroupStore = create<State & Action>((set, get) => ({
   fetch: async () => {
     set(() => ({ isLoading: true }));
     try {
-      const response = await groupService.getList();
+      const response = USE_MOCKS ? await mockGroupApi.getList() : await groupService.getList();
       set(() => ({ groups: response.map((item) => ({ ...item, cards: [] })), isLoading: false }));
     } catch {
       set(() => ({ isLoading: false }));
     }
   },
   create: async (name: string) => {
-    const response = await groupService.post({ name });
+    const response = USE_MOCKS ? await mockGroupApi.post({ name }) : await groupService.post({ name });
     set((state) => ({ groups: [...state.groups, { ...response, cards: [] }] }));
   },
   rename: async (id: string, name: string) => {
@@ -40,12 +41,20 @@ const useGroupStore = create<State & Action>((set, get) => ({
       throw new Error(`Can not rename. Group with id = '${id}' does not exist`);
     }
     const updatedGroup = { ...groups[groupIndex], name };
-    await groupService.put(updatedGroup);
+    if (USE_MOCKS) {
+      await mockGroupApi.put(updatedGroup);
+    } else {
+      await groupService.put(updatedGroup);
+    }
     groups.splice(groupIndex, 1, updatedGroup);
     set((state) => ({ groups: [...state.groups] }));
   },
   delete: async (id: string) => {
-    await groupService.delete(id);
+    if (USE_MOCKS) {
+      await mockGroupApi.delete(id);
+    } else {
+      await groupService.delete(id);
+    }
     set((state) => ({ groups: state.groups.filter((group) => group.id !== id) }));
   },
   decrementWordCount: (id: string) => {

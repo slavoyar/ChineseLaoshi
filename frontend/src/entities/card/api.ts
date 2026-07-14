@@ -6,12 +6,16 @@ import {
   UpdateCardWordDto,
 } from '@chinese-laoshi/shared';
 import { BaseService } from '@shared/api';
+import { mockCardApi, USE_MOCKS } from '@shared/mocks';
 import axios from 'axios';
 
 const URL = '/api/cards';
 
 class CardService extends BaseService<CardDto, CreateCardDto, UpdateCardWordDto> {
   getCardsWritePractice(count: string, groupId?: string): Promise<CardDto[]> {
+    if (USE_MOCKS) {
+      return mockCardApi.getCardsWritePractice(count, groupId);
+    }
     return axios.post<GetWriteCardDto, CardDto[]>(
       `${this.url}/study/write`,
       { count, groupId },

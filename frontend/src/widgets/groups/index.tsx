@@ -7,11 +7,8 @@ import { HTMLAttributes } from 'react';
 
 export const Groups = (props: HTMLAttributes<HTMLDivElement>) => {
   const [cardsPerGroup, fetchCards] = useCardStore((state) => [state.cardsPerGroup, state.fetch]);
-  const [groups, isLoading, decrementWordCount] = useGroupStore((state) => [
-    state.groups,
-    state.isLoading,
-    state.decrementWordCount,
-  ]);
+  const [groups, isLoading] = useGroupStore((state) => [state.groups, state.isLoading]);
+  const decrementWordCount = useGroupStore((state) => state.decrementWordCount);
 
   const groupOpenHandler = async (group: GroupDto) => {
     if (!cardsPerGroup[group.id]) {
@@ -21,19 +18,19 @@ export const Groups = (props: HTMLAttributes<HTMLDivElement>) => {
 
   return (
     <div
-      className='flex min-h-0 flex-col gap-5 rounded-2xl bg-secondary-900 p-5 md:gap-10 md:p-10'
+      className='flex h-fit max-h-full flex-col gap-5 rounded-2xl bg-secondary-900 p-5 md:gap-10 md:p-10'
       {...props}
     >
       <div className='flex items-center justify-between'>
         <h2 className='text-2xl text-white'>Groups</h2>
         <AddGroup />
       </div>
-      <div className='min-h-0 flex-1 overflow-auto'>
+      <div className='h-full overflow-auto'>
         {isLoading ? (
-          <p className='text-secondary-200'>Loading groups...</p>
+          <p className='text-secondary-200'>Loading groups…</p>
         ) : groups.length === 0 ? (
           <div className='flex flex-col items-center gap-4 py-8 text-center text-secondary-200'>
-            <p>No groups yet. Create your first group to start studying.</p>
+            <p>No groups yet. Create one to start building your vocabulary.</p>
             <AddGroup />
           </div>
         ) : (

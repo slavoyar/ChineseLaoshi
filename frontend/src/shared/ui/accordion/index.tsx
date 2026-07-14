@@ -48,28 +48,16 @@ export const Accordion = <T,>({
       {sections.map((section, index) => (
         <div key={rowKey(section)} className='accordion-item'>
           <div className={`accordion-header ${isOpened(section) ? 'border-b' : ''}`}>
-            <button
-              type='button'
-              className='flex flex-1 cursor-pointer items-center gap-2 text-left text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500'
-              onClick={() => toggleSection(section)}
-              aria-expanded={isOpened(section)}
-            >
+            <div className='flex cursor-pointer items-center gap-2' onClick={() => toggleSection(section)}>
               {`${index + 1}.`} {header(section)}
-              <i
-                className={`fa ${isOpened(section) ? 'fa-chevron-down' : 'fa-chevron-right'}`}
-                aria-hidden='true'
-              />
-            </button>
+              <i className={`fa ${isOpened(section) ? 'fa-chevron-down' : 'fa-chevron-right'}`} />
+            </div>
             <div className={cn('flex items-center gap-2', isActionsAvailable ? '' : 'hidden')}>
               {actions && actions(section)}
-              <button
-                type='button'
-                className='flex min-h-11 min-w-11 items-center justify-center rounded text-error-600 hover:bg-secondary-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500'
+              <i
+                className='fa fa-close cursor-pointer rounded p-1 text-error-600 hover:bg-secondary-600'
                 onClick={() => handleDelete(section)}
-                aria-label='Delete section'
-              >
-                <i className='fa fa-close' aria-hidden='true' />
-              </button>
+              />
             </div>
           </div>
           <div className={`accordion-content ${isOpened(section) ? 'active' : ''}`}>{content(section)}</div>

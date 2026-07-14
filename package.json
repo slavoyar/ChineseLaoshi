@@ -13,7 +13,8 @@
     "lint:frontend": "eslint ./frontend -c ./frontend/eslint.config.js --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
     "lint:backend": "eslint ./backend -c ./backend/eslint.config.js --ext ts --report-unused-disable-directives --max-warnings 0 --fix",
     "lint:shared": "eslint ./shared -c ./shared/eslint.config.js --ext ts --report-unused-disable-directives --max-warnings 0 --fix",
-    "lint": "npm run lint:frontend && npm run lint:backend && npm run lint:shared"
+    "lint": "npm run lint:frontend && npm run lint:backend && npm run lint:shared",
+    "dev:frontend": "npm run dev --workspace=@chinese-laoshi/frontend"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
