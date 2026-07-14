@@ -1,4 +1,5 @@
 import { useGroupStore } from '@entities/group';
+import { useRequireAuth } from '@shared/hooks';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { Check, Pencil } from 'lucide-react';
@@ -12,6 +13,7 @@ interface Props {
 
 export const GroupEditableTitle = ({ groupId, name, className }: Props) => {
   const setName = useGroupStore((state) => state.setName);
+  const { isDemo } = useRequireAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(name);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -84,22 +86,24 @@ export const GroupEditableTitle = ({ groupId, name, className }: Props) => {
   return (
     <div className={cn('group/title flex min-w-0 items-center gap-2', className)}>
       <h1 className='min-w-0 truncate text-2xl text-foreground'>{name}</h1>
-      <Button
-        type='button'
-        variant='ghost'
-        size='icon'
-        className={cn(
-          'h-9 w-9 shrink-0 text-muted-foreground opacity-0 transition-opacity duration-150',
-          'hover:bg-accent hover:text-foreground',
-          'group-hover/title:opacity-100 group-focus-within/title:opacity-100',
-          'focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-ring',
-          'motion-reduce:transition-none',
-        )}
-        onClick={() => setIsEditing(true)}
-        aria-label='Edit group name'
-      >
-        <Pencil className='h-4 w-4' />
-      </Button>
+      {!isDemo && (
+        <Button
+          type='button'
+          variant='ghost'
+          size='icon'
+          className={cn(
+            'h-9 w-9 shrink-0 text-muted-foreground opacity-0 transition-opacity duration-150',
+            'hover:bg-accent hover:text-foreground',
+            'group-hover/title:opacity-100 group-focus-within/title:opacity-100',
+            'focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-ring',
+            'motion-reduce:transition-none',
+          )}
+          onClick={() => setIsEditing(true)}
+          aria-label='Edit group name'
+        >
+          <Pencil className='h-4 w-4' />
+        </Button>
+      )}
     </div>
   );
 };
