@@ -1,7 +1,7 @@
 import { CardDto } from '@chinese-laoshi/shared';
 import { useCardStore } from '@entities/card';
 import { getProgressStyles } from '@entities/card/utils';
-import { useDelete } from '@shared/hooks';
+import { useDelete, useRequireAuth } from '@shared/hooks';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,6 +24,7 @@ interface Props {
 export const WordCard = ({ card, onDelete }: Props) => {
   const deleteCard = useCardStore((state) => state.delete);
   const progressStyles = getProgressStyles(card.progress);
+  const { isDemo } = useRequireAuth();
 
   const { isDeleteDialogOpen, closeDeleteDialog, deleteItem, openDeleteDialog } = useDelete<CardDto>();
 
@@ -71,13 +72,15 @@ export const WordCard = ({ card, onDelete }: Props) => {
             </div>
           </div>
         </div>
-        <TileDeleteButton
-          aria-label={`Delete word ${card.word.symbols}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            openDeleteDialog(card);
-          }}
-        />
+        {!isDemo && (
+          <TileDeleteButton
+            aria-label={`Delete word ${card.word.symbols}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              openDeleteDialog(card);
+            }}
+          />
+        )}
       </div>
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={(open) => !open && closeDeleteDialog()}>
         <AlertDialogContent>

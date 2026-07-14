@@ -1,5 +1,6 @@
 import { GroupDto } from '@chinese-laoshi/shared';
 import { getGroupIcon } from '@entities/group/lib/group-icons';
+import { useRequireAuth } from '@shared/hooks';
 import { TileDeleteButton } from '@shared/ui';
 import { tileItemClassName } from '@shared/ui/tile-grid';
 import { cn } from '@shared/utils';
@@ -13,6 +14,7 @@ interface Props {
 
 export const GroupCard = ({ group, onNavigate, onDelete }: Props) => {
   const Icon = getGroupIcon(group.id);
+  const { isDemo } = useRequireAuth();
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -41,13 +43,15 @@ export const GroupCard = ({ group, onNavigate, onDelete }: Props) => {
           </p>
         </div>
       </div>
-      <TileDeleteButton
-        aria-label={`Delete group ${group.name}`}
-        onClick={(e) => {
-          e.stopPropagation();
-          onDelete();
-        }}
-      />
+      {!isDemo && (
+        <TileDeleteButton
+          aria-label={`Delete group ${group.name}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+        />
+      )}
     </div>
   );
 };
