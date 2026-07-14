@@ -3,9 +3,10 @@ import { CardList, useCardStore } from '@entities/card';
 import { GroupList, useGroupStore } from '@entities/group';
 import { AddGroup } from '@features/add-group';
 import { AddWord } from '@features/add-word';
+import { cn } from '@shared/utils';
 import { HTMLAttributes } from 'react';
 
-export const Groups = (props: HTMLAttributes<HTMLDivElement>) => {
+export const Groups = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) => {
   const [cardsPerGroup, fetchCards] = useCardStore((state) => [state.cardsPerGroup, state.fetch]);
   const [groups, isLoading] = useGroupStore((state) => [state.groups, state.isLoading]);
   const decrementWordCount = useGroupStore((state) => state.decrementWordCount);
@@ -18,14 +19,17 @@ export const Groups = (props: HTMLAttributes<HTMLDivElement>) => {
 
   return (
     <div
-      className='flex h-fit max-h-full flex-col gap-5 rounded-2xl border bg-card p-5 md:gap-10 md:p-10'
+      className={cn(
+        'flex min-h-0 flex-col gap-5 rounded-2xl border bg-card p-5 md:gap-10 md:p-10',
+        className,
+      )}
       {...props}
     >
       <div className='flex items-center justify-between'>
         <h2 className='text-2xl text-foreground'>Groups</h2>
         <AddGroup />
       </div>
-      <div className='h-full overflow-auto'>
+      <div className='min-h-0 flex-1 overflow-auto'>
         {isLoading ? (
           <p className='text-muted-foreground'>Loading groups…</p>
         ) : groups.length === 0 ? (
