@@ -1,0 +1,17 @@
+services:
+  backend:
+    image: ${REGISTRY_IMAGE:-chinese-laoshi:latest}
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: chinese-laoshi
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: ${PORT:-3000}
+      DEFAULT_USER_EMAIL: ${DEFAULT_USER_EMAIL:-slavoyar@mail.com}
+      DB_URL: ${DB_URL:-}
+      DATA_DIR: /app/data/pg
+    volumes:
+      - ${PG_DATA_HOST_PATH:-/var/lib/chineselaoshi/pg}:/app/data/pg

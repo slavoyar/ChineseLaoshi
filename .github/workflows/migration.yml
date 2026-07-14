@@ -3,7 +3,7 @@ name: Apply database migrations
 on:
   push:
     paths:
-      - 'backend/src/config/prisma/**'
+      - 'backend/migrations/**'
     branches:
       - production
 
@@ -14,27 +14,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
-          node-version: '23.9.0'
+          go-version: '1.24'
 
-      - name: Install dependencies
-        working-directory: ./backend
-        run: npm install
-
-      - name: Create .env file
-        working-directory: ./backend
-        run: echo "DB_URL=${{ secrets.DB_URL }}" > .env
-
-      - name: Generate prisma client
-        working-directory: ./backend
-        run: npm run generate
+      - name: Install golang-migrate
+        run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
       - name: Migrate database
-        working-directory: ./backend
-        run: npm run migrate:prod
-
-      - name: Seed database
-        working-directory: ./backend
-        run: npm run seed
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+        run: migrate -path backend/migrations -database "$DB_URL" up

@@ -23,12 +23,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create .env file
-        working-directory: ./backend
         run: |
           echo "BASE_URL=${{ secrets.BASE_URL }}" > .env
           echo "DB_URL=${{ secrets.DB_URL }}" >> .env
           echo "PORT=${{ secrets.PORT }}" >> .env
           echo "DEFAULT_USER_EMAIL=${{ secrets.DEFAULT_USER_EMAIL }}" >> .env
+          echo "PG_DATA_HOST_PATH=/var/lib/chineselaoshi/pg" >> .env
+          echo "REGISTRY_IMAGE=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest" >> .env
 
       - name: Log in to container registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u "${{ github.repository_owner }}" --password-stdin
@@ -49,15 +50,11 @@ jobs:
 
       - name: Deploy on server
         run: |
-          scp -o StrictHostKeyChecking=no ./backend/.env ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{secrets.BACKEND_PATH}}
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+          scp -o StrictHostKeyChecking=no ./.env ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{secrets.BACKEND_PATH}}/.env
+          scp -o StrictHostKeyChecking=no ./docker-compose.yml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{secrets.BACKEND_PATH}}/docker-compose.yml
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << EOF
             docker pull ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
-            docker stop ${{ env.IMAGE_NAME }} || true
-            docker rm ${{ env.IMAGE_NAME }} || true
-            docker run -d \
-              --name ${{ env.IMAGE_NAME }} \
-              --restart=always \
-              --env-file ${{secrets.BACKEND_PATH}}/.env \
-              -p 3000:3000 \
-              ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+            cd ${{secrets.BACKEND_PATH}}
+            docker compose down || true
+            docker compose --env-file .env up -d
           EOF

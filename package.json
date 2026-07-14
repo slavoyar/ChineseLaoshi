@@ -3,7 +3,6 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "backend",
     "frontend",
     "shared"
   ],
@@ -11,10 +10,11 @@
   "license": "ISC",
   "scripts": {
     "lint:frontend": "eslint ./frontend -c ./frontend/eslint.config.js --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
-    "lint:backend": "eslint ./backend -c ./backend/eslint.config.js --ext ts --report-unused-disable-directives --max-warnings 0 --fix",
     "lint:shared": "eslint ./shared -c ./shared/eslint.config.js --ext ts --report-unused-disable-directives --max-warnings 0 --fix",
-    "lint": "npm run lint:frontend && npm run lint:backend && npm run lint:shared",
-    "dev:frontend": "npm run dev --workspace=@chinese-laoshi/frontend"
+    "lint": "npm run lint:frontend && npm run lint:shared",
+    "dev:frontend": "npm run dev --workspace=@chinese-laoshi/frontend",
+    "dev:backend": "cd backend && go run ./cmd/server",
+    "generate:types": "tygo generate"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
@@ -27,9 +27,5 @@
     "prettier": "^3.9.4",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.63.0"
-  },
-  "dependencies": {
-    "@sinclair/typebox": "^0.34.50",
-    "ajv": "^8.20.0"
   }
 }

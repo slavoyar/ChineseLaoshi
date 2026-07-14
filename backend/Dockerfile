@@ -1,32 +1,31 @@
-FROM node:23-alpine
+# Build stage
+FROM golang:1.24-alpine AS builder
 
-# Install openssl if needed
-RUN apk add --no-cache openssl
+RUN apk add --no-cache git ca-certificates
 
-# Set the working directory to /app
-WORKDIR /app
+WORKDIR /src
 
-# Copy the root package.json and package-lock.json for dependency installation
-COPY package.json package-lock.json ./
-
-# Copy the backend's package.json
-COPY backend/package.json ./backend/
-
-# Copy the shared folder (for types) if necessary
-COPY shared ./shared
-
-# Copy the entire backend codebase
+COPY shared/contracts ./shared/contracts
 COPY backend ./backend
 
-# Install all dependencies from the root
-RUN npm install --frozen-lockfile
+WORKDIR /src/backend
 
-# Build only the backend
-WORKDIR /app/backend
-RUN npm run build
+RUN go mod download
+RUN CGO_ENABLED=0 GOOS=linux go build -o /server ./cmd/server
 
-# Expose the backend port
+# Runtime stage
+FROM alpine:3.21
+
+RUN apk add --no-cache ca-certificates tzdata
+
+WORKDIR /app
+
+COPY --from=builder /server ./server
+COPY backend/migrations ./migrations
+
+ENV DATA_DIR=/app/data/pg
+ENV PORT=3000
+
 EXPOSE 3000
 
-# Start the backend service
-CMD ["node", "dist/index.js"]
+CMD ["./server"]

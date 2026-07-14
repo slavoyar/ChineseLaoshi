@@ -24,3 +24,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Go backend
+backend/data/
+backend/server
+backend/server.exe
