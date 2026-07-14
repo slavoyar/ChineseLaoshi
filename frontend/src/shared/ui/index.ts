@@ -8,3 +8,4 @@ export * from './group-combobox';
 export * from './input';
 export * from './label';
 export * from './popover';
+export * from './skeleton';

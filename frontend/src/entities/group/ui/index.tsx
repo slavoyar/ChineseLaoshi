@@ -17,18 +17,21 @@ import {
   Button,
 } from '@shared/ui';
 import { Trash2 } from 'lucide-react';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 
 import { GroupHeader } from './group-header';
 
+export { GroupListSkeleton } from './group-list-skeleton';
+
 interface Props {
-  content: (item: GroupDto) => ReactNode;
+  content: (item: GroupDto, isOpen: boolean) => ReactNode;
   onGroupOpen: (item: GroupDto) => void;
 }
 
 export const GroupList = ({ content, onGroupOpen }: Props) => {
   const [groups, deleteGroup] = useGroupStore((state) => [state.groups, state.delete]);
   const { isDeleteDialogOpen, closeDeleteDialog, deleteItem, openDeleteDialog } = useDelete<GroupDto>();
+  const [openGroupId, setOpenGroupId] = useState<string>('');
 
   const deleteHandler = async () => {
     closeDeleteDialog();
@@ -40,7 +43,9 @@ export const GroupList = ({ content, onGroupOpen }: Props) => {
       <Accordion
         type='single'
         collapsible
+        value={openGroupId}
         onValueChange={(value) => {
+          setOpenGroupId(value);
           if (value) {
             const group = groups.find((item) => item.id === value);
             if (group) {
@@ -67,7 +72,7 @@ export const GroupList = ({ content, onGroupOpen }: Props) => {
                 <Trash2 className='h-4 w-4' />
               </Button>
             </div>
-            <AccordionContent>{content(group)}</AccordionContent>
+            <AccordionContent>{content(group, group.id === openGroupId)}</AccordionContent>
           </AccordionItem>
         ))}
       </Accordion>

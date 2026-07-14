@@ -5,6 +5,7 @@ import { create } from 'zustand';
 
 interface State {
   cardsPerGroup: Record<string, CardDto[]>;
+  loadingGroupIds: Record<string, boolean>;
 }
 
 interface Action {
@@ -17,9 +18,18 @@ interface Action {
 
 const useCardStore = create<State & Action>((set, get) => ({
   cardsPerGroup: {},
+  loadingGroupIds: {},
   fetch: async (id: string) => {
-    const response = USE_MOCKS ? await mockCardApi.getList(id) : await cardService.getList(id);
-    set((state) => ({ cardsPerGroup: { ...state.cardsPerGroup, [id]: response } }));
+    set((state) => ({ loadingGroupIds: { ...state.loadingGroupIds, [id]: true } }));
+    try {
+      const response = USE_MOCKS ? await mockCardApi.getList(id) : await cardService.getList(id);
+      set((state) => ({
+        cardsPerGroup: { ...state.cardsPerGroup, [id]: response },
+        loadingGroupIds: { ...state.loadingGroupIds, [id]: false },
+      }));
+    } catch {
+      set((state) => ({ loadingGroupIds: { ...state.loadingGroupIds, [id]: false } }));
+    }
   },
   create: async (id: string, data: CreateCardDto) => {
     const response = USE_MOCKS ? await mockCardApi.post(data, id) : await cardService.post(data, id);
@@ -59,7 +69,7 @@ const useCardStore = create<State & Action>((set, get) => ({
     }));
   },
   reset: () => {
-    set(() => ({ cardsPerGroup: {} }));
+    set(() => ({ cardsPerGroup: {}, loadingGroupIds: {} }));
   },
 }));
 

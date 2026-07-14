@@ -1,18 +1,22 @@
 import { GroupDto } from '@chinese-laoshi/shared';
 import { CardList, useCardStore } from '@entities/card';
-import { GroupList, useGroupStore } from '@entities/group';
+import { GroupList, GroupListSkeleton, useGroupStore } from '@entities/group';
 import { AddGroup } from '@features/add-group';
 import { AddWord } from '@features/add-word';
 import { cn } from '@shared/utils';
 import { HTMLAttributes } from 'react';
 
 export const Groups = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) => {
-  const [cardsPerGroup, fetchCards] = useCardStore((state) => [state.cardsPerGroup, state.fetch]);
+  const [cardsPerGroup, fetchCards, loadingGroupIds] = useCardStore((state) => [
+    state.cardsPerGroup,
+    state.fetch,
+    state.loadingGroupIds,
+  ]);
   const [groups, isLoading] = useGroupStore((state) => [state.groups, state.isLoading]);
   const decrementWordCount = useGroupStore((state) => state.decrementWordCount);
 
   const groupOpenHandler = async (group: GroupDto) => {
-    if (!cardsPerGroup[group.id]) {
+    if (!cardsPerGroup[group.id] && !loadingGroupIds[group.id]) {
       await fetchCards(group.id);
     }
   };
@@ -31,7 +35,7 @@ export const Groups = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) 
       </div>
       <div className='min-h-0 flex-1 overflow-auto'>
         {isLoading ? (
-          <p className='text-muted-foreground'>Loading groups…</p>
+          <GroupListSkeleton />
         ) : groups.length === 0 ? (
           <div className='flex flex-col items-center gap-4 py-8 text-center text-muted-foreground'>
             <p>No groups yet. Create one to start building your vocabulary.</p>
@@ -39,12 +43,21 @@ export const Groups = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) 
           </div>
         ) : (
           <GroupList
-            content={(item) => (
-              <div>
-                <CardList groupId={item.id} onDelete={() => decrementWordCount(item.id)} />
-                <AddWord groupId={item.id} />
-              </div>
-            )}
+            content={(item, isOpen) => {
+              const isCardsLoading = isOpen && (loadingGroupIds[item.id] || cardsPerGroup[item.id] === undefined);
+
+              return (
+                <div>
+                  <CardList
+                    groupId={item.id}
+                    isOpen={isOpen}
+                    wordCount={item.wordCount}
+                    onDelete={() => decrementWordCount(item.id)}
+                  />
+                  {!isCardsLoading && <AddWord groupId={item.id} />}
+                </div>
+              );
+            }}
             onGroupOpen={groupOpenHandler}
           />
         )}
