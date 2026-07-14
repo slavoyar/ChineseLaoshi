@@ -1,50 +1,79 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: ['class'],
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
-    extend: {
-      colors: {
-        background: '#222831',
-        'primary-100': '#BDDADC',
-        'primary-200': '#96C3C6',
-        'primary-300': '#76ABAE',
-        'primary-400': '#669A9B',
-        'primary-500': '#54898A',
-        'primary-600': '#4F7D7D',
-        'primary-700': '#486D6D',
-        'primary-800': '#425E5D',
-        'primary-900': '#344241',
-
-        'secondary-200': '#BAC0CB',
-        'secondary-300': '#9EA7B6',
-        'secondary-400': '#8993A5',
-        'secondary-500': '#748095',
-        'secondary-600': '#667184',
-        'secondary-700': '#545D6D',
-        'secondary-800': '#444B57',
-        'secondary-900': '#31363F',
-
-        'success-100': '#D9FFBE',
-        'success-200': '#BCFF91',
-        'success-300': '#99FF59',
-        'success-400': '#74FF03',
-        'success-500': '#48FD00',
-        'success-600': '#28EA00',
-        'success-700': '#00D400',
-        'success-800': '#00C000',
-        'success-900': '#009B00',
-
-        'error-100': '#FFCDD2',
-        'error-200': '#EF9A9A',
-        'error-300': '#E57373',
-        'error-400': '#EF5350',
-        'error-500': '#F44336',
-        'error-600': '#E53935',
-        'error-700': '#D32F2F',
-        'error-800': '#B71B1C',
-        'error-900': '#B71B1C',
-      },
-    },
+  	extend: {
+  		borderRadius: {
+  			lg: 'var(--radius)',
+  			md: 'calc(var(--radius) - 2px)',
+  			sm: 'calc(var(--radius) - 4px)'
+  		},
+  		colors: {
+  			background: 'hsl(var(--background))',
+  			foreground: 'hsl(var(--foreground))',
+  			card: {
+  				DEFAULT: 'hsl(var(--card))',
+  				foreground: 'hsl(var(--card-foreground))'
+  			},
+  			popover: {
+  				DEFAULT: 'hsl(var(--popover))',
+  				foreground: 'hsl(var(--popover-foreground))'
+  			},
+  			primary: {
+  				DEFAULT: 'hsl(var(--primary))',
+  				foreground: 'hsl(var(--primary-foreground))'
+  			},
+  			secondary: {
+  				DEFAULT: 'hsl(var(--secondary))',
+  				foreground: 'hsl(var(--secondary-foreground))'
+  			},
+  			muted: {
+  				DEFAULT: 'hsl(var(--muted))',
+  				foreground: 'hsl(var(--muted-foreground))'
+  			},
+  			accent: {
+  				DEFAULT: 'hsl(var(--accent))',
+  				foreground: 'hsl(var(--accent-foreground))'
+  			},
+  			destructive: {
+  				DEFAULT: 'hsl(var(--destructive))',
+  				foreground: 'hsl(var(--destructive-foreground))'
+  			},
+  			border: 'hsl(var(--border))',
+  			input: 'hsl(var(--input))',
+  			ring: 'hsl(var(--ring))',
+  			chart: {
+  				'1': 'hsl(var(--chart-1))',
+  				'2': 'hsl(var(--chart-2))',
+  				'3': 'hsl(var(--chart-3))',
+  				'4': 'hsl(var(--chart-4))',
+  				'5': 'hsl(var(--chart-5))'
+  			}
+  		},
+  		keyframes: {
+  			'accordion-down': {
+  				from: {
+  					height: '0'
+  				},
+  				to: {
+  					height: 'var(--radix-accordion-content-height)'
+  				}
+  			},
+  			'accordion-up': {
+  				from: {
+  					height: 'var(--radix-accordion-content-height)'
+  				},
+  				to: {
+  					height: '0'
+  				}
+  			}
+  		},
+  		animation: {
+  			'accordion-down': 'accordion-down 0.2s ease-out',
+  			'accordion-up': 'accordion-up 0.2s ease-out'
+  		}
+  	}
   },
-  plugins: [],
+  plugins: [require('tailwindcss-animate')],
 };

@@ -3,8 +3,19 @@ import { useCardStore } from '@entities/card';
 import { getColorByPercent } from '@entities/card/utils';
 import { useDelete } from '@shared/hooks';
 import { useAuthStore } from '@shared/stores';
-import { DeleteDialog } from '@shared/ui';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  Button,
+} from '@shared/ui';
 import { cn, getPercentFromRatio } from '@shared/utils';
+import { Circle, X } from 'lucide-react';
 
 interface Props {
   card: CardDto;
@@ -21,39 +32,46 @@ export const CardItem = ({ card, onDelete }: Props) => {
     await deleteCard(deleteItem.id);
     onDelete();
   };
+
   return (
     <>
-      <div className='flex w-full items-center justify-between rounded-xl bg-secondary-600 px-4 py-2'>
+      <div className='flex w-full items-center justify-between rounded-xl bg-secondary px-4 py-2'>
         <div className='flex items-center gap-4'>
-          <div className={`w-10 text-center ${getColorByPercent(card.progress)}`}>
-            <i className='fa fa-circle fa-sm' />
-            <div>{getPercentFromRatio(card.progress)}%</div>
+          <div className={cn('flex w-10 flex-col items-center text-center', getColorByPercent(card.progress))}>
+            <Circle className='h-3 w-3 fill-current' />
+            <div className='text-xs'>{getPercentFromRatio(card.progress)}%</div>
           </div>
           <div>
             {card.word.symbols}
-            <span className='px-1 text-secondary-200'>({card.word.transcription})</span>-{' '}
+            <span className='px-1 text-muted-foreground'>({card.word.transcription})</span>-{' '}
             {card.word.translation}
           </div>
         </div>
-        <i
-          className={cn(
-            'fa fa-close cursor-pointer rounded p-1 text-error-600 hover:bg-secondary-500',
-            isDemo ? 'hidden' : ''
-          )}
+        <Button
+          variant='ghost'
+          size='icon'
+          className={cn('text-destructive hover:text-destructive', isDemo ? 'hidden' : '')}
           onClick={() => openDeleteDialog(card)}
-        />
+          aria-label={`Delete card ${card.word.symbols}`}
+        >
+          <X className='h-4 w-4' />
+        </Button>
       </div>
-      <DeleteDialog
-        title='Delete card'
-        isOpen={isDeleteDialogOpen}
-        onClose={closeDeleteDialog}
-        onDelete={() => onDeleteHandler()}
-      >
-        <div className='text-secondary-200'>
-          Are you sure you want to delete card <span className='text-lg text-white'>{card.word.symbols}</span>
-          ?
-        </div>
-      </DeleteDialog>
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={(open) => !open && closeDeleteDialog()}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete card</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete card{' '}
+              <span className='text-lg font-medium text-foreground'>{card.word.symbols}</span>?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={onDeleteHandler}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };

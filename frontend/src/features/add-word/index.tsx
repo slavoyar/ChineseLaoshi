@@ -1,6 +1,16 @@
 import { useCardStore } from '@entities/card';
 import { useGroupStore } from '@entities/group';
-import { Button, CreateDialog, TextField } from '@shared/ui';
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Input,
+  Label,
+} from '@shared/ui';
+import { Plus } from 'lucide-react';
 import pinyin from 'pinyin';
 import { useEffect, useState } from 'react';
 
@@ -18,10 +28,13 @@ export const AddWord = ({ groupId }: Props) => {
   const incrementWordCount = useGroupStore((state) => state.incrementWordCount);
 
   useEffect(() => {
-    setTranscription('');
-    setTranslation('');
-    setSymbols('');
+    if (!isOpen) {
+      setTranscription('');
+      setTranslation('');
+      setSymbols('');
+    }
   }, [isOpen]);
+
   const saveHandler = async () => {
     try {
       await createWord(groupId, { word: { transcription, translation, symbols }, groupId });
@@ -32,7 +45,6 @@ export const AddWord = ({ groupId }: Props) => {
   };
 
   const symbolsHandler = (value: string) => {
-    // TODO: add check if it is a hieroglyph
     setSymbols(value);
     setTranscription(
       pinyin(value)
@@ -43,41 +55,52 @@ export const AddWord = ({ groupId }: Props) => {
 
   return (
     <>
-      <Button variant='text' onClick={() => setIsOpen(true)}>
-        <i className='fa fa-add mr-1' aria-hidden='true' />
+      <Button variant='ghost' onClick={() => setIsOpen(true)}>
+        <Plus className='h-4 w-4' />
         Add word
       </Button>
-      <CreateDialog onSave={saveHandler} isOpen={isOpen} title='Create word' onClose={() => setIsOpen(false)}>
-        <div className='flex flex-col gap-2'>
-          <label className='flex flex-col gap-1 text-sm text-secondary-200'>
-            Hieroglyphs
-            <TextField
-              id='create-word-symbols'
-              value={symbols}
-              placeholder='Enter hieroglyphs'
-              onInput={(e) => symbolsHandler(e.currentTarget.value)}
-            />
-          </label>
-          <label className='flex flex-col gap-1 text-sm text-secondary-200'>
-            Transcription
-            <TextField
-              id='create-word-transcription'
-              value={transcription}
-              placeholder='Enter transcription'
-              disabled
-            />
-          </label>
-          <label className='flex flex-col gap-1 text-sm text-secondary-200'>
-            Translation
-            <TextField
-              id='create-word-translation'
-              value={translation}
-              placeholder='Enter translation'
-              onInput={(e) => setTranslation(e.currentTarget.value)}
-            />
-          </label>
-        </div>
-      </CreateDialog>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create word</DialogTitle>
+          </DialogHeader>
+          <div className='grid gap-4 py-2'>
+            <div className='grid gap-2'>
+              <Label htmlFor='create-word-symbols'>Hieroglyphs</Label>
+              <Input
+                id='create-word-symbols'
+                value={symbols}
+                placeholder='Enter hieroglyphs'
+                onChange={(e) => symbolsHandler(e.target.value)}
+              />
+            </div>
+            <div className='grid gap-2'>
+              <Label htmlFor='create-word-transcription'>Transcription</Label>
+              <Input
+                id='create-word-transcription'
+                value={transcription}
+                placeholder='Enter transcription'
+                disabled
+              />
+            </div>
+            <div className='grid gap-2'>
+              <Label htmlFor='create-word-translation'>Translation</Label>
+              <Input
+                id='create-word-translation'
+                value={translation}
+                placeholder='Enter translation'
+                onChange={(e) => setTranslation(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter className='gap-2 sm:gap-0'>
+            <Button variant='outline' onClick={() => setIsOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={saveHandler}>Create</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

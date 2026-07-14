@@ -18,18 +18,18 @@ export const Groups = (props: HTMLAttributes<HTMLDivElement>) => {
 
   return (
     <div
-      className='flex h-fit max-h-full flex-col gap-5 rounded-2xl bg-secondary-900 p-5 md:gap-10 md:p-10'
+      className='flex h-fit max-h-full flex-col gap-5 rounded-2xl border bg-card p-5 md:gap-10 md:p-10'
       {...props}
     >
       <div className='flex items-center justify-between'>
-        <h2 className='text-2xl text-white'>Groups</h2>
+        <h2 className='text-2xl text-foreground'>Groups</h2>
         <AddGroup />
       </div>
       <div className='h-full overflow-auto'>
         {isLoading ? (
-          <p className='text-secondary-200'>Loading groups…</p>
+          <p className='text-muted-foreground'>Loading groups…</p>
         ) : groups.length === 0 ? (
-          <div className='flex flex-col items-center gap-4 py-8 text-center text-secondary-200'>
+          <div className='flex flex-col items-center gap-4 py-8 text-center text-muted-foreground'>
             <p>No groups yet. Create one to start building your vocabulary.</p>
             <AddGroup />
           </div>

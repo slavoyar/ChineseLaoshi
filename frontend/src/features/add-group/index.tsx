@@ -1,5 +1,15 @@
 import { useGroupStore } from '@entities/group';
-import { Button, CreateDialog, TextField } from '@shared/ui';
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Input,
+  Label,
+} from '@shared/ui';
+import { Plus } from 'lucide-react';
 import { KeyboardEvent, useState } from 'react';
 
 export const AddGroup = () => {
@@ -29,28 +39,35 @@ export const AddGroup = () => {
   return (
     <>
       <Button variant='secondary' onClick={() => setIsOpen(true)}>
-        <i className='fa fa-add mr-1' aria-hidden='true' />
+        <Plus className='h-4 w-4' />
         Create group
       </Button>
-      <CreateDialog
-        onSave={() => saveHandler()}
-        isDisabled={!name}
-        isOpen={isOpen}
-        title='Create group'
-        onClose={handleClose}
-      >
-        <label className='flex flex-col gap-1 text-sm text-secondary-200'>
-          Group name
-          <TextField
-            id='create-group-name'
-            autoFocus
-            onKeyUp={handleEnter}
-            placeholder='Enter group name'
-            onInput={(e) => setName(e.currentTarget.value)}
-            value={name}
-          />
-        </label>
-      </CreateDialog>
+      <Dialog open={isOpen} onOpenChange={(open) => (open ? setIsOpen(true) : handleClose())}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create group</DialogTitle>
+          </DialogHeader>
+          <div className='grid gap-2 py-2'>
+            <Label htmlFor='create-group-name'>Group name</Label>
+            <Input
+              id='create-group-name'
+              autoFocus
+              onKeyUp={handleEnter}
+              placeholder='Enter group name'
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+          <DialogFooter className='gap-2 sm:gap-0'>
+            <Button variant='outline' onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button disabled={!name} onClick={saveHandler}>
+              Create
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

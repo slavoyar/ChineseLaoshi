@@ -1,5 +1,6 @@
 import { useAuthStore } from '@shared/stores';
 import { Route } from '@shared/types';
+import { LogOut, User } from 'lucide-react';
 import { forwardRef, HTMLAttributes } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,32 +16,38 @@ export const Header = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>
   };
 
   return (
-    <div ref={ref} className='fixed h-[80px] w-full bg-secondary-900' {...props}>
-      <div className='m-auto flex h-full items-center justify-between p-4 text-white md:w-9/12 xl:w-7/12'>
+    <div ref={ref} className='fixed h-[80px] w-full border-b bg-card' {...props}>
+      <div className='m-auto flex h-full items-center justify-between p-4 md:w-9/12 xl:w-7/12'>
         <button
           type='button'
-          className='cursor-pointer text-2xl font-bold'
+          className='cursor-pointer text-2xl font-bold text-foreground'
           onClick={() => navigate(Route.Root)}
         >
           {APP_NAME}
         </button>
 
         <div className='flex items-center gap-4'>
-          <div className='flex items-center gap-2 text-white'>
-            <i className='fa fa-user rounded-full bg-primary-200 p-2' aria-hidden='true' />
+          <div className='flex items-center gap-2 text-foreground'>
+            <span className='rounded-full bg-primary p-2 text-primary-foreground'>
+              <User className='h-4 w-4' aria-hidden='true' />
+            </span>
             <div>{username}</div>
-            {isDemo && <span className='text-sm text-secondary-200'>(mock data)</span>}
+            {isDemo && <span className='text-sm text-muted-foreground'>(mock data)</span>}
           </div>
           {!isDemo && (
             <button
               type='button'
-              className='fa fa-sign-out cursor-pointer'
+              className='rounded p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground'
               aria-label='Sign out'
               onClick={onSignOut}
-            />
+            >
+              <LogOut className='h-4 w-4' />
+            </button>
           )}
         </div>
       </div>
     </div>
   );
 });
+
+Header.displayName = 'Header';

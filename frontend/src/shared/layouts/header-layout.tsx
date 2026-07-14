@@ -1,4 +1,4 @@
-import { Header } from '@shared/ui';
+import { Header } from '@widgets/header';
 import { useResizeObserver } from '@siberiacancode/reactuse';
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';

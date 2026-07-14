@@ -1,3 +1,8 @@
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
 export const getPercentFromRatio = (num: number): number => Math.round(num * 100);
 
-export const cn = (...params: string[]): string => params.join(' ').trim();
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}

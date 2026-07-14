@@ -1,7 +1,0 @@
-﻿.input {
-  @apply box-border h-fit w-full rounded px-4 py-2 text-xl;
-}
-
-.input--primary {
-  @apply bg-secondary-700 focus:bg-secondary-600 outline-secondary-200 text-white outline-[1px];
-}
