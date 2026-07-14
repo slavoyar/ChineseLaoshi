@@ -1,18 +1,13 @@
-import { useCardStore } from '@entities/card';
-
-import { CardItem } from './card-item';
+import { WordGrid } from './word-grid';
 
 interface Props {
   groupId: string;
+  wordCount?: number;
   onDelete: () => void;
 }
 
-export const CardList = ({ groupId, onDelete }: Props) => {
-  const cardsPerGroup = useCardStore((state) => state.cardsPerGroup);
-
-  return (
-    <div className='flex flex-col gap-2 py-2'>
-      {cardsPerGroup[groupId]?.map((card) => <CardItem key={card.id} card={card} onDelete={onDelete} />)}
-    </div>
-  );
+export const CardList = ({ groupId, wordCount, onDelete }: Props) => {
+  return <WordGrid groupId={groupId} wordCount={wordCount} onDelete={onDelete} />;
 };
+
+export { WordGrid } from './word-grid';

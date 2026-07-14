@@ -1,21 +1,10 @@
+import { userRepository } from '@repositories';
 import type { NextFunction, Request, Response } from 'express';
-import { verify } from 'jsonwebtoken';
-import { CustomUser } from 'types/express';
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.user) {
-    return res.status(401).json({ message: 'Unauthorized' });
-  }
-  next();
-};
+const DEFAULT_USER_EMAIL = process.env.DEFAULT_USER_EMAIL ?? 'slavoyar@mail.com';
 
-export const setUserMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  if (req.cookies && req.cookies.accessToken) {
-    const user = verify(req.cookies.accessToken, process.env.JWT_SECRET_KEY, { complete: true });
-    if (typeof user === 'string') {
-      return res.status(401).json({ message: 'Unauthorized' });
-    }
-    req.user = user.payload as CustomUser;
-  }
+export const defaultUserMiddleware = async (req: Request, _res: Response, next: NextFunction) => {
+  const user = await userRepository.getByEmail(DEFAULT_USER_EMAIL);
+  req.user = { id: user.id, username: user.username };
   next();
 };

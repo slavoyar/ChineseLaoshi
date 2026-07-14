@@ -5,6 +5,7 @@ import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { useCounter, useDebounceValue, useResizeObserver } from '@siberiacancode/reactuse';
 import HanziWriter from 'hanzi-writer';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 interface Props extends WordDto {
@@ -42,8 +43,6 @@ export const WriteCard = ({
   const { ref } = useResizeObserver<HTMLDivElement>({
     onChange: ([entry]) => {
       const { width } = entry.contentRect;
-
-      // TODO: remove magic numbers
       setFieldSize(width > 400 ? 300 : 250);
     },
   });
@@ -73,7 +72,6 @@ export const WriteCard = ({
       })
     );
 
-    // TODO: Refactor if possible
     writers.current[0].quiz({
       onComplete: onQuizComplete,
     });
@@ -104,7 +102,7 @@ export const WriteCard = ({
     }
   }, [symbols, debouncedIndex]);
 
-  const iconClass = (cond: boolean) => (cond ? 'text-primary-100' : 'text-secondary-700');
+  const navIconClass = (enabled: boolean) => cn('h-5 w-5', enabled ? 'text-foreground' : 'text-muted-foreground');
 
   const buttonHandler = async (guessed: boolean) => {
     onNext();
@@ -114,18 +112,16 @@ export const WriteCard = ({
   };
 
   return (
-    <div ref={ref} className='bg-secondary-900 flex flex-col gap-4 rounded-2xl p-4 md:w-[500px]'>
-      <div className='bg-secondary-700 w-full rounded p-2 text-center text-xl text-white'>
+    <div ref={ref} className='flex flex-col gap-4 rounded-2xl border bg-card p-4 md:w-[500px]'>
+      <div className='w-full rounded-md bg-muted p-2 text-center text-xl'>
         {translation}
-        <span className='text-secondary-500 bg-secondary-500 hover:bg-secondary-700 ml-2 rounded'>
-          ({transcription})
-        </span>
+        <span className='ml-2 text-sm text-muted-foreground'>({transcription})</span>
       </div>
       <div className='flex items-center justify-around'>
-        <Button variant='text' onClick={() => dec()} disabled={currentIndex === 0}>
-          <i className={cn('fa fa-chevron-left', iconClass(currentIndex > 0))} />
+        <Button variant='ghost' size='icon' onClick={() => dec()} disabled={currentIndex === 0}>
+          <ChevronLeft className={navIconClass(currentIndex > 0)} />
         </Button>
-        <div className='bg-secondary-500 max-h-[300px] max-w-[300px] rounded'>
+        <div className='max-h-[300px] max-w-[300px] rounded-md bg-muted'>
           {keysBySymbols(symbols, id).map((key, index) => (
             <div
               id={`hanzi-input-${index}`}
@@ -134,8 +130,8 @@ export const WriteCard = ({
             />
           ))}
         </div>
-        <Button variant='text' disabled={currentIndex === symbols.length - 1} onClick={() => inc()}>
-          <i className={cn('fa fa-chevron-right', iconClass(currentIndex < symbols.length - 1))} />
+        <Button variant='ghost' size='icon' disabled={currentIndex === symbols.length - 1} onClick={() => inc()}>
+          <ChevronRight className={navIconClass(currentIndex < symbols.length - 1)} />
         </Button>
       </div>
       <div className='flex w-full gap-4'>
@@ -144,7 +140,6 @@ export const WriteCard = ({
         </Button>
         <Button
           className='w-full'
-          variant='primary'
           title='Enter all hieroglyphs'
           disabled={guessedSymbols.length !== symbols.length || isNextDisabled}
           onClick={() => buttonHandler(true)}

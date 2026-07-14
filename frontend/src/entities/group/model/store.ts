@@ -1,16 +1,19 @@
 import { GroupDto } from '@chinese-laoshi/shared';
+import { mockGroupApi, USE_MOCKS } from '@shared/mocks';
 import { create } from 'zustand';
 
 import groupService from '../api';
 
 interface State {
   groups: GroupDto[];
+  isLoading: boolean;
 }
 
 interface Action {
   fetch: () => Promise<void>;
-  create: (name: string) => Promise<void>;
+  create: (name: string) => Promise<string>;
   rename: (id: string, name: string) => Promise<void>;
+  setName: (id: string, name: string) => void;
   delete: (id: string) => Promise<void>;
   decrementWordCount: (id: string) => void;
   incrementWordCount: (id: string) => void;
@@ -18,13 +21,20 @@ interface Action {
 
 const useGroupStore = create<State & Action>((set, get) => ({
   groups: [],
+  isLoading: false,
   fetch: async () => {
-    const response = await groupService.getList();
-    set(() => ({ groups: response.map((item) => ({ ...item, cards: [] })) }));
+    set(() => ({ isLoading: true }));
+    try {
+      const response = USE_MOCKS ? await mockGroupApi.getList() : await groupService.getList();
+      set(() => ({ groups: response.map((item) => ({ ...item, cards: [] })), isLoading: false }));
+    } catch {
+      set(() => ({ isLoading: false }));
+    }
   },
   create: async (name: string) => {
-    const response = await groupService.post({ name });
+    const response = USE_MOCKS ? await mockGroupApi.post({ name }) : await groupService.post({ name });
     set((state) => ({ groups: [...state.groups, { ...response, cards: [] }] }));
+    return response.id;
   },
   rename: async (id: string, name: string) => {
     const { groups } = get();
@@ -33,12 +43,25 @@ const useGroupStore = create<State & Action>((set, get) => ({
       throw new Error(`Can not rename. Group with id = '${id}' does not exist`);
     }
     const updatedGroup = { ...groups[groupIndex], name };
-    await groupService.put(updatedGroup);
+    if (USE_MOCKS) {
+      await mockGroupApi.put(updatedGroup);
+    } else {
+      await groupService.put(updatedGroup);
+    }
     groups.splice(groupIndex, 1, updatedGroup);
     set((state) => ({ groups: [...state.groups] }));
   },
+  setName: (id: string, name: string) => {
+    set((state) => ({
+      groups: state.groups.map((item) => (item.id === id ? { ...item, name } : item)),
+    }));
+  },
   delete: async (id: string) => {
-    await groupService.delete(id);
+    if (USE_MOCKS) {
+      await mockGroupApi.delete(id);
+    } else {
+      await groupService.delete(id);
+    }
     set((state) => ({ groups: state.groups.filter((group) => group.id !== id) }));
   },
   decrementWordCount: (id: string) => {

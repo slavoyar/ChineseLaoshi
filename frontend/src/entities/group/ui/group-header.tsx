@@ -4,7 +4,7 @@ interface Props {
 }
 
 export const GroupHeader = ({ name, wordCount }: Props) => (
-  <div>
-    {name} <span className='text-secondary-200'>({wordCount} words)</span>
-  </div>
+  <span>
+    {name} <span className='text-muted-foreground'>({wordCount} words)</span>
+  </span>
 );

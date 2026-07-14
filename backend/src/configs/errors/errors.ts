@@ -1,16 +1,4 @@
 export const errors = {
-  notAuth: {
-    message: 'User is not authenticated',
-    statusCode: 500,
-  },
-  loginError: {
-    message: 'Wrong username or password',
-    statusCode: 401,
-  },
-  registerError: {
-    message: 'Username or email is not unique',
-    statusCode: 500,
-  },
   entityNotFoundError: {
     message: 'Requested entity is not found',
     statusCode: 404,
@@ -25,10 +13,6 @@ export const errors = {
   },
   entityDeleteError: {
     message: 'Could not delete an entity',
-    statusCode: 500,
-  },
-  emailSendError: {
-    message: 'Error during email send',
     statusCode: 500,
   },
   validationError: {

@@ -1,9 +1,11 @@
 import { CardDto, CreateCardDto } from '@chinese-laoshi/shared';
 import cardService from '@entities/card/api';
+import { mockCardApi, USE_MOCKS } from '@shared/mocks';
 import { create } from 'zustand';
 
 interface State {
   cardsPerGroup: Record<string, CardDto[]>;
+  loadingGroupIds: Record<string, boolean>;
 }
 
 interface Action {
@@ -16,17 +18,30 @@ interface Action {
 
 const useCardStore = create<State & Action>((set, get) => ({
   cardsPerGroup: {},
+  loadingGroupIds: {},
   fetch: async (id: string) => {
-    const response = await cardService.getList(id);
-    set((state) => ({ cardsPerGroup: { ...state.cardsPerGroup, [id]: response } }));
+    set((state) => ({ loadingGroupIds: { ...state.loadingGroupIds, [id]: true } }));
+    try {
+      const response = USE_MOCKS ? await mockCardApi.getList(id) : await cardService.getList(id);
+      set((state) => ({
+        cardsPerGroup: { ...state.cardsPerGroup, [id]: response },
+        loadingGroupIds: { ...state.loadingGroupIds, [id]: false },
+      }));
+    } catch {
+      set((state) => ({ loadingGroupIds: { ...state.loadingGroupIds, [id]: false } }));
+    }
   },
   create: async (id: string, data: CreateCardDto) => {
-    const response = await cardService.post(data, id);
-    const cards = [...get().cardsPerGroup[id], response];
+    const response = USE_MOCKS ? await mockCardApi.post(data, id) : await cardService.post(data, id);
+    const cards = [...(get().cardsPerGroup[id] ?? []), response];
     set((state) => ({ cardsPerGroup: { ...state.cardsPerGroup, [id]: cards } }));
   },
   delete: async (id: string) => {
-    await cardService.delete(id);
+    if (USE_MOCKS) {
+      await mockCardApi.delete(id);
+    } else {
+      await cardService.delete(id);
+    }
     const { cardsPerGroup } = get();
     const groupId = Object.keys(cardsPerGroup).find((group) =>
       cardsPerGroup[group].some((item) => item.id === id)
@@ -42,7 +57,9 @@ const useCardStore = create<State & Action>((set, get) => ({
     }));
   },
   updateStats: async (id: string, guessed: boolean) => {
-    const card = await cardService.updateCardStats(id, guessed);
+    const card = USE_MOCKS
+      ? await mockCardApi.updateCardStats(id, guessed)
+      : await cardService.updateCardStats(id, guessed);
 
     set((state) => ({
       cardsPerGroup: {
@@ -52,7 +69,7 @@ const useCardStore = create<State & Action>((set, get) => ({
     }));
   },
   reset: () => {
-    set(() => ({ cardsPerGroup: {} }));
+    set(() => ({ cardsPerGroup: {}, loadingGroupIds: {} }));
   },
 }));
 

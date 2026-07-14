@@ -1,22 +1,42 @@
 import { useGroupStore } from '@entities/group';
-import { useAuthStore } from '@shared/stores';
-import { Button, CreateDialog, TextField } from '@shared/ui';
+import {
+  GROUP_ICON_CATALOG,
+  GroupIconKey,
+  setGroupIcon,
+} from '@entities/group/lib/group-icons';
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Input,
+  Label,
+} from '@shared/ui';
+import { cn } from '@shared/utils';
 import { KeyboardEvent, useState } from 'react';
 
-export const AddGroup = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface AddGroupDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export const AddGroupDialog = ({ open, onOpenChange }: AddGroupDialogProps) => {
   const [name, setName] = useState('');
-  const isDemo = useAuthStore((state) => state.isDemo);
+  const [selectedIcon, setSelectedIcon] = useState<GroupIconKey>('Languages');
   const createGroup = useGroupStore((state) => state.create);
 
   const handleClose = () => {
-    setIsOpen(false);
+    onOpenChange(false);
     setName('');
+    setSelectedIcon('Languages');
   };
 
   const saveHandler = async () => {
     try {
-      await createGroup(name);
+      const groupId = await createGroup(name);
+      setGroupIcon(groupId, selectedIcon);
     } finally {
       handleClose();
     }
@@ -29,31 +49,53 @@ export const AddGroup = () => {
   };
 
   return (
-    <>
-      <Button
-        variant='secondary'
-        disabled={isDemo}
-        title={isDemo ? 'Not available in demo' : ''}
-        onClick={() => setIsOpen(true)}
-      >
-        <i className='fa fa-add mr-1' />
-        Create group
-      </Button>
-      <CreateDialog
-        onSave={() => saveHandler()}
-        isDisabled={!name}
-        isOpen={isOpen}
-        title='Create group'
-        onClose={handleClose}
-      >
-        <TextField
-          autoFocus
-          onKeyUp={handleEnter}
-          placeholder='Enter group name'
-          onInput={(e) => setName(e.currentTarget.value)}
-          value={name}
-        />
-      </CreateDialog>
-    </>
+    <Dialog open={open} onOpenChange={(nextOpen) => (nextOpen ? onOpenChange(true) : handleClose())}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create group</DialogTitle>
+        </DialogHeader>
+        <div className='grid gap-4 py-2'>
+          <div className='grid gap-2'>
+            <Label htmlFor='create-group-name'>Group name</Label>
+            <Input
+              id='create-group-name'
+              autoFocus
+              onKeyUp={handleEnter}
+              placeholder='Enter group name'
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+          <div className='grid gap-2'>
+            <Label>Icon</Label>
+            <div className='grid grid-cols-4 gap-2'>
+              {GROUP_ICON_CATALOG.map(({ key, Icon }) => (
+                <button
+                  key={key}
+                  type='button'
+                  aria-label={`Select ${key} icon`}
+                  aria-pressed={selectedIcon === key}
+                  className={cn(
+                    'flex aspect-square items-center justify-center rounded-lg border bg-secondary transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                    selectedIcon === key && 'border-primary ring-2 ring-primary/30',
+                  )}
+                  onClick={() => setSelectedIcon(key)}
+                >
+                  <Icon className='h-5 w-5' aria-hidden='true' />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+        <DialogFooter className='gap-2 sm:gap-0'>
+          <Button variant='outline' onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button disabled={!name} onClick={saveHandler}>
+            Create
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };

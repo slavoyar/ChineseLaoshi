@@ -1,5 +1,5 @@
 import type { UserRepositoryType } from '@repositories/user.repository';
-import { getUuid, mockPrismaPromise } from '@utils';
+import { mockPrismaPromise } from '@utils';
 
 import { users } from './user.data';
 
@@ -10,6 +10,4 @@ export const userRepository: UserRepositoryType = {
     user ??= users.find((u) => u.username === email);
     return mockPrismaPromise(user);
   }),
-  create: jest.fn((data) => mockPrismaPromise({ ...data, id: getUuid(users.length + 1) })),
-  update: jest.fn(),
 };

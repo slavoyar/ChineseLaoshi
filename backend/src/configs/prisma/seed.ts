@@ -1,10 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import type { CreateWordDto } from '@shared/schemas';
-import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
-
-const SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
 
 const numbers = [
   { transcription: 'yī', translation: 'one', symbols: '一' },
@@ -77,14 +74,13 @@ const createGroup = async (user: Express.User, name: string, wordsData: CreateWo
 };
 
 async function main() {
-  const hashedPassword = await bcrypt.hash('password', SALT_ROUNDS);
   const user = await prisma.user.upsert({
     where: { email: 'demouser@example.com' },
     update: {},
     create: {
       email: 'demouser@example.com',
       username: 'DemoUser',
-      password: hashedPassword,
+      password: '',
     },
   });
 

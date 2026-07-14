@@ -1,8 +1,5 @@
 export const Route = {
-  SignIn: '/signin',
-  SignUp: '/signup',
   Root: '/',
+  Groups: '/groups',
   WritePractice: '/write-practice',
-  ResetPassword: '/reset-password',
-  UpdatePassword: '/update-password',
 } as const;

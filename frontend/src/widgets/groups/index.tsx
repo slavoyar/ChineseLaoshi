@@ -1,39 +1,32 @@
-import { GroupDto } from '@chinese-laoshi/shared';
-import { CardList, useCardStore } from '@entities/card';
-import { GroupList, useGroupStore } from '@entities/group';
-import { AddGroup } from '@features/add-group';
-import { AddWord } from '@features/add-word';
+import { GroupGrid, GroupListSkeleton, useGroupStore } from '@entities/group';
+import { cn } from '@shared/utils';
 import { HTMLAttributes } from 'react';
 
-export const Groups = (props: HTMLAttributes<HTMLDivElement>) => {
-  const [cardsPerGroup, fetchCards] = useCardStore((state) => [state.cardsPerGroup, state.fetch]);
-  const decrementWordCount = useGroupStore((state) => state.decrementWordCount);
-
-  const groupOpenHandler = async (group: GroupDto) => {
-    if (!cardsPerGroup[group.id]) {
-      await fetchCards(group.id);
-    }
-  };
+export const Groups = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) => {
+  const [groups, isLoading] = useGroupStore((state) => [state.groups, state.isLoading]);
 
   return (
     <div
-      className='bg-secondary-900 flex h-fit max-h-full flex-col gap-5 rounded-2xl p-5 md:gap-10 md:p-10'
+      className={cn(
+        'flex min-h-0 flex-col gap-5 rounded-2xl border bg-card p-5 md:gap-10 md:p-10',
+        className,
+      )}
       {...props}
     >
-      <div className='flex items-center justify-between'>
-        <div className='text-2xl text-white'>Groups</div>
-        <AddGroup />
-      </div>
-      <div className='h-full overflow-auto'>
-        <GroupList
-          content={(item) => (
-            <div>
-              <CardList groupId={item.id} onDelete={() => decrementWordCount(item.id)} />
-              <AddWord groupId={item.id} />
-            </div>
-          )}
-          onGroupOpen={groupOpenHandler}
-        />
+      <h2 className='text-2xl text-foreground'>Groups</h2>
+      <div className='min-h-0 flex-1 overflow-auto'>
+        {isLoading ? (
+          <GroupListSkeleton />
+        ) : (
+          <div className='flex flex-col gap-4'>
+            {groups.length === 0 && (
+              <p className='text-center text-muted-foreground'>
+                No groups yet. Create one to start building your vocabulary.
+              </p>
+            )}
+            <GroupGrid />
+          </div>
+        )}
       </div>
     </div>
   );

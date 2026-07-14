@@ -1,10 +1,19 @@
-import { GroupDto } from '@chinese-laoshi/shared';
 import { useGroupStore } from '@entities/group';
 import { PenWrite } from '@shared/icons/pen-write';
 import { useStateStore } from '@shared/stores';
 import { Route } from '@shared/types';
-import { Checkbox, CreateDialog, TextField } from '@shared/ui';
-import { Autocomplete } from '@shared/ui/autocomplete';
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  GroupCombobox,
+  Input,
+  Label,
+} from '@shared/ui';
 import { ChangeEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,10 +35,6 @@ export const StartWritePractice = () => {
     setSettings({ cardsNumber });
   };
 
-  const onGroupSelect = (item: GroupDto) => {
-    setSettings({ groupId: item.id });
-  };
-
   const handleSave = () => {
     setState(settings.prescriptionMode ? 'prescription' : 'write');
     const group = settings.groupId ? `/${settings.groupId}` : '';
@@ -47,47 +52,66 @@ export const StartWritePractice = () => {
 
   return (
     <>
-      <div
-        className='bg-secondary-900 hover:bg-secondary-800 flex w-fit cursor-pointer flex-col items-start justify-center gap-2 rounded-xl p-4'
+      <Button
+        variant='outline'
+        className='flex h-auto min-w-[7.5rem] flex-col items-center gap-3 rounded-xl p-4 [&_svg]:size-6'
         onClick={() => setIsOpen(true)}
       >
-        <PenWrite />
-        <div className='w-full text-center text-white'>Handwriting</div>
-      </div>
-      <CreateDialog
-        title='Writing mode settings'
-        isOpen={isOpen}
-        saveTitle='Study'
-        onSave={() => handleSave()}
-        onClose={() => setIsOpen(false)}
-      >
-        <div className='flex flex-col gap-2'>
-          <TextField
-            placeholder='Number of cards'
-            value={settings.cardsNumber}
-            type='number'
-            onChange={handleCardsNumberChange}
-          />
-          <Autocomplete
-            placeholder='Enter group name'
-            value={settings.groupId}
-            items={groups}
-            onSelect={onGroupSelect}
-            filterableValue={(item) => item.name}
-            keyValue={(item) => item.id}
-          />
-          <Checkbox
-            value={settings.toggleHints}
-            label='Toggle hints'
-            onChange={(e) => onToggleHint(e.currentTarget.checked)}
-          />
-          <Checkbox
-            value={settings.toggleHints}
-            label='Presciption mode'
-            onChange={(e) => onToggleMode(e.currentTarget.checked)}
-          />
-        </div>
-      </CreateDialog>
+        <span className='flex size-11 items-center justify-center rounded-lg bg-[hsl(var(--chart-2)/0.12)] text-[hsl(var(--chart-2))]'>
+          <PenWrite />
+        </span>
+        <span className='text-sm font-medium'>Handwriting</span>
+      </Button>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Writing mode settings</DialogTitle>
+          </DialogHeader>
+          <div className='grid gap-4 py-2'>
+            <div className='grid gap-2'>
+              <Label htmlFor='cards-number'>Number of cards</Label>
+              <Input
+                id='cards-number'
+                placeholder='Number of cards'
+                value={settings.cardsNumber}
+                type='number'
+                onChange={handleCardsNumberChange}
+              />
+            </div>
+            <div className='grid gap-2'>
+              <Label>Group</Label>
+              <GroupCombobox
+                groups={groups}
+                value={settings.groupId}
+                onSelect={(group) => setSettings({ groupId: group.id })}
+                placeholder='Enter group name'
+              />
+            </div>
+            <div className='flex items-center gap-2'>
+              <Checkbox
+                id='toggle-hints'
+                checked={settings.toggleHints}
+                onCheckedChange={(checked) => onToggleHint(checked === true)}
+              />
+              <Label htmlFor='toggle-hints'>Toggle hints</Label>
+            </div>
+            <div className='flex items-center gap-2'>
+              <Checkbox
+                id='prescription-mode'
+                checked={settings.prescriptionMode}
+                onCheckedChange={(checked) => onToggleMode(checked === true)}
+              />
+              <Label htmlFor='prescription-mode'>Prescription mode</Label>
+            </div>
+          </div>
+          <DialogFooter className='gap-2 sm:gap-0'>
+            <Button variant='outline' onClick={() => setIsOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave}>Study</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

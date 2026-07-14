@@ -1,17 +1,25 @@
 import { useCardStore } from '@entities/card';
 import { useGroupStore } from '@entities/group';
-import { useAuthStore } from '@shared/stores';
-import { Button, CreateDialog, TextField } from '@shared/ui';
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Input,
+  Label,
+} from '@shared/ui';
 import pinyin from 'pinyin';
-import { useEffect, useState } from 'react';
+import { KeyboardEvent, useEffect, useState } from 'react';
 
-interface Props {
+interface AddWordDialogProps {
   groupId: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-export const AddWord = ({ groupId }: Props) => {
-  const isDemo = useAuthStore((state) => state.isDemo);
-  const [isOpen, setIsOpen] = useState(false);
+export const AddWordDialog = ({ groupId, open, onOpenChange }: AddWordDialogProps) => {
   const [transcription, setTranscription] = useState('');
   const [translation, setTranslation] = useState('');
   const [symbols, setSymbols] = useState('');
@@ -20,55 +28,88 @@ export const AddWord = ({ groupId }: Props) => {
   const incrementWordCount = useGroupStore((state) => state.incrementWordCount);
 
   useEffect(() => {
-    setTranscription('');
-    setTranslation('');
-    setSymbols('');
-  }, [isOpen]);
+    if (!open) {
+      setTranscription('');
+      setTranslation('');
+      setSymbols('');
+    }
+  }, [open]);
+
+  const handleClose = () => {
+    onOpenChange(false);
+  };
+
   const saveHandler = async () => {
     try {
       await createWord(groupId, { word: { transcription, translation, symbols }, groupId });
       incrementWordCount(groupId);
     } finally {
-      setIsOpen(false);
+      handleClose();
     }
   };
 
   const symbolsHandler = (value: string) => {
-    // TODO: add check if it is a hieroglyph
     setSymbols(value);
     setTranscription(
       pinyin(value)
         .map((item: string[]) => item[0])
-        .join('')
+        .join(''),
     );
   };
 
+  const handleEnter = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (symbols && translation && e.key === 'Enter') {
+      saveHandler();
+    }
+  };
+
   return (
-    <>
-      <Button
-        variant='text'
-        disabled={isDemo}
-        title={isDemo ? 'Not available in demo' : ''}
-        onClick={() => setIsOpen(true)}
-      >
-        <i className='fa fa-add mr-1' />
-        Add word
-      </Button>
-      <CreateDialog onSave={saveHandler} isOpen={isOpen} title='Create word' onClose={() => setIsOpen(false)}>
-        <div className='flex flex-col gap-2'>
-          <TextField
-            value={symbols}
-            placeholder='Enter hieroglyphs'
-            onInput={(e) => symbolsHandler(e.currentTarget.value)}
-          />
-          <TextField value={transcription} placeholder='Enter transription' disabled />
-          <TextField
-            value={translation}
-            placeholder='Enter translation'
-            onInput={(e) => setTranslation(e.currentTarget.value)}
-          />
+    <Dialog open={open} onOpenChange={(nextOpen) => (nextOpen ? onOpenChange(true) : handleClose())}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create word</DialogTitle>
+        </DialogHeader>
+        <div className='grid gap-4 py-2'>
+          <div className='grid gap-2'>
+            <Label htmlFor='create-word-symbols'>Hieroglyphs</Label>
+            <Input
+              id='create-word-symbols'
+              autoFocus
+              value={symbols}
+              placeholder='Enter hieroglyphs'
+              onChange={(e) => symbolsHandler(e.target.value)}
+              onKeyUp={handleEnter}
+            />
+          </div>
+          <div className='grid gap-2'>
+            <Label htmlFor='create-word-transcription'>Transcription</Label>
+            <Input
+              id='create-word-transcription'
+              value={transcription}
+              placeholder='Enter transcription'
+              disabled
+            />
+          </div>
+          <div className='grid gap-2'>
+            <Label htmlFor='create-word-translation'>Translation</Label>
+            <Input
+              id='create-word-translation'
+              value={translation}
+              placeholder='Enter translation'
+              onChange={(e) => setTranslation(e.target.value)}
+              onKeyUp={handleEnter}
+            />
+          </div>
         </div>
-      </CreateDialog>
-    </>
+        <DialogFooter className='gap-2 sm:gap-0'>
+          <Button variant='outline' onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button disabled={!symbols || !translation} onClick={saveHandler}>
+            Create
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };

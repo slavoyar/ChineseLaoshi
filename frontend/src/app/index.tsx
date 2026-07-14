@@ -1,5 +1,5 @@
 import './styles/index.css';
-import './middlewares';
+import './axios';
 
 import router from '@app/router';
 import React from 'react';

@@ -1,5 +1,4 @@
-﻿import { authMiddleware } from '@middlewares';
-import { cardService } from '@services';
+﻿import { cardService } from '@services';
 import {
   type CardDto,
   type CreateCardDto,
@@ -24,7 +23,6 @@ createRoute<{ groupId: string }>(
   },
   {
     endpoint: '/:groupId',
-    middlewares: [authMiddleware],
   }
 );
 
@@ -38,7 +36,6 @@ createRoute<Params, CreateCardDto>(
   {
     method: 'post',
     schema: CreateCardSchema,
-    middlewares: [authMiddleware],
   }
 );
 
@@ -50,7 +47,6 @@ createRoute<Params, UpdateCardWordDto>(
   {
     method: 'put',
     schema: UpdateCardWordSchema,
-    middlewares: [authMiddleware],
   }
 );
 
@@ -63,7 +59,6 @@ createRoute<Params, UpdateCardStatsDto>(
     method: 'post',
     endpoint: '/stats',
     schema: UpdateCardStatsSchema,
-    middlewares: [authMiddleware],
   }
 );
 
@@ -76,7 +71,6 @@ createRoute<Params, GetWriteCardDto, CardDto[]>(
     method: 'post',
     endpoint: '/study/write',
     schema: GetWriteCardSchema,
-    middlewares: [authMiddleware],
   }
 );
 
@@ -89,7 +83,6 @@ createRoute<{ cardId: string }>(
   {
     method: 'delete',
     endpoint: '/:cardId',
-    middlewares: [authMiddleware],
   }
 );
 

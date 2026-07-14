@@ -1,7 +1,6 @@
 ﻿import 'express-async-errors';
 
-import { errorMiddleware, loggerMiddleware, setUserMiddleware } from '@middlewares';
-import cookieParser from 'cookie-parser';
+import { defaultUserMiddleware, errorMiddleware, loggerMiddleware } from '@middlewares';
 import dotenv from 'dotenv';
 import express from 'express';
 
@@ -19,9 +18,8 @@ if (NODE_ENV !== 'test') {
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cookieParser());
 
-app.use(setUserMiddleware);
+app.use(defaultUserMiddleware);
 
 app.use('/api', routes);
 

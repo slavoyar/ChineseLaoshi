@@ -1,0 +1,310 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-14T22:15:00.000Z",
+  "title": "Design System: Chinese Laoshi",
+  "extensions": {
+    "colorMeta": {
+      "background": {
+        "role": "neutral",
+        "displayName": "Midnight Canvas",
+        "canonical": "oklch(15% 0.04 264)",
+        "tonalRamp": [
+          "oklch(8% 0.03 264)",
+          "oklch(12% 0.035 264)",
+          "oklch(15% 0.04 264)",
+          "oklch(20% 0.04 264)",
+          "oklch(28% 0.035 264)",
+          "oklch(38% 0.03 264)",
+          "oklch(52% 0.025 264)",
+          "oklch(96% 0.01 264)"
+        ]
+      },
+      "foreground": {
+        "role": "neutral",
+        "displayName": "Soft Ink",
+        "canonical": "oklch(98% 0.005 240)",
+        "tonalRamp": [
+          "oklch(15% 0.02 240)",
+          "oklch(25% 0.02 240)",
+          "oklch(40% 0.015 240)",
+          "oklch(55% 0.012 240)",
+          "oklch(70% 0.01 240)",
+          "oklch(85% 0.008 240)",
+          "oklch(95% 0.006 240)",
+          "oklch(98% 0.005 240)"
+        ]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "Stage Light",
+        "canonical": "oklch(98% 0.005 240)",
+        "tonalRamp": [
+          "oklch(18% 0.03 260)",
+          "oklch(25% 0.035 260)",
+          "oklch(35% 0.04 260)",
+          "oklch(50% 0.035 260)",
+          "oklch(65% 0.025 260)",
+          "oklch(80% 0.015 260)",
+          "oklch(92% 0.008 240)",
+          "oklch(98% 0.005 240)"
+        ]
+      },
+      "secondary": {
+        "role": "neutral",
+        "displayName": "Panel Slate",
+        "canonical": "oklch(28% 0.03 260)",
+        "tonalRamp": [
+          "oklch(12% 0.03 260)",
+          "oklch(18% 0.03 260)",
+          "oklch(22% 0.03 260)",
+          "oklch(28% 0.03 260)",
+          "oklch(35% 0.028 260)",
+          "oklch(45% 0.025 260)",
+          "oklch(58% 0.02 260)",
+          "oklch(75% 0.015 260)"
+        ]
+      },
+      "muted-foreground": {
+        "role": "neutral",
+        "displayName": "Supporting Gray",
+        "canonical": "oklch(68% 0.02 250)",
+        "tonalRamp": [
+          "oklch(25% 0.02 250)",
+          "oklch(35% 0.02 250)",
+          "oklch(45% 0.02 250)",
+          "oklch(55% 0.02 250)",
+          "oklch(62% 0.02 250)",
+          "oklch(68% 0.02 250)",
+          "oklch(78% 0.015 250)",
+          "oklch(88% 0.01 250)"
+        ]
+      },
+      "progress-mid": {
+        "role": "tertiary",
+        "displayName": "Mastery Green Mid",
+        "canonical": "oklch(72% 0.19 145)",
+        "tonalRamp": [
+          "oklch(25% 0.08 145)",
+          "oklch(35% 0.12 145)",
+          "oklch(45% 0.15 145)",
+          "oklch(55% 0.17 145)",
+          "oklch(65% 0.18 145)",
+          "oklch(72% 0.19 145)",
+          "oklch(80% 0.17 145)",
+          "oklch(90% 0.12 145)"
+        ]
+      },
+      "progress-high": {
+        "role": "tertiary",
+        "displayName": "Mastery Green High",
+        "canonical": "oklch(68% 0.2 145)",
+        "tonalRamp": [
+          "oklch(22% 0.08 145)",
+          "oklch(32% 0.12 145)",
+          "oklch(42% 0.15 145)",
+          "oklch(52% 0.17 145)",
+          "oklch(62% 0.19 145)",
+          "oklch(68% 0.2 145)",
+          "oklch(76% 0.18 145)",
+          "oklch(88% 0.13 145)"
+        ]
+      },
+      "destructive": {
+        "role": "primary",
+        "displayName": "Danger Deep",
+        "canonical": "oklch(32% 0.14 25)",
+        "tonalRamp": [
+          "oklch(18% 0.1 25)",
+          "oklch(25% 0.12 25)",
+          "oklch(32% 0.14 25)",
+          "oklch(42% 0.16 25)",
+          "oklch(52% 0.18 25)",
+          "oklch(62% 0.19 25)",
+          "oklch(72% 0.17 25)",
+          "oklch(85% 0.12 25)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Character Display",
+        "purpose": "Chinese glyphs on word tiles — the visual hero."
+      },
+      "headline": {
+        "displayName": "Dialog Headline",
+        "purpose": "Modal and alert titles."
+      },
+      "title": {
+        "displayName": "Section Title",
+        "purpose": "Page headings, app name, group names."
+      },
+      "body": {
+        "displayName": "UI Body",
+        "purpose": "Buttons, inputs, descriptions, navigation links."
+      },
+      "label": {
+        "displayName": "Tile Label",
+        "purpose": "Translations, group names, form labels."
+      },
+      "micro": {
+        "displayName": "Micro Metadata",
+        "purpose": "Transcriptions, word counts, create-tile captions."
+      }
+    },
+    "shadows": [
+      {
+        "name": "modal-lift",
+        "value": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)",
+        "purpose": "Dialogs and alert dialogs only — never tiles or panels."
+      },
+      {
+        "name": "icon-drop",
+        "value": "drop-shadow(0 1px 1px rgba(0, 0, 0, 0.05))",
+        "purpose": "Delete icon legibility on tile hover."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default color and opacity transitions (150–200 ms)."
+      },
+      {
+        "name": "dialog-enter",
+        "value": "200ms fade + zoom-in-95",
+        "purpose": "Modal open/close via tailwindcss-animate."
+      },
+      {
+        "name": "accordion",
+        "value": "0.2s ease-out height",
+        "purpose": "Accordion expand/collapse."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Default committed action — Create, Save, Delete confirm.",
+      "html": "<button class=\"ds-btn-primary\">Create</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 8px 16px; border: none; border-radius: 6px; background: #f8fafc; color: #0f172a; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; white-space: nowrap; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), opacity 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-primary:hover { opacity: 0.9; } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px #020817, 0 0 0 4px #cbd5e1; } .ds-btn-primary:disabled { opacity: 0.5; pointer-events: none; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary actions — Cancel, dismiss.",
+      "html": "<button class=\"ds-btn-outline\">Cancel</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 8px 16px; border: 1px solid #1e293b; border-radius: 6px; background: #020817; color: #f8fafc; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-outline:hover { background: #1e293b; } .ds-btn-outline:focus-visible { outline: none; box-shadow: 0 0 0 2px #020817, 0 0 0 4px #cbd5e1; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Standard form field in create/edit dialogs.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Enter hieroglyphs\" />",
+      "css": ".ds-input { display: flex; width: 100%; height: 40px; padding: 8px 12px; border: 1px solid #1e293b; border-radius: 6px; background: #020817; color: #f8fafc; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-input::placeholder { color: #94a3b8; } .ds-input:focus-visible { outline: none; box-shadow: 0 0 0 2px #020817, 0 0 0 4px #cbd5e1; } .ds-input:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Group Tile",
+      "kind": "card",
+      "refersTo": "tile-group",
+      "description": "Navigable square tile for a vocabulary group.",
+      "html": "<div class=\"ds-tile-group\"><svg class=\"ds-tile-icon\" xmlns=\"http://www.w3.org/2000/svg\" width=\"28\" height=\"28\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/></svg><p class=\"ds-tile-name\">Travel</p><p class=\"ds-tile-meta\">12 words</p></div>",
+      "css": ".ds-tile-group { display: flex; flex-direction: column; align-items: center; justify-content: space-between; width: 96px; aspect-ratio: 1; padding: 8px; border: 1px solid #1e293b; border-radius: 8px; background: #1e293b; color: #f8fafc; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-tile-group:hover { background: #1e293b; filter: brightness(1.08); } .ds-tile-group:focus-visible { outline: none; box-shadow: 0 0 0 2px #cbd5e1; } .ds-tile-icon { flex: 1; display: flex; align-items: center; justify-content: center; color: #f8fafc; } .ds-tile-name { width: 100%; text-align: center; font-size: 12px; font-weight: 500; line-height: 1.25; margin: 0; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; } .ds-tile-meta { margin: 2px 0 0; font-size: 10px; color: #94a3b8; text-align: center; }"
+    },
+    {
+      "name": "Word Tile",
+      "kind": "card",
+      "refersTo": "tile-word",
+      "description": "Flashcard tile with character hero and progress footer.",
+      "html": "<div class=\"ds-tile-word\"><span class=\"ds-char\">你好</span><p class=\"ds-transcription\">nǐhǎo</p><p class=\"ds-translation\">Hello</p><div class=\"ds-progress\"><span class=\"ds-progress-line\"></span><span class=\"ds-progress-label\">75%</span><span class=\"ds-progress-line\"></span></div></div>",
+      "css": ".ds-tile-word { display: flex; flex-direction: column; width: 96px; aspect-ratio: 1; border: 2px solid #22c55e; border-bottom: none; border-radius: 8px 8px 0 0; background: #1e293b; overflow: hidden; } .ds-char { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 500; line-height: 1; color: #f8fafc; padding-top: 8px; } .ds-transcription { margin: 0; text-align: center; font-size: 10px; color: #94a3b8; line-height: 1.25; } .ds-translation { margin: 0; text-align: center; font-size: 12px; font-weight: 500; color: #f8fafc; line-height: 1.25; padding: 0 4px 4px; } .ds-progress { display: flex; align-items: center; height: 14px; padding: 0 2px; } .ds-progress-line { flex: 1; height: 2px; background: #22c55e; } .ds-progress-label { margin: 0 2px; font-size: 10px; font-weight: 600; font-variant-numeric: tabular-nums; color: #16a34a; line-height: 1; }"
+    },
+    {
+      "name": "Create Tile",
+      "kind": "custom",
+      "description": "Dashed affordance for adding groups or words.",
+      "html": "<button class=\"ds-tile-create\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"M12 5v14\"/></svg><span>Add word</span></button>",
+      "css": ".ds-tile-create { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 96px; aspect-ratio: 1; padding: 8px; border: 2px dashed rgba(148, 163, 184, 0.4); border-radius: 8px; background: rgba(30, 41, 59, 0.5); color: #94a3b8; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 10px; font-weight: 500; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), border-color 150ms cubic-bezier(0.4, 0, 0.2, 1), color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-tile-create:hover { background: #1e293b; border-color: rgba(248, 250, 252, 0.5); color: #f8fafc; } .ds-tile-create:focus-visible { outline: none; box-shadow: 0 0 0 2px #cbd5e1; }"
+    },
+    {
+      "name": "Tile Delete Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Destructive icon revealed on tile hover/focus.",
+      "html": "<button class=\"ds-tile-delete\" aria-label=\"Delete\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 6h18\"/><path d=\"M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6\"/><path d=\"M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2\"/></svg></button>",
+      "css": ".ds-tile-delete { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: none; border-radius: 6px; background: transparent; color: #ef4444; cursor: pointer; transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1), background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-tile-delete:hover { background: rgba(239, 68, 68, 0.15); color: #f87171; } .ds-tile-delete:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.5); color: #f87171; } .ds-tile-delete svg { filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.05)); }"
+    },
+    {
+      "name": "Skeleton Tile",
+      "kind": "custom",
+      "description": "Loading placeholder matching tile grid layout.",
+      "html": "<div class=\"ds-skeleton-tile\" aria-hidden=\"true\"><div class=\"ds-skeleton-block ds-skeleton-icon\"></div><div class=\"ds-skeleton-block ds-skeleton-line\"></div><div class=\"ds-skeleton-block ds-skeleton-line-short\"></div></div>",
+      "css": "@keyframes ds-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } } .ds-skeleton-tile { display: flex; flex-direction: column; align-items: center; justify-content: space-between; width: 96px; aspect-ratio: 1; padding: 8px; border: 1px solid #1e293b; border-radius: 8px; background: #1e293b; } .ds-skeleton-block { border-radius: 6px; background: #1e293b; filter: brightness(1.3); animation: ds-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; } .ds-skeleton-icon { width: 36px; height: 28px; } .ds-skeleton-line { width: 75%; height: 12px; margin-top: auto; } .ds-skeleton-line-short { width: 50%; height: 10px; margin-top: 4px; } @media (prefers-reduced-motion: reduce) { .ds-skeleton-block { animation: none; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Character Stage",
+    "overview": "Chinese Laoshi is a study tool, not a dashboard. The interface is a dark, quiet stage where Mandarin characters take center position and everything else — navigation, metadata, actions — stays in supporting roles. Built on shadcn/ui (slate base) with Tailwind CSS variables, the system favors familiar product patterns over decorative novelty: square tiles for vocabulary, bordered content panels, Lucide icons, and state-rich controls that feel trustworthy on phone, tablet, and desktop.\n\nDark mode is the default experience. Surfaces are flat and tonal; depth comes from border contrast and layered neutrals, not heavy shadows. Motion is brief (150–200 ms) and functional — hover reveals, dialog enter/exit, skeleton pulse — always gated behind prefers-reduced-motion.",
+    "keyCharacteristics": [
+      "Characters first — Chinese glyphs render at text-2xl on word tiles; English metadata stays micro-sized beneath.",
+      "Tile-native layout — Groups and words share a 96–104 px square tile grid with consistent internal structure.",
+      "Restrained accent — Primary (inverted light-on-dark) drives actions; green signals mastery progress only.",
+      "Task density without noise — Content width capped; panels use generous padding without nested cards.",
+      "Touch-ready targets — Tiles, icon buttons (40 px), and header controls sized for finger input."
+    ],
+    "rules": [
+      {
+        "name": "The Character Spotlight Rule",
+        "body": "Primary and green accents combined occupy ≤15% of any study screen. If color is everywhere, characters stop feeling like the hero.",
+        "section": "colors"
+      },
+      {
+        "name": "The Progress Green Rule",
+        "body": "Green appears only on word-tile mastery indicators (border, divider line, percent label) and inline save confirmations. It never decorates navigation, headers, or empty states.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Voice Rule",
+        "body": "A single sans family carries every role. Display fonts in buttons, labels, or data tables are prohibited.",
+        "section": "typography"
+      },
+      {
+        "name": "The Character Scale Rule",
+        "body": "Chinese glyphs on tiles must be at least 1.5rem. Supporting Latin/Cyrillic metadata stays at micro or label sizes beneath — never the same size as the character.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Stage Rule",
+        "body": "Surfaces at rest have no shadow. Elevation appears only as a modal response — never on tiles, list rows, or content panels.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep Chinese characters at text-2xl or larger on study surfaces; metadata stays at text-xs / text-[10px].",
+      "Do use the shared tile grid constants (tileGridClassName, tileItemClassName) for any new collection UI.",
+      "Do apply green only through getProgressStyles() semantics for word mastery — border, line, and label together.",
+      "Do reveal destructive actions on hover/focus-within of the parent tile, not persistently visible.",
+      "Do honor prefers-reduced-motion on every transition and skeleton animation.",
+      "Do use skeleton tile grids matching final layout while groups or words load.",
+      "Do keep primary actions to one per dialog footer; Cancel is always outline variant."
+    ],
+    "donts": [
+      "Don't use childish gamification — cartoon mascots, excessive badges, Duolingo-style streak guilt, or babyish color palettes.",
+      "Don't apply generic SaaS dashboard aesthetics to study screens — no hero metrics, no gradient accents, or decorative chart colors on non-analytics views.",
+      "Don't clutter interfaces so chrome competes with characters — avoid nested cards, redundant eyebrows, or side-stripe borders on tiles.",
+      "Don't use gradient text, glassmorphism, or heavy shadows on tiles and panels.",
+      "Don't show delete buttons at full opacity by default on touch lists — use the reveal pattern.",
+      "Don't introduce a second accent color family beyond green-for-progress and red-for-destructive.",
+      "Don't use display or serif fonts for UI labels, buttons, or data.",
+      "Don't gate content visibility on entrance animations — default state must be fully readable without JS-driven reveals."
+    ]
+  }
+}
