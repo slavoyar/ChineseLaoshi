@@ -54,11 +54,13 @@ export const StartWritePractice = () => {
     <>
       <Button
         variant='outline'
-        className='flex h-auto w-fit flex-col items-start justify-center gap-2 rounded-xl p-4'
+        className='flex h-auto min-w-[7.5rem] flex-col items-center gap-3 rounded-xl p-4 [&_svg]:size-6'
         onClick={() => setIsOpen(true)}
       >
-        <PenWrite />
-        <span className='w-full text-center'>Handwriting</span>
+        <span className='flex size-11 items-center justify-center rounded-lg bg-[hsl(var(--chart-2)/0.12)] text-[hsl(var(--chart-2))]'>
+          <PenWrite />
+        </span>
+        <span className='text-sm font-medium'>Handwriting</span>
       </Button>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent>
