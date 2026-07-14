@@ -10,16 +10,16 @@ import {
   Input,
   Label,
 } from '@shared/ui';
-import { Plus } from 'lucide-react';
 import pinyin from 'pinyin';
-import { useEffect, useState } from 'react';
+import { KeyboardEvent, useEffect, useState } from 'react';
 
-interface Props {
+interface AddWordDialogProps {
   groupId: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-export const AddWord = ({ groupId }: Props) => {
-  const [isOpen, setIsOpen] = useState(false);
+export const AddWordDialog = ({ groupId, open, onOpenChange }: AddWordDialogProps) => {
   const [transcription, setTranscription] = useState('');
   const [translation, setTranslation] = useState('');
   const [symbols, setSymbols] = useState('');
@@ -28,19 +28,23 @@ export const AddWord = ({ groupId }: Props) => {
   const incrementWordCount = useGroupStore((state) => state.incrementWordCount);
 
   useEffect(() => {
-    if (!isOpen) {
+    if (!open) {
       setTranscription('');
       setTranslation('');
       setSymbols('');
     }
-  }, [isOpen]);
+  }, [open]);
+
+  const handleClose = () => {
+    onOpenChange(false);
+  };
 
   const saveHandler = async () => {
     try {
       await createWord(groupId, { word: { transcription, translation, symbols }, groupId });
       incrementWordCount(groupId);
     } finally {
-      setIsOpen(false);
+      handleClose();
     }
   };
 
@@ -49,58 +53,63 @@ export const AddWord = ({ groupId }: Props) => {
     setTranscription(
       pinyin(value)
         .map((item: string[]) => item[0])
-        .join('')
+        .join(''),
     );
   };
 
+  const handleEnter = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (symbols && translation && e.key === 'Enter') {
+      saveHandler();
+    }
+  };
+
   return (
-    <>
-      <Button variant='ghost' onClick={() => setIsOpen(true)}>
-        <Plus className='h-4 w-4' />
-        Add word
-      </Button>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create word</DialogTitle>
-          </DialogHeader>
-          <div className='grid gap-4 py-2'>
-            <div className='grid gap-2'>
-              <Label htmlFor='create-word-symbols'>Hieroglyphs</Label>
-              <Input
-                id='create-word-symbols'
-                value={symbols}
-                placeholder='Enter hieroglyphs'
-                onChange={(e) => symbolsHandler(e.target.value)}
-              />
-            </div>
-            <div className='grid gap-2'>
-              <Label htmlFor='create-word-transcription'>Transcription</Label>
-              <Input
-                id='create-word-transcription'
-                value={transcription}
-                placeholder='Enter transcription'
-                disabled
-              />
-            </div>
-            <div className='grid gap-2'>
-              <Label htmlFor='create-word-translation'>Translation</Label>
-              <Input
-                id='create-word-translation'
-                value={translation}
-                placeholder='Enter translation'
-                onChange={(e) => setTranslation(e.target.value)}
-              />
-            </div>
+    <Dialog open={open} onOpenChange={(nextOpen) => (nextOpen ? onOpenChange(true) : handleClose())}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create word</DialogTitle>
+        </DialogHeader>
+        <div className='grid gap-4 py-2'>
+          <div className='grid gap-2'>
+            <Label htmlFor='create-word-symbols'>Hieroglyphs</Label>
+            <Input
+              id='create-word-symbols'
+              autoFocus
+              value={symbols}
+              placeholder='Enter hieroglyphs'
+              onChange={(e) => symbolsHandler(e.target.value)}
+              onKeyUp={handleEnter}
+            />
           </div>
-          <DialogFooter className='gap-2 sm:gap-0'>
-            <Button variant='outline' onClick={() => setIsOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={saveHandler}>Create</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+          <div className='grid gap-2'>
+            <Label htmlFor='create-word-transcription'>Transcription</Label>
+            <Input
+              id='create-word-transcription'
+              value={transcription}
+              placeholder='Enter transcription'
+              disabled
+            />
+          </div>
+          <div className='grid gap-2'>
+            <Label htmlFor='create-word-translation'>Translation</Label>
+            <Input
+              id='create-word-translation'
+              value={translation}
+              placeholder='Enter translation'
+              onChange={(e) => setTranslation(e.target.value)}
+              onKeyUp={handleEnter}
+            />
+          </div>
+        </div>
+        <DialogFooter className='gap-2 sm:gap-0'>
+          <Button variant='outline' onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button disabled={!symbols || !translation} onClick={saveHandler}>
+            Create
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };

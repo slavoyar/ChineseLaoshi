@@ -1,19 +1,23 @@
 import { Skeleton } from '@shared/ui';
+import { tileGridClassName, tileItemClassName } from '@shared/ui/tile-grid';
+import { cn } from '@shared/utils';
 
-const ROW_COUNT = 3;
+const TILE_COUNT = 6;
+
+const GroupTileSkeleton = () => (
+  <div className={cn('flex flex-col items-center justify-between rounded-lg border bg-secondary p-2', tileItemClassName)}>
+    <Skeleton className='h-7 w-7 rounded-md' />
+    <div className='flex w-full flex-col items-center gap-1'>
+      <Skeleton className='h-3 w-3/4' />
+      <Skeleton className='h-2.5 w-1/2' />
+    </div>
+  </div>
+);
 
 export const GroupListSkeleton = () => (
-  <div className='flex flex-col' aria-busy='true' aria-label='Loading groups'>
-    {Array.from({ length: ROW_COUNT }, (_, index) => (
-      <div key={index} className='border-b'>
-        <div className='flex items-center justify-between gap-2'>
-          <div className='flex flex-1 items-center justify-between py-4'>
-            <Skeleton className='h-5 w-48 max-w-[calc(100%-2rem)]' />
-            <Skeleton className='h-4 w-4 shrink-0' />
-          </div>
-          <Skeleton className='h-10 w-10 shrink-0 rounded-md' />
-        </div>
-      </div>
+  <div className={tileGridClassName} aria-busy='true' aria-label='Loading groups'>
+    {Array.from({ length: TILE_COUNT }, (_, index) => (
+      <GroupTileSkeleton key={index} />
     ))}
   </div>
 );

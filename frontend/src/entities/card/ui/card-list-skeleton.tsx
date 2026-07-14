@@ -1,19 +1,14 @@
 import { Skeleton } from '@shared/ui';
+import { tileGridClassName, tileItemClassName } from '@shared/ui/tile-grid';
+import { cn } from '@shared/utils';
 
-export const CardItemSkeleton = () => (
-  <div className='flex w-full items-center justify-between rounded-xl bg-secondary px-4 py-2'>
-    <div className='flex min-w-0 items-center gap-4'>
-      <div className='flex w-10 shrink-0 flex-col items-center gap-1'>
-        <Skeleton className='h-3 w-3 rounded-full' />
-        <Skeleton className='h-3 w-6' />
-      </div>
-      <div className='flex min-w-0 flex-1 items-center gap-1.5'>
-        <Skeleton className='h-5 w-8 shrink-0' />
-        <Skeleton className='h-4 w-14 shrink-0' />
-        <Skeleton className='h-4 w-24 min-w-0 flex-1' />
-      </div>
+const WordTileSkeleton = () => (
+  <div className={cn('flex flex-col items-center justify-between rounded-lg border bg-secondary p-2', tileItemClassName)}>
+    <Skeleton className='h-7 w-9' />
+    <div className='flex w-full flex-col items-center gap-1'>
+      <Skeleton className='h-2.5 w-2/3' />
+      <Skeleton className='h-3 w-4/5' />
     </div>
-    <Skeleton className='h-10 w-10 shrink-0 rounded-md' />
   </div>
 );
 
@@ -21,10 +16,10 @@ interface Props {
   count?: number;
 }
 
-export const CardListSkeleton = ({ count = 3 }: Props) => (
-  <div className='flex flex-col gap-2 py-2' aria-busy='true' aria-label='Loading words'>
+export const CardListSkeleton = ({ count = 5 }: Props) => (
+  <div className={tileGridClassName} aria-busy='true' aria-label='Loading words'>
     {Array.from({ length: count }, (_, index) => (
-      <CardItemSkeleton key={index} />
+      <WordTileSkeleton key={index} />
     ))}
   </div>
 );

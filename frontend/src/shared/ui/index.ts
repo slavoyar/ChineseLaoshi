@@ -9,3 +9,4 @@ export * from './input';
 export * from './label';
 export * from './popover';
 export * from './skeleton';
+export * from './tile-delete-button';

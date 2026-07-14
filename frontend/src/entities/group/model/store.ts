@@ -11,8 +11,9 @@ interface State {
 
 interface Action {
   fetch: () => Promise<void>;
-  create: (name: string) => Promise<void>;
+  create: (name: string) => Promise<string>;
   rename: (id: string, name: string) => Promise<void>;
+  setName: (id: string, name: string) => void;
   delete: (id: string) => Promise<void>;
   decrementWordCount: (id: string) => void;
   incrementWordCount: (id: string) => void;
@@ -33,6 +34,7 @@ const useGroupStore = create<State & Action>((set, get) => ({
   create: async (name: string) => {
     const response = USE_MOCKS ? await mockGroupApi.post({ name }) : await groupService.post({ name });
     set((state) => ({ groups: [...state.groups, { ...response, cards: [] }] }));
+    return response.id;
   },
   rename: async (id: string, name: string) => {
     const { groups } = get();
@@ -48,6 +50,11 @@ const useGroupStore = create<State & Action>((set, get) => ({
     }
     groups.splice(groupIndex, 1, updatedGroup);
     set((state) => ({ groups: [...state.groups] }));
+  },
+  setName: (id: string, name: string) => {
+    set((state) => ({
+      groups: state.groups.map((item) => (item.id === id ? { ...item, name } : item)),
+    }));
   },
   delete: async (id: string) => {
     if (USE_MOCKS) {

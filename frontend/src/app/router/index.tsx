@@ -1,3 +1,4 @@
+import { GroupDetail } from '@pages/group-detail';
 import { Main } from '@pages/main';
 import { WritePractice } from '@pages/write-practice';
 import { HeaderLayout } from '@shared/layouts';
@@ -12,6 +13,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Main />,
+      },
+      {
+        path: `${Route.Groups}/:groupId`,
+        element: <GroupDetail />,
       },
       {
         path: `${Route.WritePractice}/:count/:groupId?`,
