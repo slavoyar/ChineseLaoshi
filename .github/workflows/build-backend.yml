@@ -7,6 +7,12 @@ on:
       - 'frontend/src/shared/api/generated/**'
     branches:
       - production
+  push:
+    paths:
+      - 'backend/**'
+      - 'frontend/src/shared/api/generated/**'
+    branches:
+      - production
 
 jobs:
   lint-build-and-test:

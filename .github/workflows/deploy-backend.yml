@@ -1,12 +1,14 @@
 name: Deploy to server
 
+# TEMPORARY: deploy disabled — re-enable push trigger when ready to deploy again
 on:
-  push:
-    paths:
-      - 'backend/**'
-      - 'frontend/src/shared/api/generated/**'
-    branches:
-      - production
+  workflow_dispatch:
+  # push:
+  #   paths:
+  #     - 'backend/**'
+  #     - 'frontend/src/shared/api/generated/**'
+  #   branches:
+  #     - production
 
 env:
   IMAGE_NAME: chinese-laoshi

@@ -1,11 +1,13 @@
 name: Deploy frontend
 
+# TEMPORARY: deploy disabled — re-enable push trigger when ready to deploy again
 on:
-  push:
-    paths:
-      - 'frontend/**'
-    branches:
-      - production
+  workflow_dispatch:
+  # push:
+  #   paths:
+  #     - 'frontend/**'
+  #   branches:
+  #     - production
 
 jobs:
   build-and-deploy-frontend:

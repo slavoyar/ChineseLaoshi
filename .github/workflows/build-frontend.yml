@@ -6,6 +6,11 @@ on:
       - 'frontend/**'
     branches:
       - production
+  push:
+    paths:
+      - 'frontend/**'
+    branches:
+      - production
 
 jobs:
   lint-and-build:

@@ -1,11 +1,13 @@
 name: Apply database migrations
 
+# TEMPORARY: auto-migration disabled — re-enable push trigger when ready to deploy again
 on:
-  push:
-    paths:
-      - 'backend/migrations/**'
-    branches:
-      - production
+  workflow_dispatch:
+  # push:
+  #   paths:
+  #     - 'backend/migrations/**'
+  #   branches:
+  #     - production
 
 jobs:
   migrate-database:
