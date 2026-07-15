@@ -9,7 +9,7 @@ export const Groups = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) 
     <div
       className={cn(
         'flex min-h-0 flex-col gap-5 rounded-2xl border bg-card p-5 md:gap-10 md:p-10',
-        className,
+        className
       )}
       {...props}
     >

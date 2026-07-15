@@ -9,7 +9,7 @@
   "license": "ISC",
   "scripts": {
     "lint": "npm run lint:frontend",
-    "lint:frontend": "eslint ./frontend -c ./frontend/eslint.config.js --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
+    "lint:frontend": "eslint \"frontend/**/*.{ts,tsx}\" -c ./frontend/eslint.config.js --report-unused-disable-directives --max-warnings 0 --fix",
     "dev:frontend": "npm run dev --workspace=@chinese-laoshi/frontend",
     "dev:backend": "cd backend && go run ./cmd/server",
     "generate:types": "tygo generate"

@@ -22,8 +22,8 @@ export const DemoGateDialog = () => {
         <DialogHeader>
           <DialogTitle>Registration required</DialogTitle>
           <DialogDescription>
-            Create a free account to add groups, words, and manage your vocabulary. Study modes are
-            available in demo.
+            Create a free account to add groups, words, and manage your vocabulary. Study modes are available
+            in demo.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className='gap-2 sm:gap-0'>

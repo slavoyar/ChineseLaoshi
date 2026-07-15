@@ -32,7 +32,10 @@ export const GroupDetail = () => {
     return (
       <div className='m-auto flex h-full flex-col items-center justify-center gap-4 md:w-9/12 xl:w-7/12'>
         <p className='text-muted-foreground'>Group not found.</p>
-        <Link to={Route.Root} className='text-sm font-medium text-foreground underline-offset-4 hover:underline'>
+        <Link
+          to={Route.Root}
+          className='text-sm font-medium text-foreground underline-offset-4 hover:underline'
+        >
           Back to home
         </Link>
       </div>
@@ -42,9 +45,7 @@ export const GroupDetail = () => {
   return (
     <div className='m-auto flex h-full flex-col gap-6 md:w-9/12 xl:w-7/12'>
       <div
-        className={cn(
-          'flex min-h-0 flex-1 flex-col gap-5 rounded-2xl border bg-card p-5 md:gap-8 md:p-10',
-        )}
+        className={cn('flex min-h-0 flex-1 flex-col gap-5 rounded-2xl border bg-card p-5 md:gap-8 md:p-10')}
       >
         <div className='flex flex-col gap-3'>
           <Link

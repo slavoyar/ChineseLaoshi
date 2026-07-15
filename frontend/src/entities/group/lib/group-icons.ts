@@ -5,9 +5,9 @@ import {
   GraduationCap,
   Languages,
   Library,
+  type LucideIcon,
   MessageCircle,
   PenLine,
-  type LucideIcon,
 } from 'lucide-react';
 
 export const DEFAULT_GROUP_ICON = 'Languages';

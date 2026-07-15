@@ -1,9 +1,5 @@
 import { useGroupStore } from '@entities/group';
-import {
-  GROUP_ICON_CATALOG,
-  GroupIconKey,
-  setGroupIcon,
-} from '@entities/group/lib/group-icons';
+import { GROUP_ICON_CATALOG, GroupIconKey, setGroupIcon } from '@entities/group/lib/group-icons';
 import {
   Button,
   Dialog,
@@ -77,7 +73,7 @@ export const AddGroupDialog = ({ open, onOpenChange }: AddGroupDialogProps) => {
                   aria-pressed={selectedIcon === key}
                   className={cn(
                     'flex aspect-square items-center justify-center rounded-lg border bg-secondary transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                    selectedIcon === key && 'border-primary ring-2 ring-primary/30',
+                    selectedIcon === key && 'border-primary ring-2 ring-primary/30'
                   )}
                   onClick={() => setSelectedIcon(key)}
                 >

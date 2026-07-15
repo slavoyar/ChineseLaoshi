@@ -6,7 +6,7 @@ import typescriptEslint from 'typescript-eslint';
 
 export const createConfig = (options = []) =>
   typescriptEslint.config(
-    globalIgnores(['node_modules', 'dist']),
+    globalIgnores(['**/node_modules/**', '**/dist/**', 'frontend/public/**', '**/.env*', '**/*.md', '**/.impeccable/**']),
     eslint.configs.recommended,
     ...typescriptEslint.configs.recommended,
     {

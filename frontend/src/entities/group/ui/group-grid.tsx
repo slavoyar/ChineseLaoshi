@@ -1,6 +1,7 @@
-import { Group } from '@shared/api/generated';
 import { useGroupStore } from '@entities/group';
+import { Group } from '@shared/api/generated';
 import { useDelete } from '@shared/hooks';
+import { Route } from '@shared/types';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,12 +12,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@shared/ui';
-import { Route } from '@shared/types';
+import { tileGridClassName } from '@shared/ui/tile-grid';
 import { useNavigate } from 'react-router-dom';
 
 import { CreateGroupCard } from './create-group-card';
 import { GroupCard } from './group-card';
-import { tileGridClassName } from '@shared/ui/tile-grid';
 
 export const GroupGrid = () => {
   const groups = useGroupStore((state) => state.groups);

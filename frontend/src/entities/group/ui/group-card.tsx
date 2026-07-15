@@ -1,5 +1,5 @@
-import { Group } from '@shared/api/generated';
 import { getGroupIcon } from '@entities/group/lib/group-icons';
+import { Group } from '@shared/api/generated';
 import { useRequireAuth } from '@shared/hooks';
 import { TileDeleteButton } from '@shared/ui';
 import { tileItemClassName } from '@shared/ui/tile-grid';

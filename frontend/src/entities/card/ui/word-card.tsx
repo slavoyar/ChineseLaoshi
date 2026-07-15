@@ -1,6 +1,6 @@
-import { Card } from '@shared/api/generated';
 import { useCardStore } from '@entities/card';
 import { getProgressStyles } from '@entities/card/utils';
+import { Card } from '@shared/api/generated';
 import { useDelete, useRequireAuth } from '@shared/hooks';
 import {
   AlertDialog,
@@ -40,7 +40,7 @@ export const WordCard = ({ card, onDelete }: Props) => {
         <div
           className={cn(
             'flex h-full flex-col overflow-hidden rounded-lg border-x-2 border-t-2 bg-secondary',
-            progressStyles.border,
+            progressStyles.border
           )}
           aria-label={`${card.word.symbols}, ${card.word.translation}, ${progressStyles.percentLabel}% progress`}
         >
@@ -63,7 +63,7 @@ export const WordCard = ({ card, onDelete }: Props) => {
               <span
                 className={cn(
                   'mx-0.5 shrink-0 px-0.5 text-[10px] font-semibold tabular-nums leading-none',
-                  progressStyles.label,
+                  progressStyles.label
                 )}
               >
                 {progressStyles.percentLabel}%

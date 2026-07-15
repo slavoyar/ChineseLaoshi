@@ -1,6 +1,6 @@
-import { Card } from '@shared/api/generated';
 import { useCardStore } from '@entities/card';
 import { getColorByPercent } from '@entities/card/utils';
+import { Card } from '@shared/api/generated';
 import { useDelete } from '@shared/hooks';
 import { useAuthStore } from '@shared/stores';
 import {
@@ -37,7 +37,9 @@ export const CardItem = ({ card, onDelete }: Props) => {
     <>
       <div className='flex w-full items-center justify-between rounded-xl bg-secondary px-4 py-2'>
         <div className='flex items-center gap-4'>
-          <div className={cn('flex w-10 flex-col items-center text-center', getColorByPercent(card.progress))}>
+          <div
+            className={cn('flex w-10 flex-col items-center text-center', getColorByPercent(card.progress))}
+          >
             <Circle className='h-3 w-3 fill-current' />
             <div className='text-xs'>{getPercentFromRatio(card.progress)}%</div>
           </div>

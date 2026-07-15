@@ -1,5 +1,5 @@
-import { Word } from '@shared/api/generated';
 import { useCardStore } from '@entities/card';
+import { Word } from '@shared/api/generated';
 import { useStateStore } from '@shared/stores';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
@@ -102,7 +102,8 @@ export const WriteCard = ({
     }
   }, [symbols, debouncedIndex]);
 
-  const navIconClass = (enabled: boolean) => cn('h-5 w-5', enabled ? 'text-foreground' : 'text-muted-foreground');
+  const navIconClass = (enabled: boolean) =>
+    cn('h-5 w-5', enabled ? 'text-foreground' : 'text-muted-foreground');
 
   const buttonHandler = async (guessed: boolean) => {
     onNext();
@@ -130,7 +131,12 @@ export const WriteCard = ({
             />
           ))}
         </div>
-        <Button variant='ghost' size='icon' disabled={currentIndex === symbols.length - 1} onClick={() => inc()}>
+        <Button
+          variant='ghost'
+          size='icon'
+          disabled={currentIndex === symbols.length - 1}
+          onClick={() => inc()}
+        >
           <ChevronRight className={navIconClass(currentIndex < symbols.length - 1)} />
         </Button>
       </div>

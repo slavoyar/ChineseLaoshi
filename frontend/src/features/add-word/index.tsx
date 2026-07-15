@@ -53,7 +53,7 @@ export const AddWordDialog = ({ groupId, open, onOpenChange }: AddWordDialogProp
     setTranscription(
       pinyin(value)
         .map((item: string[]) => item[0])
-        .join(''),
+        .join('')
     );
   };
 

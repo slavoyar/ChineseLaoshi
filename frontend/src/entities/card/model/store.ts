@@ -1,5 +1,5 @@
-import { Card, CreateCard } from '@shared/api/generated';
 import cardService from '@entities/card/api';
+import { Card, CreateCard } from '@shared/api/generated';
 import { create } from 'zustand';
 
 interface State {

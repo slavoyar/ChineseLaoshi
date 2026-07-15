@@ -1,8 +1,8 @@
-import { AuthProvider } from '@shared/types/auth';
-import { ReactNode } from 'react';
 import { useAuthStore } from '@shared/stores';
+import { AuthProvider } from '@shared/types/auth';
 import { Button, Dialog, DialogContent, DialogHeader, DialogTitle } from '@shared/ui';
 import { cn } from '@shared/utils';
+import { ReactNode } from 'react';
 
 interface AuthProviderConfig {
   id: AuthProvider;

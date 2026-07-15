@@ -12,7 +12,7 @@ export const useRequireAuth = () => {
       }
       action();
     },
-    [isDemo, openDemoGate],
+    [isDemo, openDemoGate]
   );
 
   return { isDemo, gateAction };
