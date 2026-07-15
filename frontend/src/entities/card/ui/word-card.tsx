@@ -1,4 +1,4 @@
-import { CardDto } from '@chinese-laoshi/shared';
+import { Card } from '@shared/api/generated';
 import { useCardStore } from '@entities/card';
 import { getProgressStyles } from '@entities/card/utils';
 import { useDelete, useRequireAuth } from '@shared/hooks';
@@ -17,7 +17,7 @@ import { tileItemClassName } from '@shared/ui/tile-grid';
 import { cn } from '@shared/utils';
 
 interface Props {
-  card: CardDto;
+  card: Card;
   onDelete: () => void;
 }
 
@@ -26,7 +26,7 @@ export const WordCard = ({ card, onDelete }: Props) => {
   const progressStyles = getProgressStyles(card.progress);
   const { isDemo } = useRequireAuth();
 
-  const { isDeleteDialogOpen, closeDeleteDialog, deleteItem, openDeleteDialog } = useDelete<CardDto>();
+  const { isDeleteDialogOpen, closeDeleteDialog, deleteItem, openDeleteDialog } = useDelete<Card>();
 
   const onDeleteHandler = async () => {
     closeDeleteDialog();

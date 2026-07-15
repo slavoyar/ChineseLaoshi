@@ -1,4 +1,4 @@
-import { CardDto } from '@chinese-laoshi/shared';
+import { Card } from '@shared/api/generated';
 import { cardService, useCardStore, WriteCard } from '@entities/card';
 import { useStateStore } from '@shared/stores';
 import { Route } from '@shared/types';
@@ -10,8 +10,8 @@ import { toast } from 'react-toastify';
 export const WritePractice = () => {
   const navigate = useNavigate();
   const { groupId, count } = useParams();
-  const [cards, setCards] = useState<CardDto[]>([]);
-  const currentCard = useRef<CardDto>();
+  const [cards, setCards] = useState<Card[]>([]);
+  const currentCard = useRef<Card>();
 
   const reset = useCardStore((state) => state.reset);
   const [state, setState] = useStateStore((store) => [store.state, store.setState]);

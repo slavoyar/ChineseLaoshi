@@ -1,4 +1,4 @@
-import { GroupDto } from '@chinese-laoshi/shared';
+import { Group } from '@shared/api/generated';
 import { Button } from '@shared/ui/button';
 import {
   Command,
@@ -14,9 +14,9 @@ import { Check, ChevronsUpDown } from 'lucide-react';
 import { useState } from 'react';
 
 interface Props {
-  groups: GroupDto[];
+  groups: Group[];
   value?: string;
-  onSelect: (group: GroupDto) => void;
+  onSelect: (group: Group) => void;
   placeholder?: string;
 }
 

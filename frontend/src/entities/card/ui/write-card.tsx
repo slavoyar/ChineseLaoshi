@@ -1,4 +1,4 @@
-import { WordDto } from '@chinese-laoshi/shared';
+import { Word } from '@shared/api/generated';
 import { useCardStore } from '@entities/card';
 import { useStateStore } from '@shared/stores';
 import { Button } from '@shared/ui';
@@ -8,7 +8,7 @@ import HanziWriter from 'hanzi-writer';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
-interface Props extends WordDto {
+interface Props extends Word {
   isNextDisabled?: boolean;
   updateStats?: boolean;
   showOutline?: boolean;

@@ -1,7 +1,7 @@
 # Chinese Laoshi
 
 ## Overview
-Chinese Laoshi is a comprehensive Chinese language learning application designed to help users master Mandarin through interactive flashcards. The app is equipped with two regimes: Handwriting and Translation Guessing. Users can create custom cards, review new words, and learn through engaging exercises. The application is built using React, Express, and TypeScript, and is available on phone, tablet, and desktop browsers.
+Chinese Laoshi is a comprehensive Chinese language learning application designed to help users master Mandarin through interactive flashcards. The app is equipped with two regimes: Handwriting and Translation Guessing. Users can create custom cards, review new words, and learn through engaging exercises. The application is built using React and Go, and is available on phone, tablet, and desktop browsers.
 
 ## Features
 - **Handwriting Regime**: Practice writing Chinese characters using touch or mouse input.
@@ -11,8 +11,12 @@ Chinese Laoshi is a comprehensive Chinese language learning application designed
 - **Multi-Platform Support**: Accessible on phones, tablets, and desktop browsers.
 
 ## Tech Stack
-- **Frontend**: React, TypeScript
-- **Backend**: Express, Prisma, TypeScript
+- **Frontend**: React, TypeScript, Vite
+- **Backend**: Go, PostgreSQL
+
+## Development
+
+See [DEV.md](DEV.md) for instructions on running the backend and frontend locally.
 
 ## Contact
 For questions or suggestions, please reach out to slavoyarmc@gmail.com.

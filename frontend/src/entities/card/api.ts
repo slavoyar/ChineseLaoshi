@@ -1,30 +1,20 @@
-import {
-  CardDto,
-  CreateCardDto,
-  GetWriteCardDto,
-  UpdateCardStatsDto,
-  UpdateCardWordDto,
-} from '@chinese-laoshi/shared';
+import { Card, CreateCard, GetWriteCard, UpdateCardStats, UpdateCardWord } from '@shared/api/generated';
 import { BaseService } from '@shared/api';
-import { mockCardApi, USE_MOCKS } from '@shared/mocks';
 import axios from 'axios';
 
 const URL = '/api/cards';
 
-class CardService extends BaseService<CardDto, CreateCardDto, UpdateCardWordDto> {
-  getCardsWritePractice(count: string, groupId?: string): Promise<CardDto[]> {
-    if (USE_MOCKS) {
-      return mockCardApi.getCardsWritePractice(count, groupId);
-    }
-    return axios.post<GetWriteCardDto, CardDto[]>(
+class CardService extends BaseService<Card, CreateCard, UpdateCardWord> {
+  getCardsWritePractice(count: string, groupId?: string): Promise<Card[]> {
+    return axios.post<GetWriteCard, Card[]>(
       `${this.url}/study/write`,
       { count, groupId },
       { cancelToken: this.getCancelToken('getCardsWritePractice') }
     );
   }
 
-  updateCardStats(id: string, guessed: boolean): Promise<CardDto> {
-    return axios.post<UpdateCardStatsDto, CardDto>(
+  updateCardStats(id: string, guessed: boolean): Promise<void> {
+    return axios.post<UpdateCardStats, void>(
       `${this.url}/stats`,
       { id, guessed },
       { cancelToken: this.getCancelToken('updateCardStats') }

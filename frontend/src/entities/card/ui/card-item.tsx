@@ -1,4 +1,4 @@
-import { CardDto } from '@chinese-laoshi/shared';
+import { Card } from '@shared/api/generated';
 import { useCardStore } from '@entities/card';
 import { getColorByPercent } from '@entities/card/utils';
 import { useDelete } from '@shared/hooks';
@@ -18,7 +18,7 @@ import { cn, getPercentFromRatio } from '@shared/utils';
 import { Circle, X } from 'lucide-react';
 
 interface Props {
-  card: CardDto;
+  card: Card;
   onDelete: () => void;
 }
 
@@ -26,7 +26,7 @@ export const CardItem = ({ card, onDelete }: Props) => {
   const deleteCard = useCardStore((state) => state.delete);
   const isDemo = useAuthStore((state) => state.isDemo);
 
-  const { isDeleteDialogOpen, closeDeleteDialog, deleteItem, openDeleteDialog } = useDelete<CardDto>();
+  const { isDeleteDialogOpen, closeDeleteDialog, deleteItem, openDeleteDialog } = useDelete<Card>();
   const onDeleteHandler = async () => {
     closeDeleteDialog();
     await deleteCard(deleteItem.id);
