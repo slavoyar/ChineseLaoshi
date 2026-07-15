@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - 'backend/**'
-      - 'shared/**'
+      - 'frontend/src/shared/api/generated/**'
     branches:
       - production
 
@@ -26,7 +26,7 @@ jobs:
         run: |
           go install github.com/gzuidhof/tygo@latest
           tygo generate
-          git diff --exit-code shared/generated/index.ts
+          git diff --exit-code frontend/src/shared/api/generated/index.ts
 
       - name: Download Go modules
         working-directory: ./backend
@@ -48,5 +48,5 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Lint frontend and shared
+      - name: Lint frontend
         run: npm run lint

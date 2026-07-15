@@ -7,7 +7,7 @@ import (
 	"regexp"
 
 	"github.com/slavo/ChineseLaoshi/backend/internal/apperrors"
-	"github.com/slavo/ChineseLaoshi/shared/contracts/dto"
+	"github.com/slavo/ChineseLaoshi/backend/internal/dto"
 )
 
 var uuidRegex = regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$`)

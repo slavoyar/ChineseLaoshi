@@ -1,4 +1,4 @@
-import { GroupDto } from '@chinese-laoshi/shared';
+import { Group } from '@shared/api/generated';
 import { useGroupStore } from '@entities/group';
 import { useDelete } from '@shared/hooks';
 import {
@@ -21,7 +21,7 @@ import { tileGridClassName } from '@shared/ui/tile-grid';
 export const GroupGrid = () => {
   const groups = useGroupStore((state) => state.groups);
   const deleteGroup = useGroupStore((state) => state.delete);
-  const { isDeleteDialogOpen, closeDeleteDialog, deleteItem, openDeleteDialog } = useDelete<GroupDto>();
+  const { isDeleteDialogOpen, closeDeleteDialog, deleteItem, openDeleteDialog } = useDelete<Group>();
   const navigate = useNavigate();
 
   const deleteHandler = async () => {

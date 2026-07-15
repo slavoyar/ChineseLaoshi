@@ -5,7 +5,6 @@ RUN apk add --no-cache git ca-certificates
 
 WORKDIR /src
 
-COPY shared/contracts ./shared/contracts
 COPY backend ./backend
 
 WORKDIR /src/backend

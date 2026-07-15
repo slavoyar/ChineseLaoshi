@@ -7,7 +7,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/slavo/ChineseLaoshi/backend/internal/apperrors"
 	"github.com/slavo/ChineseLaoshi/backend/internal/repository"
-	"github.com/slavo/ChineseLaoshi/shared/contracts/dto"
+	"github.com/slavo/ChineseLaoshi/backend/internal/dto"
 )
 
 const (

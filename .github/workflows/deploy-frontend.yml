@@ -4,7 +4,6 @@ on:
   push:
     paths:
       - 'frontend/**'
-      - 'shared/**'
     branches:
       - production
 

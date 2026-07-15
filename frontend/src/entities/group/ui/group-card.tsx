@@ -1,4 +1,4 @@
-import { GroupDto } from '@chinese-laoshi/shared';
+import { Group } from '@shared/api/generated';
 import { getGroupIcon } from '@entities/group/lib/group-icons';
 import { useRequireAuth } from '@shared/hooks';
 import { TileDeleteButton } from '@shared/ui';
@@ -7,7 +7,7 @@ import { cn } from '@shared/utils';
 import { KeyboardEvent } from 'react';
 
 interface Props {
-  group: GroupDto;
+  group: Group;
   onNavigate: () => void;
   onDelete: () => void;
 }

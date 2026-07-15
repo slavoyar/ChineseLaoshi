@@ -1,5 +1,5 @@
 packages:
-  - path: github.com/slavo/ChineseLaoshi/shared/contracts/dto
-    output_path: shared/generated/index.ts
+  - path: github.com/slavo/ChineseLaoshi/backend/internal/dto
+    output_path: frontend/src/shared/api/generated/index.ts
     type_mappings:
       time.Time: string

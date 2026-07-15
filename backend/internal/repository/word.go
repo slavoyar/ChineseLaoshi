@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/slavo/ChineseLaoshi/shared/contracts/dto"
+	"github.com/slavo/ChineseLaoshi/backend/internal/dto"
 )
 
 type WordRepository struct {

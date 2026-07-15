@@ -3,15 +3,13 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "frontend",
-    "shared"
+    "frontend"
   ],
   "author": "Yaroslav Zaprudskii",
   "license": "ISC",
   "scripts": {
+    "lint": "npm run lint:frontend",
     "lint:frontend": "eslint ./frontend -c ./frontend/eslint.config.js --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
-    "lint:shared": "eslint ./shared -c ./shared/eslint.config.js --ext ts --report-unused-disable-directives --max-warnings 0 --fix",
-    "lint": "npm run lint:frontend && npm run lint:shared",
     "dev:frontend": "npm run dev --workspace=@chinese-laoshi/frontend",
     "dev:backend": "cd backend && go run ./cmd/server",
     "generate:types": "tygo generate"

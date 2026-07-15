@@ -1,11 +1,10 @@
-import { GroupDto } from '@chinese-laoshi/shared';
-import { mockGroupApi, USE_MOCKS } from '@shared/mocks';
+import { Group } from '@shared/api/generated';
 import { create } from 'zustand';
 
 import groupService from '../api';
 
 interface State {
-  groups: GroupDto[];
+  groups: Group[];
   isLoading: boolean;
 }
 
@@ -25,15 +24,15 @@ const useGroupStore = create<State & Action>((set, get) => ({
   fetch: async () => {
     set(() => ({ isLoading: true }));
     try {
-      const response = USE_MOCKS ? await mockGroupApi.getList() : await groupService.getList();
-      set(() => ({ groups: response.map((item) => ({ ...item, cards: [] })), isLoading: false }));
+      const response = await groupService.getList();
+      set(() => ({ groups: response, isLoading: false }));
     } catch {
       set(() => ({ isLoading: false }));
     }
   },
   create: async (name: string) => {
-    const response = USE_MOCKS ? await mockGroupApi.post({ name }) : await groupService.post({ name });
-    set((state) => ({ groups: [...state.groups, { ...response, cards: [] }] }));
+    const response = await groupService.post({ name });
+    set((state) => ({ groups: [...state.groups, response] }));
     return response.id;
   },
   rename: async (id: string, name: string) => {
@@ -43,11 +42,7 @@ const useGroupStore = create<State & Action>((set, get) => ({
       throw new Error(`Can not rename. Group with id = '${id}' does not exist`);
     }
     const updatedGroup = { ...groups[groupIndex], name };
-    if (USE_MOCKS) {
-      await mockGroupApi.put(updatedGroup);
-    } else {
-      await groupService.put(updatedGroup);
-    }
+    await groupService.put(updatedGroup);
     groups.splice(groupIndex, 1, updatedGroup);
     set((state) => ({ groups: [...state.groups] }));
   },
@@ -57,11 +52,7 @@ const useGroupStore = create<State & Action>((set, get) => ({
     }));
   },
   delete: async (id: string) => {
-    if (USE_MOCKS) {
-      await mockGroupApi.delete(id);
-    } else {
-      await groupService.delete(id);
-    }
+    await groupService.delete(id);
     set((state) => ({ groups: state.groups.filter((group) => group.id !== id) }));
   },
   decrementWordCount: (id: string) => {

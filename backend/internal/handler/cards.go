@@ -6,7 +6,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/slavo/ChineseLaoshi/backend/internal/middleware"
 	"github.com/slavo/ChineseLaoshi/backend/internal/service"
-	"github.com/slavo/ChineseLaoshi/shared/contracts/dto"
+	"github.com/slavo/ChineseLaoshi/backend/internal/dto"
 )
 
 type CardHandler struct {

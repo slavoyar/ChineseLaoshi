@@ -1,6 +1,3 @@
 go 1.24
 
-use (
-	./backend
-	./shared/contracts
-)
+use ./backend
