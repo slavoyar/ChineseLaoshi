@@ -3,6 +3,8 @@ package db
 import (
 	"context"
 	"fmt"
+	"io"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -28,14 +30,9 @@ func Bootstrap(ctx context.Context, cfg config.Config, migrationsPath string) (*
 			return nil, fmt.Errorf("create data dir: %w", err)
 		}
 
-		embedded = embeddedpostgres.NewDatabase(embeddedpostgres.DefaultConfig().
-			Username("postgres").
-			Password("postgres").
-			Database("chineselaoshi").
-			Version(embeddedpostgres.V16).
-			DataPath(cfg.DataDir).
-			Port(cfg.EmbeddedPGPort))
+		embedded = embeddedpostgres.NewDatabase(embeddedPostgresConfig(cfg))
 
+		log.Printf("starting embedded postgres on :%d", cfg.EmbeddedPGPort)
 		if err := embedded.Start(); err != nil {
 			return nil, fmt.Errorf("start embedded postgres: %w", err)
 		}
@@ -62,6 +59,22 @@ func Bootstrap(ctx context.Context, cfg config.Config, migrationsPath string) (*
 	}
 
 	return &DB{Pool: pool, embedded: embedded}, nil
+}
+
+func embeddedPostgresConfig(cfg config.Config) embeddedpostgres.Config {
+	return embeddedpostgres.DefaultConfig().
+		Username("postgres").
+		Password("postgres").
+		Database("chineselaoshi").
+		Version(embeddedpostgres.V16).
+		DataPath(cfg.DataDir).
+		Port(cfg.EmbeddedPGPort).
+		Locale("C").
+		Encoding("UTF8").
+		StartParameters(map[string]string{
+			"lc_messages": "C",
+		}).
+		Logger(io.Discard)
 }
 
 func runMigrations(dbURL, migrationsPath string) error {
