@@ -1,6 +1,6 @@
 import { useCardStore } from '@entities/card';
 import { Word } from '@shared/api/generated';
-import { useStateStore } from '@shared/stores';
+import { useAuthStore, useStateStore } from '@shared/stores';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { useCounter, useDebounceValue, useResizeObserver } from '@siberiacancode/reactuse';
@@ -31,6 +31,7 @@ export const WriteCard = ({
   onComplete,
 }: Props) => {
   const updateCardStats = useCardStore((state) => state.updateStats);
+  const isDemo = useAuthStore((state) => state.isDemo);
   const settings = useStateStore((state) => state.settings);
 
   const writers = useRef<HanziWriter[]>([]);
@@ -107,7 +108,8 @@ export const WriteCard = ({
 
   const buttonHandler = async (guessed: boolean) => {
     onNext();
-    if (updateStats) {
+    // Demo browses the shared template; never persist template study stats.
+    if (updateStats && !isDemo) {
       await updateCardStats(id, guessed);
     }
   };

@@ -30,18 +30,28 @@ func Logger(next http.Handler) http.Handler {
 	})
 }
 
-func Auth(authenticator auth.Authenticator) func(http.Handler) http.Handler {
+// OptionalAuth attaches a user when a valid session cookie is present.
+func OptionalAuth(authenticator auth.Authenticator) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			user, err := authenticator.UserFromRequest(r.Context())
-			if err != nil {
-				writeError(w, err)
-				return
+			user, err := authenticator.UserFromRequest(r)
+			if err == nil {
+				r = r.WithContext(auth.WithUser(r.Context(), user))
 			}
-			ctx := auth.WithUser(r.Context(), user)
-			next.ServeHTTP(w, r.WithContext(ctx))
+			next.ServeHTTP(w, r)
 		})
 	}
+}
+
+// RequireAuth rejects requests without an authenticated user.
+func RequireAuth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if _, ok := auth.UserFromContext(r.Context()); !ok {
+			writeError(w, apperrors.New(apperrors.UnauthorizedError))
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 
 func Recoverer(next http.Handler) http.Handler {
@@ -74,13 +84,13 @@ func writeError(w http.ResponseWriter, err error) {
 	log.Printf("internal error: %v", err)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusInternalServerError)
-	_ = json.NewEncoder(w).Encode(map[string]string{"message": err.Error()})
+	_ = json.NewEncoder(w).Encode(map[string]string{"message": "Internal server error"})
 }
 
 func UserFromContext(ctx context.Context) (auth.UserContext, error) {
 	user, ok := auth.UserFromContext(ctx)
 	if !ok {
-		return auth.UserContext{}, apperrors.New(apperrors.EntityNotFoundError)
+		return auth.UserContext{}, apperrors.New(apperrors.UnauthorizedError)
 	}
 	return user, nil
 }

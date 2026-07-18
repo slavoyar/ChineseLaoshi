@@ -16,6 +16,7 @@ interface Action {
   delete: (id: string) => Promise<void>;
   decrementWordCount: (id: string) => void;
   incrementWordCount: (id: string) => void;
+  reset: () => void;
 }
 
 const useGroupStore = create<State & Action>((set, get) => ({
@@ -25,7 +26,7 @@ const useGroupStore = create<State & Action>((set, get) => ({
     set(() => ({ isLoading: true }));
     try {
       const response = await groupService.getList();
-      set(() => ({ groups: response, isLoading: false }));
+      set(() => ({ groups: response ?? [], isLoading: false }));
     } catch {
       set(() => ({ isLoading: false }));
     }
@@ -70,6 +71,9 @@ const useGroupStore = create<State & Action>((set, get) => ({
         wordCount: item.id === id ? item.wordCount + 1 : item.wordCount,
       })),
     }));
+  },
+  reset: () => {
+    set(() => ({ groups: [], isLoading: false }));
   },
 }));
 

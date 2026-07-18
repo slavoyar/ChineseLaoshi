@@ -90,29 +90,45 @@ func (r *CardRepository) GetCardsCount(ctx context.Context, wordID string) (int,
 	return count, err
 }
 
-func (r *CardRepository) GetCardsByGroupID(ctx context.Context, groupID string) ([]dto.Card, error) {
+func (r *CardRepository) AssertOwnedByUser(ctx context.Context, cardID, userID string) error {
+	var exists bool
+	err := r.pool.QueryRow(ctx, `
+		SELECT EXISTS(
+			SELECT 1 FROM "Card" c
+			JOIN "Group" g ON g.id = c."groupId"
+			WHERE c.id = $1 AND g."userId" = $2
+		)
+	`, cardID, userID).Scan(&exists)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return apperrors.New(apperrors.EntityNotFoundError)
+	}
+	return nil
+}
+
+func (r *CardRepository) GetCardsByGroupID(ctx context.Context, groupID, userID string) ([]dto.Card, error) {
 	rows, err := r.pool.Query(ctx, `
 		SELECT c.id, c."groupId", c."wordId", c."showCount", c.progress, c.step, c."isWinStreak", c.streak, c."updatedAt",
 		       w.id, w.symbols, w.transcription, w.translation
 		FROM "Card" c
 		JOIN "Word" w ON w.id = c."wordId"
-		WHERE c."groupId" = $1
-	`, groupID)
+		JOIN "Group" g ON g.id = c."groupId"
+		WHERE c."groupId" = $1 AND g."userId" = $2
+	`, groupID, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var cards []dto.Card
+	cards := make([]dto.Card, 0)
 	for rows.Next() {
 		card, err := r.scanCardWithWord(rows)
 		if err != nil {
 			return nil, err
 		}
 		cards = append(cards, card)
-	}
-	if cards == nil {
-		cards = []dto.Card{}
 	}
 	return cards, rows.Err()
 }

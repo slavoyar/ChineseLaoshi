@@ -7,5 +7,3 @@ export interface AuthUser {
   avatarUrl: string;
   provider: AuthProvider;
 }
-
-export type InitialAuthMode = 'demo' | 'authenticated';

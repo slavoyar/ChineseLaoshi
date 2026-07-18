@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/slavo/ChineseLaoshi/backend/internal/apperrors"
 	"github.com/slavo/ChineseLaoshi/backend/internal/dto"
 )
 
@@ -26,7 +27,7 @@ func (r *GroupRepository) GetGroupsByUserID(ctx context.Context, userID string) 
 	}
 	defer rows.Close()
 
-	var groups []dto.Group
+	groups := make([]dto.Group, 0)
 	for rows.Next() {
 		var g dto.Group
 		if err := rows.Scan(&g.ID, &g.Name, &g.WordCount); err != nil {
@@ -51,12 +52,26 @@ func (r *GroupRepository) CreateGroup(ctx context.Context, data dto.CreateGroup,
 	return g, nil
 }
 
-func (r *GroupRepository) UpdateGroup(ctx context.Context, data dto.UpdateGroup) (dto.Group, error) {
+func (r *GroupRepository) AssertOwnedByUser(ctx context.Context, groupID, userID string) error {
+	var exists bool
+	err := r.pool.QueryRow(ctx, `
+		SELECT EXISTS(SELECT 1 FROM "Group" WHERE id = $1 AND "userId" = $2)
+	`, groupID, userID).Scan(&exists)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return apperrors.New(apperrors.EntityNotFoundError)
+	}
+	return nil
+}
+
+func (r *GroupRepository) UpdateGroup(ctx context.Context, data dto.UpdateGroup, userID string) (dto.Group, error) {
 	var g dto.Group
 	err := r.pool.QueryRow(ctx, `
-		UPDATE "Group" SET name = $2 WHERE id = $1
+		UPDATE "Group" SET name = $2 WHERE id = $1 AND "userId" = $3
 		RETURNING id, name, "wordCount"
-	`, data.ID, data.Name).Scan(&g.ID, &g.Name, &g.WordCount)
+	`, data.ID, data.Name, userID).Scan(&g.ID, &g.Name, &g.WordCount)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return dto.Group{}, pgx.ErrNoRows
@@ -66,8 +81,8 @@ func (r *GroupRepository) UpdateGroup(ctx context.Context, data dto.UpdateGroup)
 	return g, nil
 }
 
-func (r *GroupRepository) DeleteGroup(ctx context.Context, id string) error {
-	tag, err := r.pool.Exec(ctx, `DELETE FROM "Group" WHERE id = $1`, id)
+func (r *GroupRepository) DeleteGroup(ctx context.Context, id, userID string) error {
+	tag, err := r.pool.Exec(ctx, `DELETE FROM "Group" WHERE id = $1 AND "userId" = $2`, id, userID)
 	if err != nil {
 		return err
 	}

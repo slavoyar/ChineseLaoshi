@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/slavo/ChineseLaoshi/backend/internal/config"
 )
 
 type seedWord struct {
@@ -37,9 +38,67 @@ var pronouns = []seedWord{
 	{"tāmen", "they", "他们"},
 }
 
-func SeedIfEmpty(ctx context.Context, pool *pgxpool.Pool, defaultUserEmail string) error {
+// EnsureTemplateData creates or upgrades the demo template user and starter groups.
+func EnsureTemplateData(ctx context.Context, pool *pgxpool.Pool, templateEmail string) error {
+	templateID, err := resolveTemplateUserID(ctx, pool, templateEmail)
+	if err != nil {
+		return err
+	}
+	return ensureTemplateGroups(ctx, pool, templateID)
+}
+
+func resolveTemplateUserID(ctx context.Context, pool *pgxpool.Pool, templateEmail string) (string, error) {
+	var templateID string
+	err := pool.QueryRow(ctx, `
+		SELECT id FROM "User"
+		WHERE provider = $1 AND provider_subject = $2
+	`, config.TemplateProvider, config.TemplateProviderSubject).Scan(&templateID)
+	if err == nil {
+		return templateID, nil
+	}
+	if err != pgx.ErrNoRows {
+		return "", err
+	}
+
+	// Upgrade an existing local seed user if present (pre-SSO databases).
+	err = pool.QueryRow(ctx, `
+		SELECT id FROM "User"
+		WHERE email = $1 OR username = 'DemoUser'
+		ORDER BY CASE WHEN email = $1 THEN 0 ELSE 1 END
+		LIMIT 1
+	`, templateEmail).Scan(&templateID)
+	if err == nil {
+		_, err = pool.Exec(ctx, `
+			UPDATE "User"
+			SET email = $2,
+			    provider = $3,
+			    provider_subject = $4,
+			    password = NULL
+			WHERE id = $1
+		`, templateID, templateEmail, config.TemplateProvider, config.TemplateProviderSubject)
+		if err != nil {
+			return "", err
+		}
+		return templateID, nil
+	}
+	if err != pgx.ErrNoRows {
+		return "", err
+	}
+
+	templateID = uuid.NewString()
+	_, err = pool.Exec(ctx, `
+		INSERT INTO "User" (id, username, email, password, provider, provider_subject, avatar_url)
+		VALUES ($1, $2, $3, NULL, $4, $5, NULL)
+	`, templateID, "DemoUser", templateEmail, config.TemplateProvider, config.TemplateProviderSubject)
+	if err != nil {
+		return "", err
+	}
+	return templateID, nil
+}
+
+func ensureTemplateGroups(ctx context.Context, pool *pgxpool.Pool, templateID string) error {
 	var count int
-	if err := pool.QueryRow(ctx, `SELECT COUNT(*) FROM "User"`).Scan(&count); err != nil {
+	if err := pool.QueryRow(ctx, `SELECT COUNT(*) FROM "Group" WHERE "userId" = $1`, templateID).Scan(&count); err != nil {
 		return err
 	}
 	if count > 0 {
@@ -52,22 +111,12 @@ func SeedIfEmpty(ctx context.Context, pool *pgxpool.Pool, defaultUserEmail strin
 	}
 	defer tx.Rollback(ctx)
 
-	userID := uuid.NewString()
-	_, err = tx.Exec(ctx, `
-		INSERT INTO "User" (id, username, email, password)
-		VALUES ($1, $2, $3, $4)
-	`, userID, "DemoUser", defaultUserEmail, "")
-	if err != nil {
+	if err := seedGroup(ctx, tx, templateID, "Numbers", numbers); err != nil {
 		return err
 	}
-
-	if err := seedGroup(ctx, tx, userID, "Numbers", numbers); err != nil {
+	if err := seedGroup(ctx, tx, templateID, "Pronouns", pronouns); err != nil {
 		return err
 	}
-	if err := seedGroup(ctx, tx, userID, "Pronouns", pronouns); err != nil {
-		return err
-	}
-
 	return tx.Commit(ctx)
 }
 

@@ -33,7 +33,7 @@ export const GroupGrid = () => {
     <>
       <div className={tileGridClassName}>
         <CreateGroupCard />
-        {groups.map((group) => (
+        {(groups ?? []).map((group) => (
           <GroupCard
             key={group.id}
             group={group}

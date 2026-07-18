@@ -64,12 +64,15 @@ func newTestApp() (*TestApp, error) {
 	port := uint32(15432)
 
 	cfg := config.Config{
-		Port:             "3000",
-		DBURL:            "",
-		DataDir:          dataDir,
-		DefaultUserEmail: DefaultTestEmail,
-		NodeEnv:          "test",
-		EmbeddedPGPort:   port,
+		Port:           "3000",
+		DBURL:          "",
+		DataDir:        dataDir,
+		TemplateEmail:  config.DefaultTemplateEmail,
+		NodeEnv:        "test",
+		EmbeddedPGPort: port,
+		JWTSecret:      "test-jwt-secret",
+		GoogleClientID: "test-google-client-id",
+		SessionTTL:     config.DefaultSessionTTL,
 	}
 
 	database, err := db.Bootstrap(ctx, cfg, db.MigrationsPath())
@@ -86,13 +89,28 @@ func newTestApp() (*TestApp, error) {
 	groupRepo := repository.NewGroupRepository(database.Pool)
 	wordRepo := repository.NewWordRepository(database.Pool)
 	cardRepo := repository.NewCardRepository(database.Pool)
+	cloneRepo := repository.NewCloneRepository(database.Pool)
 
 	groupService := service.NewGroupService(database.Pool, cardRepo, groupRepo, wordRepo)
 	cardService := service.NewCardService(database.Pool, cardRepo, groupRepo, wordRepo)
 	wordService := service.NewWordService(wordRepo)
 
-	authenticator := auth.NewDefaultUserAuthenticator(userRepo, cfg.DefaultUserEmail)
-	handlers := handler.NewHandlers(groupService, cardService, wordService)
+	tokenService := auth.NewTokenService(cfg.JWTSecret, cfg.SessionTTL)
+	googleVerifier := auth.NewGoogleVerifier(cfg.GoogleClientID)
+	authService := service.NewAuthService(userRepo, cloneRepo, googleVerifier, tokenService, cfg.TemplateEmail)
+
+	authenticator := auth.NewDefaultUserAuthenticator(userRepo, DefaultTestEmail)
+	cookieConfig := auth.CookieConfig{Secure: false, TTL: cfg.SessionTTL}
+	handlers := handler.NewHandlers(
+		groupService,
+		cardService,
+		wordService,
+		authService,
+		userRepo,
+		cfg.TemplateEmail,
+		cookieConfig,
+		[]string{"http://localhost:5173"},
+	)
 	server := httptest.NewServer(handlers.Router(authenticator, false))
 
 	return &TestApp{
@@ -111,11 +129,21 @@ func seedTestData(ctx context.Context, pool *pgxpool.Pool) error {
 		return err
 	}
 
+	// Template user for anonymous reads / clone source.
+	templateID := GetUUID(99)
+	_, err = pool.Exec(ctx, `
+		INSERT INTO "User" (id, username, email, password, provider, provider_subject)
+		VALUES ($1, $2, $3, NULL, $4, $5)
+	`, templateID, "DemoUser", config.DefaultTemplateEmail, config.TemplateProvider, config.TemplateProviderSubject)
+	if err != nil {
+		return err
+	}
+
 	userID := GetUUID(1)
 	_, err = pool.Exec(ctx, `
-		INSERT INTO "User" (id, username, email, password)
-		VALUES ($1, $2, $3, $4)
-	`, userID, "slavoyar", DefaultTestEmail, "")
+		INSERT INTO "User" (id, username, email, password, provider, provider_subject)
+		VALUES ($1, $2, $3, NULL, $4, $5)
+	`, userID, "slavoyar", DefaultTestEmail, "google", "test-subject-1")
 	if err != nil {
 		return err
 	}

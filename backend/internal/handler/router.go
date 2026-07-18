@@ -6,26 +6,40 @@ import (
 	"github.com/go-chi/chi/v5"
 	chimw "github.com/go-chi/chi/v5/middleware"
 	"github.com/slavo/ChineseLaoshi/backend/internal/auth"
+	"github.com/slavo/ChineseLaoshi/backend/internal/config"
 	"github.com/slavo/ChineseLaoshi/backend/internal/middleware"
+	"github.com/slavo/ChineseLaoshi/backend/internal/repository"
 	"github.com/slavo/ChineseLaoshi/backend/internal/service"
 )
 
 type Handlers struct {
-	Groups *GroupHandler
-	Cards  *CardHandler
-	Words  *WordHandler
+	Groups         *GroupHandler
+	Cards          *CardHandler
+	Words          *WordHandler
+	Auth           *AuthHandler
+	users          *repository.UserRepository
+	templateEmail  string
 }
 
 func NewHandlers(
 	groupService *service.GroupService,
 	cardService *service.CardService,
 	wordService *service.WordService,
+	authService *service.AuthService,
+	users *repository.UserRepository,
+	templateEmail string,
+	cookieConfig auth.CookieConfig,
+	allowedOrigins []string,
 ) *Handlers {
-	return &Handlers{
-		Groups: NewGroupHandler(groupService),
-		Cards:  NewCardHandler(cardService),
-		Words:  NewWordHandler(wordService),
+	h := &Handlers{
+		Words:         NewWordHandler(wordService),
+		Auth:          NewAuthHandler(authService, cookieConfig, allowedOrigins),
+		users:         users,
+		templateEmail: templateEmail,
 	}
+	h.Groups = NewGroupHandler(groupService, h.resolveUserID)
+	h.Cards = NewCardHandler(cardService, h.resolveUserID)
+	return h
 }
 
 func (h *Handlers) Router(authenticator auth.Authenticator, enableLogger bool) http.Handler {
@@ -36,27 +50,48 @@ func (h *Handlers) Router(authenticator auth.Authenticator, enableLogger bool) h
 	if enableLogger {
 		r.Use(middleware.Logger)
 	}
-	r.Use(middleware.Auth(authenticator))
+	r.Use(middleware.OptionalAuth(authenticator))
 
 	r.Route("/api", func(r chi.Router) {
+		r.Route("/auth", func(r chi.Router) {
+			r.Post("/google", h.Auth.GoogleLogin)
+			r.Post("/logout", h.Auth.Logout)
+			r.With(middleware.RequireAuth).Get("/me", h.Auth.Me)
+		})
+
 		r.Route("/groups", func(r chi.Router) {
 			r.Get("/", h.Groups.List)
-			r.Post("/", h.Groups.Create)
-			r.Put("/", h.Groups.Update)
-			r.Delete("/{groupId}", h.Groups.Delete)
+			r.With(middleware.RequireAuth).Post("/", h.Groups.Create)
+			r.With(middleware.RequireAuth).Put("/", h.Groups.Update)
+			r.With(middleware.RequireAuth).Delete("/{groupId}", h.Groups.Delete)
 		})
 
 		r.Route("/cards", func(r chi.Router) {
 			r.Get("/{groupId}", h.Cards.ListByGroup)
-			r.Post("/", h.Cards.Create)
-			r.Put("/", h.Cards.Update)
-			r.Post("/stats", h.Cards.UpdateStats)
 			r.Post("/study/write", h.Cards.GetWriteCards)
-			r.Delete("/{cardId}", h.Cards.Delete)
+			r.With(middleware.RequireAuth).Post("/", h.Cards.Create)
+			r.With(middleware.RequireAuth).Put("/", h.Cards.Update)
+			r.With(middleware.RequireAuth).Post("/stats", h.Cards.UpdateStats)
+			r.With(middleware.RequireAuth).Delete("/{cardId}", h.Cards.Delete)
 		})
 
 		r.Get("/words", h.Words.Search)
 	})
 
 	return r
+}
+
+func (h *Handlers) resolveUserID(r *http.Request) (string, error) {
+	if user, ok := auth.UserFromContext(r.Context()); ok {
+		return user.ID, nil
+	}
+	template, err := h.users.GetByProviderSubject(r.Context(), config.TemplateProvider, config.TemplateProviderSubject)
+	if err == nil {
+		return template.ID, nil
+	}
+	template, err = h.users.GetByEmail(r.Context(), h.templateEmail)
+	if err != nil {
+		return "", err
+	}
+	return template.ID, nil
 }

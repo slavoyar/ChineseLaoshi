@@ -19,7 +19,7 @@ export const Groups = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) 
           <GroupListSkeleton />
         ) : (
           <div className='flex flex-col gap-4'>
-            {groups.length === 0 && (
+            {(groups?.length ?? 0) === 0 && (
               <p className='text-center text-muted-foreground'>
                 No groups yet. Create one to start building your vocabulary.
               </p>
