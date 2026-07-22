@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 const (
@@ -29,6 +31,9 @@ type Config struct {
 }
 
 func Load() Config {
+	// Load backend/.env when present (e.g. npm run dev:backend). Existing env wins.
+	_ = godotenv.Load()
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "3000"

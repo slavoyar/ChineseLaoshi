@@ -41,6 +41,8 @@ Open **http://localhost:5173** in your browser.
 
 ### Backend
 
+Copy `backend/.env.example` to `backend/.env` and fill in values. `npm run dev:backend` loads that file automatically (existing process env vars still win).
+
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PORT` | `3000` | HTTP listen port |
