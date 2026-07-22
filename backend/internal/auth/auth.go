@@ -1,10 +1,16 @@
 package auth
 
-import "context"
+import (
+	"context"
+	"net/http"
+)
 
 type UserContext struct {
-	ID       string
-	Username string
+	ID        string
+	Username  string
+	Email     string
+	AvatarURL string
+	Provider  string
 }
 
 type contextKey string
@@ -21,5 +27,5 @@ func UserFromContext(ctx context.Context) (UserContext, bool) {
 }
 
 type Authenticator interface {
-	UserFromRequest(ctx context.Context) (UserContext, error)
+	UserFromRequest(r *http.Request) (UserContext, error)
 }

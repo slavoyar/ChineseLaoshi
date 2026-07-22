@@ -21,6 +21,13 @@ func main() {
 	cfg := config.Load()
 	ctx := context.Background()
 
+	if cfg.JWTSecret == "" {
+		log.Fatal("JWT_SECRET is required")
+	}
+	if cfg.GoogleClientID == "" {
+		log.Fatal("GOOGLE_CLIENT_ID is required")
+	}
+
 	migrationsPath := db.MigrationsPath()
 
 	database, err := db.Bootstrap(ctx, cfg, migrationsPath)
@@ -29,7 +36,7 @@ func main() {
 	}
 	defer database.Close()
 
-	if err := db.SeedIfEmpty(ctx, database.Pool, cfg.DefaultUserEmail); err != nil {
+	if err := db.EnsureTemplateData(ctx, database.Pool, cfg.TemplateEmail); err != nil {
 		log.Fatalf("seed failed: %v", err)
 	}
 
@@ -37,13 +44,28 @@ func main() {
 	groupRepo := repository.NewGroupRepository(database.Pool)
 	wordRepo := repository.NewWordRepository(database.Pool)
 	cardRepo := repository.NewCardRepository(database.Pool)
+	cloneRepo := repository.NewCloneRepository(database.Pool)
 
 	groupService := service.NewGroupService(database.Pool, cardRepo, groupRepo, wordRepo)
 	cardService := service.NewCardService(database.Pool, cardRepo, groupRepo, wordRepo)
 	wordService := service.NewWordService(wordRepo)
 
-	authenticator := auth.NewDefaultUserAuthenticator(userRepo, cfg.DefaultUserEmail)
-	handlers := handler.NewHandlers(groupService, cardService, wordService)
+	tokenService := auth.NewTokenService(cfg.JWTSecret, cfg.SessionTTL)
+	googleVerifier := auth.NewGoogleVerifier(cfg.GoogleClientID)
+	authService := service.NewAuthService(userRepo, cloneRepo, googleVerifier, tokenService, cfg.TemplateEmail)
+	authenticator := auth.NewSessionAuthenticator(tokenService, userRepo)
+
+	cookieConfig := auth.CookieConfig{Secure: cfg.CookieSecure, TTL: cfg.SessionTTL}
+	handlers := handler.NewHandlers(
+		groupService,
+		cardService,
+		wordService,
+		authService,
+		userRepo,
+		cfg.TemplateEmail,
+		cookieConfig,
+		cfg.AllowedOrigins,
+	)
 	enableLogger := cfg.NodeEnv != "test"
 	server := &http.Server{
 		Addr:              ":" + cfg.Port,

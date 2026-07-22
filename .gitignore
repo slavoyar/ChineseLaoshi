@@ -12,6 +12,10 @@ coverage
 dist
 dist-ssr
 .env
+.env.dev
+.env.development
+**/.env.dev
+**/.env.development
 *.local
 
 # Editor directories and files

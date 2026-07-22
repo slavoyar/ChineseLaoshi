@@ -5,8 +5,8 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/slavo/ChineseLaoshi/backend/internal/apperrors"
-	"github.com/slavo/ChineseLaoshi/backend/internal/repository"
 	"github.com/slavo/ChineseLaoshi/backend/internal/dto"
+	"github.com/slavo/ChineseLaoshi/backend/internal/repository"
 )
 
 type GroupService struct {
@@ -33,16 +33,20 @@ func (s *GroupService) CreateGroup(ctx context.Context, data dto.CreateGroup, us
 	return s.groups.CreateGroup(ctx, data, userID)
 }
 
-func (s *GroupService) UpdateGroup(ctx context.Context, data dto.UpdateGroup) (dto.Group, error) {
-	group, err := s.groups.UpdateGroup(ctx, data)
+func (s *GroupService) UpdateGroup(ctx context.Context, data dto.UpdateGroup, userID string) (dto.Group, error) {
+	group, err := s.groups.UpdateGroup(ctx, data, userID)
 	if err == pgx.ErrNoRows {
 		return dto.Group{}, apperrors.New(apperrors.EntityNotFoundError)
 	}
 	return group, err
 }
 
-func (s *GroupService) DeleteGroup(ctx context.Context, id string) error {
-	cards, err := s.cards.GetCardsByGroupID(ctx, id)
+func (s *GroupService) DeleteGroup(ctx context.Context, id, userID string) error {
+	if err := s.groups.AssertOwnedByUser(ctx, id, userID); err != nil {
+		return err
+	}
+
+	cards, err := s.cards.GetCardsByGroupID(ctx, id, userID)
 	if err != nil {
 		return err
 	}
@@ -79,7 +83,7 @@ func (s *GroupService) DeleteGroup(ctx context.Context, id string) error {
 		return err
 	}
 
-	tag, err := tx.Exec(ctx, `DELETE FROM "Group" WHERE id = $1`, id)
+	tag, err := tx.Exec(ctx, `DELETE FROM "Group" WHERE id = $1 AND "userId" = $2`, id, userID)
 	if err != nil {
 		return err
 	}

@@ -1,30 +1,23 @@
-import { AuthProvider, AuthUser, InitialAuthMode } from '@shared/types/auth';
+import useCardStore from '@entities/card/model/store';
+import useGroupStore from '@entities/group/model/store';
+import { authApi } from '@shared/api/auth';
+import { AuthUser } from '@shared/types/auth';
 import { create } from 'zustand';
 
-const MOCK_GOOGLE_USER: AuthUser = {
-  id: 'mock-google-user',
-  name: 'Alex Chen',
-  email: 'alex.chen@example.com',
-  avatarUrl: 'https://ui-avatars.com/api/?name=Alex+Chen&background=f8fafc&color=0f172a',
-  provider: 'google',
-};
-
-const MOCK_USERS: Record<AuthProvider, AuthUser> = {
-  google: MOCK_GOOGLE_USER,
-};
-
-const getInitialUser = (): AuthUser | null => {
-  const mode = (import.meta.env.VITE_INITIAL_AUTH ?? 'demo') as InitialAuthMode;
-  return mode === 'authenticated' ? MOCK_GOOGLE_USER : null;
+const clearSessionCaches = () => {
+  useCardStore.getState().reset();
+  useGroupStore.getState().reset();
 };
 
 interface AuthState {
   user: AuthUser | null;
   isDemo: boolean;
+  isBootstrapped: boolean;
   isAuthDialogOpen: boolean;
   isDemoGateOpen: boolean;
-  signInWithProvider: (provider: AuthProvider) => void;
-  signOut: () => void;
+  bootstrap: () => Promise<void>;
+  signInWithGoogle: (idToken: string) => Promise<void>;
+  signOut: () => Promise<void>;
   openAuthDialog: () => void;
   closeAuthDialog: () => void;
   openDemoGate: () => void;
@@ -32,34 +25,46 @@ interface AuthState {
   openAuthFromDemoGate: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => {
-  const initialUser = getInitialUser();
-
-  return {
-    user: initialUser,
-    isDemo: initialUser === null,
-    isAuthDialogOpen: false,
-    isDemoGateOpen: false,
-    signInWithProvider: (provider) => {
-      set({
-        user: MOCK_USERS[provider],
-        isDemo: false,
-        isAuthDialogOpen: false,
-        isDemoGateOpen: false,
-      });
-    },
-    signOut: () => {
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  isDemo: true,
+  isBootstrapped: false,
+  isAuthDialogOpen: false,
+  isDemoGateOpen: false,
+  bootstrap: async () => {
+    try {
+      const user = await authApi.me();
+      set({ user, isDemo: false, isBootstrapped: true });
+    } catch {
+      set({ user: null, isDemo: true, isBootstrapped: true });
+    }
+  },
+  signInWithGoogle: async (idToken) => {
+    const user = await authApi.loginWithGoogle(idToken);
+    clearSessionCaches();
+    set({
+      user,
+      isDemo: false,
+      isAuthDialogOpen: false,
+      isDemoGateOpen: false,
+    });
+  },
+  signOut: async () => {
+    try {
+      await authApi.logout();
+    } finally {
+      clearSessionCaches();
       set({
         user: null,
         isDemo: true,
         isAuthDialogOpen: false,
         isDemoGateOpen: false,
       });
-    },
-    openAuthDialog: () => set({ isAuthDialogOpen: true }),
-    closeAuthDialog: () => set({ isAuthDialogOpen: false }),
-    openDemoGate: () => set({ isDemoGateOpen: true }),
-    closeDemoGate: () => set({ isDemoGateOpen: false }),
-    openAuthFromDemoGate: () => set({ isDemoGateOpen: false, isAuthDialogOpen: true }),
-  };
-});
+    }
+  },
+  openAuthDialog: () => set({ isAuthDialogOpen: true }),
+  closeAuthDialog: () => set({ isAuthDialogOpen: false }),
+  openDemoGate: () => set({ isDemoGateOpen: true }),
+  closeDemoGate: () => set({ isDemoGateOpen: false }),
+  openAuthFromDemoGate: () => set({ isDemoGateOpen: false, isAuthDialogOpen: true }),
+}));

@@ -17,8 +17,8 @@ export const Header = () => {
     state.openAuthDialog,
   ]);
 
-  const onSignOut = () => {
-    signOut();
+  const onSignOut = async () => {
+    await signOut();
     navigate(Route.Root);
   };
 

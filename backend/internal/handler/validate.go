@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 	"regexp"
 
@@ -143,5 +144,6 @@ func mapHandlerError(w http.ResponseWriter, err error) {
 		writeJSON(w, ae.StatusCode, ae)
 		return
 	}
-	writeJSON(w, http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	log.Printf("handler error: %v", err)
+	writeJSON(w, http.StatusInternalServerError, map[string]string{"message": "Internal server error"})
 }

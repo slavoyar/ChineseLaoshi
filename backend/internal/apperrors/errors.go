@@ -1,6 +1,9 @@
 package apperrors
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type ErrorCode string
 
@@ -10,9 +13,11 @@ const (
 	EntityUpdateError   ErrorCode = "entityUpdateError"
 	EntityDeleteError   ErrorCode = "entityDeleteError"
 	ValidationError     ErrorCode = "validationError"
+	UnauthorizedError   ErrorCode = "unauthorizedError"
+	ForbiddenError      ErrorCode = "forbiddenError"
 )
 
-var errors = map[ErrorCode]struct {
+var errorDefs = map[ErrorCode]struct {
 	Message    string
 	StatusCode int
 }{
@@ -21,6 +26,8 @@ var errors = map[ErrorCode]struct {
 	EntityUpdateError:   {Message: "Could not update an entity", StatusCode: 500},
 	EntityDeleteError:   {Message: "Could not delete an entity", StatusCode: 500},
 	ValidationError:     {Message: "Validation error", StatusCode: 500},
+	UnauthorizedError:   {Message: "Authentication required", StatusCode: 401},
+	ForbiddenError:      {Message: "Forbidden", StatusCode: 403},
 }
 
 type AppError struct {
@@ -34,7 +41,7 @@ func (e *AppError) Error() string {
 }
 
 func New(code ErrorCode) *AppError {
-	info := errors[code]
+	info := errorDefs[code]
 	return &AppError{
 		Code:       code,
 		StatusCode: info.StatusCode,
@@ -43,10 +50,8 @@ func New(code ErrorCode) *AppError {
 }
 
 func IsAppError(err error) (*AppError, bool) {
-	if err == nil {
-		return nil, false
-	}
-	if ae, ok := err.(*AppError); ok {
+	var ae *AppError
+	if errors.As(err, &ae) {
 		return ae, true
 	}
 	return nil, false

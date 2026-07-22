@@ -6,8 +6,8 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/slavo/ChineseLaoshi/backend/internal/apperrors"
-	"github.com/slavo/ChineseLaoshi/backend/internal/repository"
 	"github.com/slavo/ChineseLaoshi/backend/internal/dto"
+	"github.com/slavo/ChineseLaoshi/backend/internal/repository"
 )
 
 const (
@@ -32,8 +32,11 @@ func NewCardService(
 	return &CardService{pool: pool, cards: cards, groups: groups, words: words}
 }
 
-func (s *CardService) GetCardsByGroupID(ctx context.Context, groupID string) ([]dto.Card, error) {
-	return s.cards.GetCardsByGroupID(ctx, groupID)
+func (s *CardService) GetCardsByGroupID(ctx context.Context, groupID, userID string) ([]dto.Card, error) {
+	if err := s.groups.AssertOwnedByUser(ctx, groupID, userID); err != nil {
+		return nil, err
+	}
+	return s.cards.GetCardsByGroupID(ctx, groupID, userID)
 }
 
 func isCreateWord(word dto.CreateCardWord) bool {
@@ -41,7 +44,11 @@ func isCreateWord(word dto.CreateCardWord) bool {
 		*word.Symbols != "" && *word.Transcription != "" && *word.Translation != ""
 }
 
-func (s *CardService) CreateCard(ctx context.Context, data dto.CreateCard) (dto.Card, error) {
+func (s *CardService) CreateCard(ctx context.Context, data dto.CreateCard, userID string) (dto.Card, error) {
+	if err := s.groups.AssertOwnedByUser(ctx, data.GroupID, userID); err != nil {
+		return dto.Card{}, err
+	}
+
 	tx, err := s.pool.Begin(ctx)
 	if err != nil {
 		return dto.Card{}, err
@@ -80,7 +87,11 @@ func (s *CardService) CreateCard(ctx context.Context, data dto.CreateCard) (dto.
 	return card, nil
 }
 
-func (s *CardService) DeleteCard(ctx context.Context, id string) error {
+func (s *CardService) DeleteCard(ctx context.Context, id, userID string) error {
+	if err := s.cards.AssertOwnedByUser(ctx, id, userID); err != nil {
+		return err
+	}
+
 	card, err := s.cards.GetCardByID(ctx, id)
 	if err != nil {
 		return err
@@ -117,7 +128,10 @@ func (s *CardService) DeleteCard(ctx context.Context, id string) error {
 	return tx.Commit(ctx)
 }
 
-func (s *CardService) UpdateCard(ctx context.Context, data dto.UpdateCardWord) error {
+func (s *CardService) UpdateCard(ctx context.Context, data dto.UpdateCardWord, userID string) error {
+	if err := s.cards.AssertOwnedByUser(ctx, data.ID, userID); err != nil {
+		return err
+	}
 	if data.Word.ID == "" {
 		return apperrors.New(apperrors.EntityUpdateError)
 	}
@@ -158,7 +172,11 @@ func (s *CardService) UpdateCard(ctx context.Context, data dto.UpdateCardWord) e
 	return err
 }
 
-func (s *CardService) UpdateCardStats(ctx context.Context, data dto.UpdateCardStats) error {
+func (s *CardService) UpdateCardStats(ctx context.Context, data dto.UpdateCardStats, userID string) error {
+	if err := s.cards.AssertOwnedByUser(ctx, data.ID, userID); err != nil {
+		return err
+	}
+
 	card, err := s.cards.GetCardByID(ctx, data.ID)
 	if err != nil {
 		return err
@@ -205,6 +223,11 @@ func (s *CardService) GetWriteCards(ctx context.Context, data dto.GetWriteCard, 
 	count, err := strconv.Atoi(data.Count)
 	if err != nil {
 		return nil, apperrors.New(apperrors.ValidationError)
+	}
+	if data.GroupID != nil && *data.GroupID != "" {
+		if err := s.groups.AssertOwnedByUser(ctx, *data.GroupID, userID); err != nil {
+			return nil, err
+		}
 	}
 	return s.cards.GetWriteCards(ctx, count, userID, data.GroupID)
 }

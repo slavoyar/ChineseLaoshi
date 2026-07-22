@@ -41,13 +41,20 @@ Open **http://localhost:5173** in your browser.
 
 ### Backend
 
+Copy `backend/.env.example` to `backend/.env` and fill in values. `npm run dev:backend` loads that file automatically (existing process env vars still win).
+
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PORT` | `3000` | HTTP listen port |
 | `DB_URL` | *(empty)* | External Postgres connection string. Leave empty to use embedded Postgres. |
 | `DATA_DIR` | `./data/pg` | Data directory for embedded Postgres |
 | `EMBEDDED_PG_PORT` | `5433` | Port for embedded Postgres |
-| `DEFAULT_USER_EMAIL` | `slavoyar@mail.com` | Email of the stub-authenticated user |
+| `TEMPLATE_USER_EMAIL` | `demo-template@chineselaoshi.local` | Demo template user (anonymous reads + clone source). `DEFAULT_USER_EMAIL` is still accepted as a fallback. |
+| `GOOGLE_CLIENT_ID` | *(required)* | Google OAuth Web Client ID (audience for ID token verification) |
+| `JWT_SECRET` | *(required)* | Secret used to sign the httpOnly session cookie JWT |
+| `COOKIE_SECURE` | `true` when `NODE_ENV=production` | Set `false` for local http |
+| `SESSION_TTL_HOURS` | `168` (7 days) | Session cookie lifetime |
+| `ALLOWED_ORIGINS` | `http://localhost:5173`, `http://127.0.0.1:5173` | Origins allowed for `POST /api/auth/google` |
 | `NODE_ENV` | *(empty)* | Set to `test` to disable request logging |
 
 ### Frontend
@@ -56,9 +63,9 @@ Create or edit `frontend/.env.development`:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `VITE_INITIAL_AUTH` | `demo` | Initial auth UI state: `demo` (unsigned in) or `authenticated` |
+| `VITE_GOOGLE_CLIENT_ID` | *(required)* | Same Google Web Client ID as backend `GOOGLE_CLIENT_ID` |
 
-> **Note:** The backend uses stub authentication and always serves requests as `DEFAULT_USER_EMAIL`. The frontend auth UI (sign-in dialog, demo gate) is cosmetic only and does not affect API authorization.
+> **Note:** Anonymous users read the demo template. Mutations require Google SSO. The session is an httpOnly cookie (`cl_session`) set by `POST /api/auth/google`.
 
 ## Regenerating API types
 
@@ -107,3 +114,4 @@ cd frontend && npm run build
 # Run backend tests
 cd backend && go test ./...
 ```
+
