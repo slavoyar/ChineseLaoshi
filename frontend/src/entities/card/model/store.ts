@@ -60,10 +60,14 @@ const useCardStore = create<State & Action>((set, get) => ({
     if (!groupId) {
       return;
     }
-    const response = await cardService.getList(groupId);
-    set((state) => ({
-      cardsPerGroup: { ...state.cardsPerGroup, [groupId]: response },
-    }));
+    try {
+      const response = await cardService.getList(groupId);
+      set((state) => ({
+        cardsPerGroup: { ...state.cardsPerGroup, [groupId]: response },
+      }));
+    } catch {
+      // Stats already persisted; a silent list refresh failure must not fail the lesson.
+    }
   },
   reset: () => {
     set(() => ({ cardsPerGroup: {}, loadingGroupIds: {} }));

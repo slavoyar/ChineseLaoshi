@@ -6,18 +6,24 @@ const URL = '/api/cards';
 
 class CardService extends BaseService<Card, CreateCard, UpdateCardWord> {
   getCardsWritePractice(count: string, groupId?: string): Promise<Card[]> {
-    return axios.post<GetWriteCard, Card[]>(
-      `${this.url}/study/write`,
-      { count, groupId },
-      { cancelToken: this.getCancelToken('getCardsWritePractice') }
+    return this.request(
+      axios.post<GetWriteCard, Card[]>(
+        `${this.url}/study/write`,
+        { count, groupId },
+        { cancelToken: this.getCancelToken('getCardsWritePractice') }
+      ),
+      { notify: true }
     );
   }
 
   updateCardStats(id: string, guessed: boolean): Promise<void> {
-    return axios.post<UpdateCardStats, void>(
-      `${this.url}/stats`,
-      { id, guessed },
-      { cancelToken: this.getCancelToken('updateCardStats') }
+    return this.request(
+      axios.post<UpdateCardStats, void>(
+        `${this.url}/stats`,
+        { id, guessed },
+        { cancelToken: this.getCancelToken('updateCardStats') }
+      ),
+      { notify: true }
     );
   }
 }

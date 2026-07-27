@@ -1,4 +1,5 @@
 import { useCardStore } from '@entities/card';
+import { isRequestCanceled, parseApiError } from '@shared/api';
 import { Word } from '@shared/api/generated';
 import { useAuthStore, useStateStore } from '@shared/stores';
 import { Button } from '@shared/ui';
@@ -13,6 +14,7 @@ interface Props extends Word {
   updateStats?: boolean;
   showOutline?: boolean;
   onNext: () => void;
+  onAbort?: () => void;
   onComplete?: () => void;
 }
 
@@ -28,6 +30,7 @@ export const WriteCard = ({
   updateStats = true,
   showOutline = false,
   onNext,
+  onAbort,
   onComplete,
 }: Props) => {
   const updateCardStats = useCardStore((state) => state.updateStats);
@@ -35,6 +38,7 @@ export const WriteCard = ({
   const settings = useStateStore((state) => state.settings);
 
   const writers = useRef<HanziWriter[]>([]);
+  const isSubmittingRef = useRef(false);
   const { value: currentIndex, inc, dec, reset } = useCounter(0);
   const debouncedIndex = useDebounceValue(currentIndex, 300);
 
@@ -107,10 +111,31 @@ export const WriteCard = ({
     cn('h-5 w-5', enabled ? 'text-foreground' : 'text-muted-foreground');
 
   const buttonHandler = async (guessed: boolean) => {
+    if (isSubmittingRef.current) {
+      return;
+    }
+    isSubmittingRef.current = true;
+
+    const cardId = id;
+    // Advance immediately so Skip/Next stay responsive; persist stats afterward.
     onNext();
-    // Demo browses the shared template; never persist template study stats.
-    if (updateStats && !isDemo) {
-      await updateCardStats(id, guessed);
+
+    try {
+      // Demo browses the shared template; never persist template study stats.
+      if (updateStats && !isDemo) {
+        await updateCardStats(cardId, guessed);
+      }
+    } catch (err) {
+      if (isRequestCanceled(err)) {
+        return;
+      }
+      // Auth dialog already opened for 401; keep the lesson so the user can retry after sign-in.
+      if (parseApiError(err).code === 'unauthorizedError') {
+        return;
+      }
+      onAbort?.();
+    } finally {
+      isSubmittingRef.current = false;
     }
   };
 

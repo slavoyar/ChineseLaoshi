@@ -1,5 +1,7 @@
 import axios, { CancelTokenSource } from 'axios';
 
+import { apiRequest, ApiRequestOptions } from './api-error';
+
 export class BaseService<Entity, Create = Entity, Update = Entity> {
   protected url: string;
   protected cancelTokenByUrl = new Map<string, CancelTokenSource>();
@@ -24,29 +26,48 @@ export class BaseService<Entity, Create = Entity, Update = Entity> {
     return cancelTokenSource.token;
   }
 
+  protected request<T>(promise: Promise<T>, options?: ApiRequestOptions) {
+    return apiRequest(promise, options);
+  }
+
   async get<Response = Entity>(id?: string) {
-    return axios.get<Response, Response>(this.getUrlWithId(id), { cancelToken: this.getCancelToken('get') });
+    return this.request(
+      axios.get<Response, Response>(this.getUrlWithId(id), { cancelToken: this.getCancelToken('get') }),
+      { notify: false }
+    );
   }
 
   async getList<Response = Entity[]>(id?: string) {
-    return axios.get<Response, Response>(this.getUrlWithId(id), {
-      cancelToken: this.getCancelToken('getList'),
-    });
+    return this.request(
+      axios.get<Response, Response>(this.getUrlWithId(id), {
+        cancelToken: this.getCancelToken('getList'),
+      }),
+      { notify: false }
+    );
   }
 
   post<Request = Create, Response = Entity>(data: Request, id?: string) {
-    return axios.post<Request, Response>(this.getUrlWithId(id), data, {
-      cancelToken: this.getCancelToken('post'),
-    });
+    return this.request(
+      axios.post<Request, Response>(this.getUrlWithId(id), data, {
+        cancelToken: this.getCancelToken('post'),
+      }),
+      { notify: true }
+    );
   }
 
   put<Request = Update, Response = Entity>(data: Request, id?: string) {
-    return axios.put<Request, Response>(this.getUrlWithId(id), data, {
-      cancelToken: this.getCancelToken('put'),
-    });
+    return this.request(
+      axios.put<Request, Response>(this.getUrlWithId(id), data, {
+        cancelToken: this.getCancelToken('put'),
+      }),
+      { notify: true }
+    );
   }
 
   delete(id: string) {
-    return axios.delete(`${this.url}/${id}`, { cancelToken: this.getCancelToken('delete') });
+    return this.request(
+      axios.delete(`${this.url}/${id}`, { cancelToken: this.getCancelToken('delete') }),
+      { notify: true }
+    );
   }
 }
