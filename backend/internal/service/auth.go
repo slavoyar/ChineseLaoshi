@@ -16,7 +16,7 @@ const googleProvider = "google"
 type AuthService struct {
 	users    *repository.UserRepository
 	cloner   *repository.CloneRepository
-	google   *auth.GoogleVerifier
+	google   auth.GoogleTokenVerifier
 	tokens   *auth.TokenService
 	template string // template user email for lookup fallback
 }
@@ -24,7 +24,7 @@ type AuthService struct {
 func NewAuthService(
 	users *repository.UserRepository,
 	cloner *repository.CloneRepository,
-	google *auth.GoogleVerifier,
+	google auth.GoogleTokenVerifier,
 	tokens *auth.TokenService,
 	templateEmail string,
 ) *AuthService {

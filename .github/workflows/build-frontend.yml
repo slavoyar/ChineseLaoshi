@@ -1,14 +1,12 @@
 name: Lint, build and test frontend
 
+# No path filters: branch protection requires this job name (`lint-and-build`)
+# on every PR to production, including backend-only changes.
 on:
   pull_request:
-    paths:
-      - 'frontend/**'
     branches:
       - production
   push:
-    paths:
-      - 'frontend/**'
     branches:
       - production
 
@@ -18,10 +16,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23.9.0'
 
       - name: Install dependencies
         run: npm install

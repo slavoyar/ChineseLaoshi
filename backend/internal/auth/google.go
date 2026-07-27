@@ -15,6 +15,10 @@ type GoogleIdentity struct {
 	Picture       string
 }
 
+type GoogleTokenVerifier interface {
+	VerifyIDToken(ctx context.Context, rawToken string) (GoogleIdentity, error)
+}
+
 type GoogleVerifier struct {
 	clientID string
 }

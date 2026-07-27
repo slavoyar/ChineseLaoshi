@@ -209,3 +209,86 @@ func TestCards_DeleteNotFound(t *testing.T) {
 		t.Fatalf("expected 404, got %d", res.StatusCode)
 	}
 }
+
+func TestCards_GetWriteCards(t *testing.T) {
+	app := testutil.SetupTestApp(t)
+	payload := map[string]string{"count": "2"}
+	body, _ := json.Marshal(payload)
+	res, err := http.Post(app.Server.URL+"/api/cards/study/write", "application/json", bytes.NewReader(body))
+	if err != nil {
+		t.Fatalf("request failed: %v", err)
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		t.Fatalf("expected 200, got %d", res.StatusCode)
+	}
+
+	var cards []map[string]any
+	if err := json.NewDecoder(res.Body).Decode(&cards); err != nil {
+		t.Fatalf("decode failed: %v", err)
+	}
+	if len(cards) != 2 {
+		t.Fatalf("expected 2 cards, got %d", len(cards))
+	}
+}
+
+func TestCards_GetWriteCardsWithGroup(t *testing.T) {
+	app := testutil.SetupTestApp(t)
+	payload := map[string]string{"count": "5", "groupId": testutil.GetUUID(1)}
+	body, _ := json.Marshal(payload)
+	res, err := http.Post(app.Server.URL+"/api/cards/study/write", "application/json", bytes.NewReader(body))
+	if err != nil {
+		t.Fatalf("request failed: %v", err)
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		t.Fatalf("expected 200, got %d", res.StatusCode)
+	}
+
+	var cards []map[string]any
+	if err := json.NewDecoder(res.Body).Decode(&cards); err != nil {
+		t.Fatalf("decode failed: %v", err)
+	}
+	if len(cards) != 2 {
+		t.Fatalf("expected 2 cards, got %d", len(cards))
+	}
+}
+
+func TestCards_GetWriteCardsValidation(t *testing.T) {
+	app := testutil.SetupTestApp(t)
+	cases := []string{`{}`, `{"count":""}`, `{"count":"5","groupId":"bad"}`}
+	for _, payload := range cases {
+		res, err := http.Post(app.Server.URL+"/api/cards/study/write", "application/json", bytes.NewReader([]byte(payload)))
+		if err != nil {
+			t.Fatalf("request failed: %v", err)
+		}
+		res.Body.Close()
+		if res.StatusCode != http.StatusBadRequest {
+			t.Fatalf("expected 400 for %s, got %d", payload, res.StatusCode)
+		}
+	}
+}
+
+func TestCards_CreateUnauthorized(t *testing.T) {
+	app := testutil.SetupStrictAuthApp(t)
+	payload := map[string]any{
+		"groupId": testutil.GetUUID(1),
+		"word": map[string]string{
+			"symbols":       "三",
+			"transcription": "san",
+			"translation":   "three",
+		},
+	}
+	body, _ := json.Marshal(payload)
+	res, err := http.Post(app.Server.URL+"/api/cards", "application/json", bytes.NewReader(body))
+	if err != nil {
+		t.Fatalf("request failed: %v", err)
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusUnauthorized {
+		t.Fatalf("expected 401, got %d", res.StatusCode)
+	}
+}

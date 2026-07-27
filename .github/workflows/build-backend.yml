@@ -38,9 +38,11 @@ jobs:
         working-directory: ./backend
         run: go mod download
 
-      - name: Test backend
+      - name: Test backend with coverage
         working-directory: ./backend
-        run: go test ./... -count=1
+        run: |
+          go test ./... -count=1 -p 1
+          bash scripts/check-coverage.sh
 
       - name: Build backend
         working-directory: ./backend
