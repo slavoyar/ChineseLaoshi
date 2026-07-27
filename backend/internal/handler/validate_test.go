@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"encoding/json"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/slavo/ChineseLaoshi/backend/internal/apperrors"
 	"github.com/slavo/ChineseLaoshi/backend/internal/dto"
 )
 
@@ -16,6 +18,16 @@ func TestValidateCreateGroup(t *testing.T) {
 	w = httptest.NewRecorder()
 	if validateCreateGroup(w, &dto.CreateGroup{Name: ""}) != false || w.Code != 400 {
 		t.Fatal("expected invalid empty name")
+	}
+	var body apperrors.AppError
+	if err := json.NewDecoder(w.Body).Decode(&body); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	if body.Code != apperrors.ValidationError || body.Message != "name is required" {
+		t.Fatalf("expected validation envelope, got %+v", body)
+	}
+	if len(body.Details) != 1 || body.Details[0].Message != "name is required" {
+		t.Fatalf("expected details, got %+v", body.Details)
 	}
 }
 

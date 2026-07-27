@@ -101,6 +101,13 @@ func TestWriteErrorNoRows(t *testing.T) {
 	if w.Code != http.StatusNotFound {
 		t.Fatalf("expected 404, got %d", w.Code)
 	}
+	var body apperrors.AppError
+	if err := json.NewDecoder(w.Body).Decode(&body); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	if body.Code != apperrors.EntityNotFoundError {
+		t.Fatalf("expected entityNotFoundError, got %s", body.Code)
+	}
 }
 
 func TestWriteErrorGeneric(t *testing.T) {
@@ -109,6 +116,13 @@ func TestWriteErrorGeneric(t *testing.T) {
 
 	if w.Code != http.StatusInternalServerError {
 		t.Fatalf("expected 500, got %d", w.Code)
+	}
+	var body apperrors.AppError
+	if err := json.NewDecoder(w.Body).Decode(&body); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	if body.Code != apperrors.InternalError {
+		t.Fatalf("expected internalError, got %s", body.Code)
 	}
 }
 

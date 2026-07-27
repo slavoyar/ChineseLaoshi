@@ -1,4 +1,5 @@
 import { cardService, useCardStore, WriteCard } from '@entities/card';
+import { isRequestCanceled } from '@shared/api';
 import { Card } from '@shared/api/generated';
 import { useStateStore } from '@shared/stores';
 import { Route } from '@shared/types';
@@ -10,37 +11,11 @@ import { toast } from 'react-toastify';
 export const WritePractice = () => {
   const navigate = useNavigate();
   const { groupId, count } = useParams();
-  const [cards, setCards] = useState<Card[]>([]);
-  const currentCard = useRef<Card>();
+  const [current, setCurrent] = useState<Card | null>(null);
+  const remainingRef = useRef<Card[]>([]);
 
   const reset = useCardStore((state) => state.reset);
   const [state, setState] = useStateStore((store) => [store.state, store.setState]);
-
-  useEffect(() => {
-    if (state === 'main' || !count) {
-      navigate(Route.Root);
-      return;
-    }
-    cardService.getCardsWritePractice(count, groupId).then((data) => {
-      const [current, ...newCards] = data;
-      currentCard.current = current;
-      if (!currentCard.current) {
-        resetAndExit();
-        toast.warn('There is no enough cards for this lesson');
-      }
-      setCards(newCards);
-    });
-  }, []);
-
-  const onNext = () => {
-    const [current, ...newCards] = cards;
-    currentCard.current = current;
-    if (!currentCard.current) {
-      resetAndExit();
-      toast.info('The lesson is finished');
-    }
-    setCards(newCards);
-  };
 
   const resetAndExit = () => {
     setState('main');
@@ -48,24 +23,74 @@ export const WritePractice = () => {
     navigate(Route.Root);
   };
 
-  const getWidget = (): ReactNode => {
+  useEffect(() => {
+    let active = true;
+
+    if (state === 'main' || !count) {
+      navigate(Route.Root);
+      return;
+    }
+
+    cardService
+      .getCardsWritePractice(count, groupId)
+      .then((data) => {
+        if (!active) {
+          return;
+        }
+        const [first, ...rest] = data;
+        if (!first) {
+          resetAndExit();
+          toast.warn('There is no enough cards for this lesson');
+          return;
+        }
+        remainingRef.current = rest;
+        setCurrent(first);
+      })
+      .catch((err) => {
+        if (!active || isRequestCanceled(err)) {
+          return;
+        }
+        resetAndExit();
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const onNext = () => {
+    const [next, ...rest] = remainingRef.current;
+    remainingRef.current = rest;
+    if (!next) {
+      resetAndExit();
+      toast.info('The lesson is finished');
+      return;
+    }
+    setCurrent(next);
+  };
+
+  const getWidget = (card: Card): ReactNode => {
     switch (state) {
       case 'write':
         return (
           <WriteCard
-            id={currentCard.current!.id}
-            transcription={currentCard.current!.word.transcription}
-            translation={currentCard.current!.word.translation}
-            symbols={currentCard.current!.word.symbols}
+            key={card.id}
+            id={card.id}
+            transcription={card.word.transcription}
+            translation={card.word.translation}
+            symbols={card.word.symbols}
             onNext={onNext}
+            onAbort={resetAndExit}
           />
         );
       case 'prescription':
-        return <PrescriptionPractice card={currentCard.current!} onNext={onNext} />;
+        return <PrescriptionPractice key={card.id} card={card} onNext={onNext} />;
       default:
         throw new Error('Unknown state');
     }
   };
 
-  return <div className='flex h-full items-center justify-center'>{currentCard.current && getWidget()}</div>;
+  return (
+    <div className='flex h-full items-center justify-center'>{current && getWidget(current)}</div>
+  );
 };

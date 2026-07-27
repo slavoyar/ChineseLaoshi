@@ -13,12 +13,6 @@ import (
 
 var uuidRegex = regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$`)
 
-type validationIssue struct {
-	InstancePath string `json:"instancePath"`
-	Message      string `json:"message"`
-	Keyword      string `json:"keyword"`
-}
-
 func decodeJSON(w http.ResponseWriter, r *http.Request, dest any) bool {
 	if r.Body == nil {
 		writeValidationError(w, "body required")
@@ -41,13 +35,11 @@ func decodeJSON(w http.ResponseWriter, r *http.Request, dest any) bool {
 }
 
 func writeValidationError(w http.ResponseWriter, message string) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusBadRequest)
-	_ = json.NewEncoder(w).Encode([]validationIssue{{
+	writeJSON(w, http.StatusBadRequest, apperrors.NewValidation(message, apperrors.ValidationDetail{
 		InstancePath: "",
 		Message:      message,
 		Keyword:      "required",
-	}})
+	}))
 }
 
 func writeJSON(w http.ResponseWriter, status int, body any) {
@@ -145,5 +137,5 @@ func mapHandlerError(w http.ResponseWriter, err error) {
 		return
 	}
 	log.Printf("handler error: %v", err)
-	writeJSON(w, http.StatusInternalServerError, map[string]string{"message": "Internal server error"})
+	writeJSON(w, http.StatusInternalServerError, apperrors.New(apperrors.InternalError))
 }

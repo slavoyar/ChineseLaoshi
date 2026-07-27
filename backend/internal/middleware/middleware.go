@@ -75,16 +75,18 @@ func writeError(w http.ResponseWriter, err error) {
 	}
 
 	if errors.Is(err, pgx.ErrNoRows) {
+		ae := apperrors.New(apperrors.EntityNotFoundError)
 		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusNotFound)
-		_ = json.NewEncoder(w).Encode(map[string]string{"message": "Prisma: Not found"})
+		w.WriteHeader(ae.StatusCode)
+		_ = json.NewEncoder(w).Encode(ae)
 		return
 	}
 
 	log.Printf("internal error: %v", err)
+	ae := apperrors.New(apperrors.InternalError)
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusInternalServerError)
-	_ = json.NewEncoder(w).Encode(map[string]string{"message": "Internal server error"})
+	w.WriteHeader(ae.StatusCode)
+	_ = json.NewEncoder(w).Encode(ae)
 }
 
 func UserFromContext(ctx context.Context) (auth.UserContext, error) {

@@ -41,11 +41,7 @@ export const PrescriptionPractice = ({ card, onNext }: Props) => {
               showOutline={item.withOutline}
               isNextDisabled={index !== rounds.length - 1}
               updateStats={false}
-              onNext={() => {
-                if (index === rounds.length - 1) {
-                  onNext();
-                }
-              }}
+              onNext={onNext}
               onComplete={() => {
                 setRound((prev) => (prev === rounds.length - 1 ? prev : prev + 1));
               }}

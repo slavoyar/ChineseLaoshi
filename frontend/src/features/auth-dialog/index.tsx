@@ -2,8 +2,9 @@ import { useAuthStore } from '@shared/stores';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
 import { useState } from 'react';
+
+import { messageForApiError, parseApiError } from '@shared/api';
 
 export const AuthDialog = () => {
   const [isOpen, closeAuthDialog, signInWithGoogle] = useAuthStore((state) => [
@@ -24,11 +25,7 @@ export const AuthDialog = () => {
     try {
       await signInWithGoogle(response.credential);
     } catch (err) {
-      const message =
-        axios.isAxiosError(err) && typeof err.response?.data?.message === 'string'
-          ? err.response.data.message
-          : 'Sign-in failed. Check that Google SSO is configured and try again.';
-      setError(message);
+      setError(messageForApiError(parseApiError(err)));
     } finally {
       setIsSubmitting(false);
     }
