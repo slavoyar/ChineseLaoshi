@@ -2,7 +2,7 @@ import { useCardStore, WordGrid } from '@entities/card';
 import { GroupEditableTitle, useGroupStore } from '@entities/group';
 import { Route } from '@shared/types';
 import { Button, EmptyState } from '@shared/ui';
-import { cn } from '@shared/utils';
+import { StudyModes } from '@widgets/study-modes';
 import { ArrowLeft } from 'lucide-react';
 import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
@@ -46,11 +46,11 @@ export const GroupDetail = () => {
     );
   }
 
+  const studyDisabled = !group || group.wordCount === 0;
+
   return (
     <div className='m-auto flex h-full flex-col gap-6 md:w-9/12 xl:w-7/12'>
-      <div
-        className={cn('flex min-h-0 flex-1 flex-col gap-5 rounded-2xl border bg-card p-5 md:gap-8 md:p-10')}
-      >
+      <div className='flex min-h-0 flex-1 flex-col gap-5 md:gap-8'>
         <div className='flex flex-col gap-3'>
           <Link
             to={Route.Root}
@@ -60,11 +60,16 @@ export const GroupDetail = () => {
             Back
           </Link>
           {group ? (
-            <GroupEditableTitle groupId={group.id} name={group.name} />
+            <GroupEditableTitle
+              groupId={group.id}
+              name={group.name}
+              className='justify-center text-center'
+            />
           ) : (
-            <h1 className='text-2xl text-foreground'>Loading…</h1>
+            <h1 className='text-center text-2xl text-foreground'>Loading…</h1>
           )}
         </div>
+        <StudyModes groupId={groupId} disabled={studyDisabled} showLabel={false} />
         <div className='min-h-0 flex-1 overflow-auto'>
           {groupId && (
             <WordGrid

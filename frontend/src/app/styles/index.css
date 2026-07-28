@@ -29,6 +29,10 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    /* HanziWriter only accepts hex/rgba */
+    --hanzi-stroke: #0f172a;
+    --hanzi-outline: #94a3b8;
+    --hanzi-highlight: #0f766e;
   }
 
   .dark {
@@ -56,6 +60,9 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --hanzi-stroke: #f8fafc;
+    --hanzi-outline: #94a3b8;
+    --hanzi-highlight: #2dd4bf;
   }
 }
 

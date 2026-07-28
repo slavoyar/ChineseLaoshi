@@ -1,117 +1,69 @@
-import { useGroupStore } from '@entities/group';
+import { CARDS_PER_SESSION, StudyMode } from '@shared/config/study';
 import { PenWrite } from '@shared/icons/pen-write';
 import { useStateStore } from '@shared/stores';
 import { Route } from '@shared/types';
-import {
-  Button,
-  Checkbox,
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  GroupCombobox,
-  Input,
-  Label,
-} from '@shared/ui';
-import { ChangeEvent, useState } from 'react';
+import { Button } from '@shared/ui';
+import { cn } from '@shared/utils';
+import { BookOpen, type LucideIcon } from 'lucide-react';
+import type { ComponentType, SVGProps } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export const StartWritePractice = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface StudyModeButtonProps {
+  mode: StudyMode;
+  groupId?: string;
+  disabled?: boolean;
+}
 
-  const [setState, setSettings, settings] = useStateStore((state) => [
-    state.setState,
-    state.setSettings,
-    state.settings,
-  ]);
+type ModeIcon = LucideIcon | ComponentType<SVGProps<SVGSVGElement>>;
 
-  const groups = useGroupStore((state) => state.groups);
+const modeConfig: Record<StudyMode, { label: string; icon: ModeIcon; iconWrapClass: string }> = {
+  write: {
+    label: 'Handwriting',
+    icon: PenWrite,
+    iconWrapClass: 'bg-[hsl(var(--chart-2)/0.12)] text-[hsl(var(--chart-2))]',
+  },
+  prescription: {
+    label: 'Prescription',
+    icon: BookOpen,
+    iconWrapClass: 'bg-[hsl(var(--chart-1)/0.12)] text-[hsl(var(--chart-1))]',
+  },
+};
 
+export const StudyModeButton = ({ mode, groupId, disabled = false }: StudyModeButtonProps) => {
+  const setState = useStateStore((state) => state.setState);
   const navigate = useNavigate();
+  const { label, icon: Icon, iconWrapClass } = modeConfig[mode];
 
-  const handleCardsNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const cardsNumber = Number(e.target.value);
-    setSettings({ cardsNumber });
-  };
-
-  const handleSave = () => {
-    setState(settings.prescriptionMode ? 'prescription' : 'write');
-    const group = settings.groupId ? `/${settings.groupId}` : '';
-    const route = `${Route.WritePractice}/${settings.cardsNumber}${group}`;
-    navigate(route);
-  };
-
-  const onToggleHint = (value: boolean) => {
-    setSettings({ toggleHints: value });
-  };
-
-  const onToggleMode = (value: boolean) => {
-    setSettings({ prescriptionMode: value });
+  const handleStart = () => {
+    setState(mode);
+    const group = groupId ? `/${groupId}` : '';
+    navigate(`${Route.WritePractice}/${CARDS_PER_SESSION}${group}`);
   };
 
   return (
-    <>
-      <Button
-        variant='outline'
-        className='flex h-auto min-w-[7.5rem] flex-col items-center gap-3 rounded-xl p-4 [&_svg]:size-6'
-        onClick={() => setIsOpen(true)}
-      >
-        <span className='flex size-11 items-center justify-center rounded-lg bg-[hsl(var(--chart-2)/0.12)] text-[hsl(var(--chart-2))]'>
-          <PenWrite />
-        </span>
-        <span className='text-sm font-medium'>Handwriting</span>
-      </Button>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Writing mode settings</DialogTitle>
-          </DialogHeader>
-          <div className='grid gap-4 py-2'>
-            <div className='grid gap-2'>
-              <Label htmlFor='cards-number'>Number of cards</Label>
-              <Input
-                id='cards-number'
-                placeholder='Number of cards'
-                value={settings.cardsNumber}
-                type='number'
-                onChange={handleCardsNumberChange}
-              />
-            </div>
-            <div className='grid gap-2'>
-              <Label>Group</Label>
-              <GroupCombobox
-                groups={groups}
-                value={settings.groupId}
-                onSelect={(group) => setSettings({ groupId: group.id })}
-                placeholder='Enter group name'
-              />
-            </div>
-            <div className='flex items-center gap-2'>
-              <Checkbox
-                id='toggle-hints'
-                checked={settings.toggleHints}
-                onCheckedChange={(checked) => onToggleHint(checked === true)}
-              />
-              <Label htmlFor='toggle-hints'>Toggle hints</Label>
-            </div>
-            <div className='flex items-center gap-2'>
-              <Checkbox
-                id='prescription-mode'
-                checked={settings.prescriptionMode}
-                onCheckedChange={(checked) => onToggleMode(checked === true)}
-              />
-              <Label htmlFor='prescription-mode'>Prescription mode</Label>
-            </div>
-          </div>
-          <DialogFooter className='gap-2 sm:gap-0'>
-            <Button variant='outline' onClick={() => setIsOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSave}>Study</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+    <Button
+      variant='outline'
+      disabled={disabled}
+      className='flex h-auto min-w-[7.5rem] flex-col items-center gap-3 rounded-xl p-4 [&_svg]:size-6'
+      onClick={handleStart}
+    >
+      <span className={cn('flex size-11 items-center justify-center rounded-lg', iconWrapClass)}>
+        <Icon />
+      </span>
+      <span className='text-sm font-medium'>{label}</span>
+    </Button>
   );
 };
+
+interface StudyModeControlsProps {
+  groupId?: string;
+  disabled?: boolean;
+  className?: string;
+}
+
+export const StudyModeControls = ({ groupId, disabled, className }: StudyModeControlsProps) => (
+  <div className={cn('flex w-full flex-wrap justify-center gap-3', className)}>
+    <StudyModeButton mode='write' groupId={groupId} disabled={disabled} />
+    <StudyModeButton mode='prescription' groupId={groupId} disabled={disabled} />
+  </div>
+);

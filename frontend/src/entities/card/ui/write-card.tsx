@@ -1,7 +1,8 @@
 import { useCardStore } from '@entities/card';
 import { isRequestCanceled, parseApiError } from '@shared/api';
 import { Word } from '@shared/api/generated';
-import { useAuthStore, useStateStore } from '@shared/stores';
+import { HINT_AFTER_MISSES, HINT_SKIP_PROGRESS_THRESHOLD } from '@shared/config/study';
+import { useAuthStore } from '@shared/stores';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { useCounter, useDebounceValue, useResizeObserver } from '@siberiacancode/reactuse';
@@ -18,8 +19,21 @@ interface Props extends Word {
   onComplete?: () => void;
 }
 
-const keysBySymbols = (symbols: string, id: string) =>
+const symbolKeys = (symbols: string, id: string) =>
   symbols.split('').map((symbol, index) => `${id}-${symbol}-${index}`);
+
+const cssHex = (name: string) =>
+  getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+const writerColors = () => {
+  const stroke = cssHex('--hanzi-stroke');
+  return {
+    strokeColor: stroke,
+    drawingColor: stroke,
+    outlineColor: cssHex('--hanzi-outline'),
+    highlightColor: cssHex('--hanzi-highlight'),
+  };
+};
 
 export const WriteCard = ({
   id,
@@ -35,32 +49,56 @@ export const WriteCard = ({
 }: Props) => {
   const updateCardStats = useCardStore((state) => state.updateStats);
   const isDemo = useAuthStore((state) => state.isDemo);
-  const settings = useStateStore((state) => state.settings);
 
   const writers = useRef<HanziWriter[]>([]);
   const isSubmittingRef = useRef(false);
+  const hintCountRef = useRef(0);
   const { value: currentIndex, inc, dec, reset } = useCounter(0);
   const debouncedIndex = useDebounceValue(currentIndex, 300);
 
   const [fieldSize, setFieldSize] = useState(300);
   const [guessedSymbols, setGuessedSymbols] = useState<string[]>([]);
+  const [hintCount, setHintCount] = useState(0);
+
+  const skipProgress = hintCount >= HINT_SKIP_PROGRESS_THRESHOLD;
+  const keys = symbolKeys(symbols, id);
 
   const { ref } = useResizeObserver<HTMLDivElement>({
     onChange: ([entry]) => {
-      const { width } = entry.contentRect;
-      setFieldSize(width > 400 ? 300 : 250);
+      setFieldSize(entry.contentRect.width > 400 ? 300 : 250);
     },
   });
 
+  const onHintMistake = ({ mistakesOnStroke }: { mistakesOnStroke: number }) => {
+    if (mistakesOnStroke < HINT_AFTER_MISSES) {
+      return;
+    }
+    hintCountRef.current += 1;
+    setHintCount(hintCountRef.current);
+  };
+
   const onQuizComplete = ({ character }: { character: string }) => {
-    setGuessedSymbols((prev) => [...prev, `${id}-${character}-${currentIndex}`]);
+    setGuessedSymbols((prev) => {
+      const next = [...prev, `${id}-${character}-${currentIndex}`];
+      if (next.length === symbols.length) {
+        onComplete?.();
+      }
+      return next;
+    });
     if (currentIndex < symbols.length - 1) {
       setTimeout(() => inc(), 500);
     }
-    if (guessedSymbols.length === symbols.length - 1 && onComplete) {
-      onComplete();
-    }
   };
+
+  const quizOpts = () => ({
+    onComplete: onQuizComplete,
+    onMistake: onHintMistake,
+  });
+
+  useEffect(() => {
+    hintCountRef.current = 0;
+    setHintCount(0);
+  }, [id, symbols]);
 
   useEffect(() => {
     writers.current = symbols.split('').map((sym, index) =>
@@ -69,67 +107,55 @@ export const WriteCard = ({
         height: fieldSize,
         showCharacter: false,
         showOutline,
-        showHintAfterMisses: settings.toggleHints ? 3 : false,
+        showHintAfterMisses: HINT_AFTER_MISSES,
         drawingWidth: 20,
-        strokeColor: '#31363F',
+        ...writerColors(),
         strokeFadeDuration: 0,
         drawingFadeDuration: 0,
       })
     );
 
-    writers.current[0].quiz({
-      onComplete: onQuizComplete,
-    });
+    writers.current[0]?.quiz(quizOpts());
 
     return () => {
-      writers.current.forEach((item) => {
-        item.target.node.remove();
-      });
+      writers.current.forEach((item) => item.target.node.remove());
       writers.current = [];
       setGuessedSymbols([]);
       reset();
     };
-  }, [symbols, fieldSize]);
+  }, [symbols, fieldSize, showOutline]);
 
   useEffect(() => {
-    const symbolKey = keysBySymbols(symbols, id)[debouncedIndex];
     const writer = writers.current[debouncedIndex];
     if (!writer) {
       return;
     }
-
-    if (guessedSymbols.includes(symbolKey)) {
+    if (guessedSymbols.includes(keys[debouncedIndex])) {
       writer.showCharacter();
     } else {
-      writer.quiz({
-        onComplete: onQuizComplete,
-      });
+      writer.quiz(quizOpts());
     }
   }, [symbols, debouncedIndex]);
 
-  const navIconClass = (enabled: boolean) =>
-    cn('h-5 w-5', enabled ? 'text-foreground' : 'text-muted-foreground');
-
-  const buttonHandler = async (guessed: boolean) => {
+  const advance = async (guessed: boolean) => {
     if (isSubmittingRef.current) {
       return;
     }
     isSubmittingRef.current = true;
 
     const cardId = id;
-    // Advance immediately so Skip/Next stay responsive; persist stats afterward.
+    const shouldUpdateStats =
+      updateStats && !isDemo && hintCountRef.current < HINT_SKIP_PROGRESS_THRESHOLD;
     onNext();
 
     try {
-      // Demo browses the shared template; never persist template study stats.
-      if (updateStats && !isDemo) {
+      if (shouldUpdateStats) {
         await updateCardStats(cardId, guessed);
       }
     } catch (err) {
       if (isRequestCanceled(err)) {
         return;
       }
-      // Auth dialog already opened for 401; keep the lesson so the user can retry after sign-in.
       if (parseApiError(err).code === 'unauthorizedError') {
         return;
       }
@@ -141,16 +167,26 @@ export const WriteCard = ({
 
   return (
     <div ref={ref} className='flex flex-col gap-4 rounded-2xl border bg-card p-4 md:w-[500px]'>
+      {skipProgress && (
+        <div
+          role='status'
+          className='rounded-md bg-muted px-3 py-2 text-center text-sm text-muted-foreground'
+        >
+          Looks like you don’t know this card yet — progress won’t update for this one.
+        </div>
+      )}
       <div className='w-full rounded-md bg-muted p-2 text-center text-xl'>
         {translation}
         <span className='ml-2 text-sm text-muted-foreground'>({transcription})</span>
       </div>
       <div className='flex items-center justify-around'>
         <Button variant='ghost' size='icon' onClick={() => dec()} disabled={currentIndex === 0}>
-          <ChevronLeft className={navIconClass(currentIndex > 0)} />
+          <ChevronLeft
+            className={cn('h-5 w-5', currentIndex > 0 ? 'text-foreground' : 'text-muted-foreground')}
+          />
         </Button>
         <div className='max-h-[300px] max-w-[300px] rounded-md bg-muted'>
-          {keysBySymbols(symbols, id).map((key, index) => (
+          {keys.map((key, index) => (
             <div
               id={`hanzi-input-${index}`}
               key={key}
@@ -164,18 +200,23 @@ export const WriteCard = ({
           disabled={currentIndex === symbols.length - 1}
           onClick={() => inc()}
         >
-          <ChevronRight className={navIconClass(currentIndex < symbols.length - 1)} />
+          <ChevronRight
+            className={cn(
+              'h-5 w-5',
+              currentIndex < symbols.length - 1 ? 'text-foreground' : 'text-muted-foreground'
+            )}
+          />
         </Button>
       </div>
       <div className='flex w-full gap-4'>
-        <Button className='w-full' variant='secondary' onClick={() => buttonHandler(false)}>
+        <Button className='w-full' variant='secondary' onClick={() => void advance(false)}>
           Skip
         </Button>
         <Button
           className='w-full'
           title='Enter all hieroglyphs'
           disabled={guessedSymbols.length !== symbols.length || isNextDisabled}
-          onClick={() => buttonHandler(true)}
+          onClick={() => void advance(true)}
         >
           Next
         </Button>

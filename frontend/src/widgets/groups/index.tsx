@@ -14,14 +14,7 @@ export const Groups = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) 
   const isEmpty = !isLoading && (groups?.length ?? 0) === 0;
 
   return (
-    <div
-      className={cn(
-        'flex min-h-0 flex-col gap-5 rounded-2xl border bg-card p-5 md:gap-10 md:p-10',
-        className
-      )}
-      {...props}
-    >
-      <h2 className='text-2xl text-foreground'>Groups</h2>
+    <div className={cn('flex min-h-0 flex-col gap-5 md:gap-10', className)} {...props}>
       <div className='min-h-0 flex-1 overflow-auto'>
         {isLoading ? (
           <GroupListSkeleton />
