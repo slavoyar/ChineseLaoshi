@@ -12,10 +12,11 @@ interface Props {
 }
 
 export const GroupEditableTitle = ({ groupId, name, className }: Props) => {
-  const setName = useGroupStore((state) => state.setName);
+  const rename = useGroupStore((state) => state.rename);
   const { isDemo } = useRequireAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(name);
+  const [isSaving, setIsSaving] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -36,20 +37,32 @@ export const GroupEditableTitle = ({ groupId, name, className }: Props) => {
     setIsEditing(false);
   };
 
-  const saveEdit = () => {
+  const saveEdit = async () => {
     const trimmed = draft.trim();
     if (!trimmed) {
       cancelEdit();
       return;
     }
-    setName(groupId, trimmed);
-    setIsEditing(false);
+    if (trimmed === name) {
+      setIsEditing(false);
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      await rename(groupId, trimmed);
+      setIsEditing(false);
+    } catch {
+      setDraft(name);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      saveEdit();
+      void saveEdit();
     }
     if (e.key === 'Escape') {
       e.preventDefault();
@@ -67,14 +80,16 @@ export const GroupEditableTitle = ({ groupId, name, className }: Props) => {
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={handleKeyDown}
           aria-label='Group name'
-          className='min-w-0 flex-1 border-b border-primary/40 bg-transparent text-2xl text-foreground outline-none focus-visible:border-primary'
+          disabled={isSaving}
+          className='min-w-0 flex-1 border-b border-primary/40 bg-transparent text-2xl text-foreground outline-none focus-visible:border-primary disabled:opacity-60'
         />
         <Button
           type='button'
           variant='ghost'
           size='icon'
           className='h-9 w-9 shrink-0 text-green-600 hover:bg-green-500/15 hover:text-green-500 dark:text-green-400 dark:hover:text-green-300'
-          onClick={saveEdit}
+          onClick={() => void saveEdit()}
+          disabled={isSaving}
           aria-label='Save group name'
         >
           <Check className='h-4 w-4' strokeWidth={2.25} />

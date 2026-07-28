@@ -1,7 +1,8 @@
-import { Group } from '@shared/api/generated';
+import { Group, UpdateGroup } from '@shared/api/generated';
 import { create } from 'zustand';
 
 import groupService from '../api';
+import { DEFAULT_GROUP_ICON, GroupIconKey, setGroupIcon } from '../lib/group-icons';
 
 interface State {
   groups: Group[];
@@ -10,9 +11,8 @@ interface State {
 
 interface Action {
   fetch: () => Promise<void>;
-  create: (name: string) => Promise<string>;
+  create: (name: string, iconKey?: GroupIconKey) => Promise<string>;
   rename: (id: string, name: string) => Promise<void>;
-  setName: (id: string, name: string) => void;
   delete: (id: string) => Promise<void>;
   decrementWordCount: (id: string) => void;
   incrementWordCount: (id: string) => void;
@@ -31,8 +31,9 @@ const useGroupStore = create<State & Action>((set, get) => ({
       set(() => ({ isLoading: false }));
     }
   },
-  create: async (name: string) => {
+  create: async (name: string, iconKey: GroupIconKey = DEFAULT_GROUP_ICON) => {
     const response = await groupService.post({ name });
+    setGroupIcon(response.id, iconKey);
     set((state) => ({ groups: [...state.groups, response] }));
     return response.id;
   },
@@ -42,14 +43,11 @@ const useGroupStore = create<State & Action>((set, get) => ({
     if (groupIndex < 0) {
       throw new Error(`Can not rename. Group with id = '${id}' does not exist`);
     }
-    const updatedGroup = { ...groups[groupIndex], name };
-    await groupService.put(updatedGroup);
-    groups.splice(groupIndex, 1, updatedGroup);
-    set((state) => ({ groups: [...state.groups] }));
-  },
-  setName: (id: string, name: string) => {
+    const updatedGroup = await groupService.put<UpdateGroup, Group>({ id, name });
     set((state) => ({
-      groups: state.groups.map((item) => (item.id === id ? { ...item, name } : item)),
+      groups: state.groups.map((item, index) =>
+        index === groupIndex ? { ...item, ...updatedGroup, name } : item
+      ),
     }));
   },
   delete: async (id: string) => {

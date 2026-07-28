@@ -1,5 +1,6 @@
 import { GroupDetail } from '@pages/group-detail';
 import { Main } from '@pages/main';
+import { NotFound, RouteError } from '@pages/not-found';
 import { WritePractice } from '@pages/write-practice';
 import { HeaderLayout } from '@shared/layouts';
 import { Route } from '@shared/types';
@@ -11,16 +12,25 @@ const router = createBrowserRouter([
     element: <HeaderLayout />,
     children: [
       {
-        index: true,
-        element: <Main />,
-      },
-      {
-        path: `${Route.Groups}/:groupId`,
-        element: <GroupDetail />,
-      },
-      {
-        path: `${Route.WritePractice}/:count/:groupId?`,
-        element: <WritePractice />,
+        errorElement: <RouteError />,
+        children: [
+          {
+            index: true,
+            element: <Main />,
+          },
+          {
+            path: `${Route.Groups}/:groupId`,
+            element: <GroupDetail />,
+          },
+          {
+            path: `${Route.WritePractice}/:count/:groupId?`,
+            element: <WritePractice />,
+          },
+          {
+            path: '*',
+            element: <NotFound />,
+          },
+        ],
       },
     ],
   },

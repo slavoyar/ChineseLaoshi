@@ -1,5 +1,5 @@
 import { useGroupStore } from '@entities/group';
-import { GROUP_ICON_CATALOG, GroupIconKey, setGroupIcon } from '@entities/group/lib/group-icons';
+import { GROUP_ICON_CATALOG, GroupIconKey } from '@entities/group/lib/group-icons';
 import {
   Button,
   Dialog,
@@ -31,8 +31,7 @@ export const AddGroupDialog = ({ open, onOpenChange }: AddGroupDialogProps) => {
 
   const saveHandler = async () => {
     try {
-      const groupId = await createGroup(name);
-      setGroupIcon(groupId, selectedIcon);
+      await createGroup(name, selectedIcon);
     } finally {
       handleClose();
     }
