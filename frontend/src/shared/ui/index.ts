@@ -4,6 +4,7 @@ export * from './button';
 export * from './checkbox';
 export * from './command';
 export * from './dialog';
+export * from './empty-state';
 export * from './group-combobox';
 export * from './input';
 export * from './label';

@@ -1,6 +1,7 @@
 import { useCardStore, WordGrid } from '@entities/card';
 import { GroupEditableTitle, useGroupStore } from '@entities/group';
 import { Route } from '@shared/types';
+import { Button, EmptyState } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { ArrowLeft } from 'lucide-react';
 import { useEffect } from 'react';
@@ -30,14 +31,17 @@ export const GroupDetail = () => {
 
   if (!isLoading && !group) {
     return (
-      <div className='m-auto flex h-full flex-col items-center justify-center gap-4 md:w-9/12 xl:w-7/12'>
-        <p className='text-muted-foreground'>Group not found.</p>
-        <Link
-          to={Route.Root}
-          className='text-sm font-medium text-foreground underline-offset-4 hover:underline'
-        >
-          Back to home
-        </Link>
+      <div className='m-auto flex h-full flex-col items-center justify-center md:w-9/12 xl:w-7/12'>
+        <EmptyState
+          motif='迷'
+          title='Group not found'
+          description='This group may have been deleted or the link is incorrect.'
+          action={
+            <Button asChild>
+              <Link to={Route.Root}>Back home</Link>
+            </Button>
+          }
+        />
       </div>
     );
   }
