@@ -72,7 +72,7 @@ export const GroupEditableTitle = ({ groupId, name, className }: Props) => {
 
   if (isEditing) {
     return (
-      <div className={cn('flex min-w-0 items-center gap-2', className)}>
+      <div className={cn('flex min-w-0 items-center justify-center gap-2', className)}>
         <input
           ref={inputRef}
           type='text'
@@ -81,7 +81,7 @@ export const GroupEditableTitle = ({ groupId, name, className }: Props) => {
           onKeyDown={handleKeyDown}
           aria-label='Group name'
           disabled={isSaving}
-          className='min-w-0 flex-1 border-b border-primary/40 bg-transparent text-2xl text-foreground outline-none focus-visible:border-primary disabled:opacity-60'
+          className='min-w-0 max-w-full flex-1 border-b border-primary/40 bg-transparent text-center text-2xl text-foreground outline-none focus-visible:border-primary disabled:opacity-60'
         />
         <Button
           type='button'
@@ -99,7 +99,7 @@ export const GroupEditableTitle = ({ groupId, name, className }: Props) => {
   }
 
   return (
-    <div className={cn('group/title flex min-w-0 items-center gap-2', className)}>
+    <div className={cn('group/title flex min-w-0 items-center justify-center gap-2', className)}>
       <h1 className='min-w-0 truncate text-2xl text-foreground'>{name}</h1>
       {!isDemo && (
         <Button
