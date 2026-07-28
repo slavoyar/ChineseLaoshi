@@ -255,7 +255,7 @@ Not used in current surfaces. Prefer tile metadata text at micro/label sizes ins
 - **Group tile:** Secondary fill, centered Lucide group icon (28px), name at label size, word count at micro. Entire tile is clickable; delete button reveals on hover/focus-within.
 - **Word tile:** Secondary fill, character at display size centered, transcription micro + translation label below, progress bar footer (0.5px lines + centered percent). Top/side border color reflects mastery (see Progress Green).
 - **Create tile:** Dashed 2px border, secondary/50 background, Plus icon 24px, micro caption ("Create group" / "Add word"). Hover: solid secondary, primary/50 border tint.
-- **Delete affordance:** Ghost icon button, absolute top-right, red-500, opacity 0 → 100 on group/card hover or focus-within. 150ms opacity transition; `motion-reduce:transition-none`.
+- **Delete affordance:** Ghost icon button, absolute top-right, red-500, opacity 0 → 100 on group/card hover or focus-within. Hover/active brighten the icon only (red-300 / red-200) with no background fill; focus-visible keeps a soft red ring. 150ms opacity/color transition; `motion-reduce:transition-none`.
 
 ### Dialogs
 
