@@ -14,11 +14,11 @@ export const TileDeleteButton = ({ onClick, 'aria-label': ariaLabel, className }
     variant='ghost'
     size='icon'
     className={cn(
-      'absolute right-0.5 top-0.5 z-10 h-9 w-9 text-red-500 opacity-0 transition-[opacity,color,background-color] duration-150',
-      'hover:bg-red-500/15 hover:text-red-400 active:bg-red-500/25 active:text-red-300',
-      'group-hover/card:text-red-400 group-hover/card:opacity-100',
-      'group-focus-within/card:text-red-400 group-focus-within/card:opacity-100',
-      'focus-visible:text-red-400 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-red-500/50',
+      'absolute right-0.5 top-0.5 z-10 h-9 w-9 text-red-500 opacity-0 transition-[opacity,color] duration-150',
+      'hover:bg-transparent hover:text-red-300 active:bg-transparent active:text-red-200',
+      'group-hover/card:opacity-100',
+      'group-focus-within/card:opacity-100',
+      'focus-visible:text-red-300 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-red-500/50',
       'motion-reduce:transition-none',
       className
     )}
