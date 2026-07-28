@@ -54,8 +54,10 @@ Copy `backend/.env.example` to `backend/.env` and fill in values. `npm run dev:b
 | `JWT_SECRET` | *(required)* | Secret used to sign the httpOnly session cookie JWT |
 | `COOKIE_SECURE` | `true` when `NODE_ENV=production` | Set `false` for local http |
 | `SESSION_TTL_HOURS` | `168` (7 days) | Session cookie lifetime |
-| `ALLOWED_ORIGINS` | `http://localhost:5173`, `http://127.0.0.1:5173` | Origins allowed for `POST /api/auth/google` |
-| `NODE_ENV` | *(empty)* | Set to `test` to disable request logging |
+| `ALLOWED_ORIGINS` | non-prod: `http://localhost:5173`, `http://127.0.0.1:5173`; production: *(empty = reject all)* | Origins allowed for **all** `/api` requests (Origin/Referer). Always set explicitly in production. |
+| `NODE_ENV` | *(empty)* | `production` enables secure cookies and disables localhost origin defaults. `test` disables request logging. |
+
+> **Security:** The Vite dev proxy must target the **local** backend only (`http://localhost:3000`). Do not proxy local frontend traffic to production — production rejects non-allowlisted origins (including localhost).
 
 ### Frontend
 

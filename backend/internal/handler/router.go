@@ -13,12 +13,13 @@ import (
 )
 
 type Handlers struct {
-	Groups         *GroupHandler
-	Cards          *CardHandler
-	Words          *WordHandler
-	Auth           *AuthHandler
-	users          *repository.UserRepository
-	templateEmail  string
+	Groups          *GroupHandler
+	Cards           *CardHandler
+	Words           *WordHandler
+	Auth            *AuthHandler
+	users           *repository.UserRepository
+	templateEmail   string
+	allowedOrigins  []string
 }
 
 func NewHandlers(
@@ -32,10 +33,11 @@ func NewHandlers(
 	allowedOrigins []string,
 ) *Handlers {
 	h := &Handlers{
-		Words:         NewWordHandler(wordService),
-		Auth:          NewAuthHandler(authService, cookieConfig, allowedOrigins),
-		users:         users,
-		templateEmail: templateEmail,
+		Words:          NewWordHandler(wordService),
+		Auth:           NewAuthHandler(authService, cookieConfig),
+		users:          users,
+		templateEmail:  templateEmail,
+		allowedOrigins: allowedOrigins,
 	}
 	h.Groups = NewGroupHandler(groupService, h.resolveUserID)
 	h.Cards = NewCardHandler(cardService, h.resolveUserID)
@@ -53,6 +55,8 @@ func (h *Handlers) Router(authenticator auth.Authenticator, enableLogger bool) h
 	r.Use(middleware.OptionalAuth(authenticator))
 
 	r.Route("/api", func(r chi.Router) {
+		r.Use(RequireAllowedOrigin(h.allowedOrigins))
+
 		r.Route("/auth", func(r chi.Router) {
 			r.Post("/google", h.Auth.GoogleLogin)
 			r.Post("/logout", h.Auth.Logout)

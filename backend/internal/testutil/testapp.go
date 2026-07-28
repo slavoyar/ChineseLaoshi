@@ -65,7 +65,19 @@ func (a *TestApp) AuthenticatedRequest(t *testing.T, method, url string, body io
 		t.Fatalf("issue token: %v", err)
 	}
 	req.AddCookie(&http.Cookie{Name: auth.SessionCookieName, Value: token})
+	req.Header.Set("Origin", "http://localhost:5173")
 	return req
+}
+
+// withDefaultTestOrigin fills Origin for Go's http.Get/Post helpers that omit it.
+func withDefaultTestOrigin(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("Origin") == "" && r.Header.Get("Referer") == "" {
+			r = r.Clone(r.Context())
+			r.Header.Set("Origin", "http://localhost:5173")
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 
 func SetupStrictAuthApp(t *testing.T) *TestApp {
@@ -99,7 +111,7 @@ func SetupStrictAuthApp(t *testing.T) *TestApp {
 		[]string{"http://localhost:5173"},
 	)
 
-	server := httptest.NewServer(handlers.Router(authenticator, false))
+	server := httptest.NewServer(withDefaultTestOrigin(handlers.Router(authenticator, false)))
 	t.Cleanup(func() { server.Close() })
 
 	return &TestApp{
@@ -188,7 +200,7 @@ func newTestApp() (*TestApp, error) {
 		cookieConfig,
 		[]string{"http://localhost:5173"},
 	)
-	server := httptest.NewServer(handlers.Router(authenticator, false))
+	server := httptest.NewServer(withDefaultTestOrigin(handlers.Router(authenticator, false)))
 
 	return &TestApp{
 		Server: server,

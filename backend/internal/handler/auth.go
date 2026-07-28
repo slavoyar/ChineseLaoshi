@@ -10,13 +10,12 @@ import (
 )
 
 type AuthHandler struct {
-	service        *service.AuthService
-	cookieConfig   auth.CookieConfig
-	allowedOrigins []string
+	service      *service.AuthService
+	cookieConfig auth.CookieConfig
 }
 
-func NewAuthHandler(s *service.AuthService, cookieConfig auth.CookieConfig, allowedOrigins []string) *AuthHandler {
-	return &AuthHandler{service: s, cookieConfig: cookieConfig, allowedOrigins: allowedOrigins}
+func NewAuthHandler(s *service.AuthService, cookieConfig auth.CookieConfig) *AuthHandler {
+	return &AuthHandler{service: s, cookieConfig: cookieConfig}
 }
 
 type googleLoginBody struct {
@@ -24,10 +23,6 @@ type googleLoginBody struct {
 }
 
 func (h *AuthHandler) GoogleLogin(w http.ResponseWriter, r *http.Request) {
-	if rejectIfOriginNotAllowed(w, r, h.allowedOrigins) {
-		return
-	}
-
 	var body googleLoginBody
 	if !decodeJSON(w, r, &body) {
 		return

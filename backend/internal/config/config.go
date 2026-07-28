@@ -73,7 +73,7 @@ func Load() Config {
 		}
 	}
 
-	allowedOrigins := []string{"http://localhost:5173", "http://127.0.0.1:5173"}
+	var allowedOrigins []string
 	if v := os.Getenv("ALLOWED_ORIGINS"); v != "" {
 		parts := strings.Split(v, ",")
 		allowedOrigins = make([]string, 0, len(parts))
@@ -83,6 +83,9 @@ func Load() Config {
 				allowedOrigins = append(allowedOrigins, part)
 			}
 		}
+	} else if nodeEnv != "production" {
+		// Local/dev defaults only — production requires an explicit allowlist.
+		allowedOrigins = []string{"http://localhost:5173", "http://127.0.0.1:5173"}
 	}
 
 	return Config{
