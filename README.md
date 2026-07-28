@@ -18,5 +18,9 @@ Chinese Laoshi is a comprehensive Chinese language learning application designed
 
 See [DEV.md](DEV.md) for instructions on running the backend and frontend locally.
 
+## Production
+
+Live URL: **https://chineselaoshi.slavoyar.tech**
+
 ## Contact
 For questions or suggestions, please reach out to slavoyarmc@gmail.com.

@@ -9,6 +9,8 @@ export default defineConfig({
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.css'],
   },
   server: {
+    // Always proxy to the local backend. Do not point this at production —
+    // prod ALLOWED_ORIGINS rejects localhost and other non-SPA origins.
     proxy: {
       '/api': {
         target: 'http://localhost:3000/',

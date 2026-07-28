@@ -1,17 +1,28 @@
+# Local/dev compose — production uses `docker run` on the nginx-proxy network.
+# See README.md (Production) and .github/workflows/deploy.yml.
+
 services:
   backend:
     image: ${REGISTRY_IMAGE:-chinese-laoshi:latest}
     build:
       context: .
-      dockerfile: backend/Dockerfile
+      dockerfile: Dockerfile
+      args:
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-}
     container_name: chinese-laoshi
     restart: always
     ports:
-      - "3000:3000"
+      - "${HOST_PORT:-3000}:80"
     environment:
       PORT: ${PORT:-3000}
-      DEFAULT_USER_EMAIL: ${DEFAULT_USER_EMAIL:-slavoyar@mail.com}
+      NODE_ENV: ${NODE_ENV:-production}
+      DEFAULT_USER_EMAIL: ${DEFAULT_USER_EMAIL:-}
+      TEMPLATE_USER_EMAIL: ${TEMPLATE_USER_EMAIL:-}
       DB_URL: ${DB_URL:-}
       DATA_DIR: /app/data/pg
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      JWT_SECRET: ${JWT_SECRET}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
     volumes:
-      - ${PG_DATA_HOST_PATH:-/var/lib/chineselaoshi/pg}:/app/data/pg
+      - ${PG_DATA_HOST_PATH:-./data}:/app/data

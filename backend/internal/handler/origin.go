@@ -9,8 +9,9 @@ import (
 )
 
 func requestOriginAllowed(r *http.Request, allowed []string) bool {
+	// Empty allowlist rejects every request (production default when unset).
 	if len(allowed) == 0 {
-		return true
+		return false
 	}
 
 	origin := strings.TrimSpace(r.Header.Get("Origin"))
@@ -39,4 +40,16 @@ func rejectIfOriginNotAllowed(w http.ResponseWriter, r *http.Request, allowed []
 	}
 	mapHandlerError(w, apperrors.New(apperrors.ForbiddenError))
 	return true
+}
+
+// RequireAllowedOrigin rejects requests whose Origin/Referer is not in allowed.
+func RequireAllowedOrigin(allowed []string) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if rejectIfOriginNotAllowed(w, r, allowed) {
+				return
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
 }
