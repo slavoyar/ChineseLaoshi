@@ -5,7 +5,7 @@ import { useAuthStore } from '@shared/stores';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { useCounter, useDebounceValue, useResizeObserver } from '@siberiacancode/reactuse';
-import HanziWriter from 'hanzi-writer';
+import type HanziWriterType from 'hanzi-writer';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -49,7 +49,7 @@ export const WriteCard = ({
   const updateCardStats = useCardStore((state) => state.updateStats);
   const isDemo = useAuthStore((state) => state.isDemo);
 
-  const writers = useRef<HanziWriter[]>([]);
+  const writers = useRef<HanziWriterType[]>([]);
   const isSubmittingRef = useRef(false);
   const hintCountRef = useRef(0);
   const { value: currentIndex, inc, dec, reset } = useCounter(0);
@@ -58,6 +58,8 @@ export const WriteCard = ({
   const [fieldSize, setFieldSize] = useState(300);
   const [guessedSymbols, setGuessedSymbols] = useState<string[]>([]);
   const [hintCount, setHintCount] = useState(0);
+  const [writersReady, setWritersReady] = useState(false);
+  const [writerError, setWriterError] = useState(false);
 
   const skipProgress = hintCount >= HINT_SKIP_PROGRESS_THRESHOLD;
   const keys = symbolKeys(symbols, id);
@@ -100,31 +102,53 @@ export const WriteCard = ({
   }, [id, symbols]);
 
   useEffect(() => {
-    writers.current = symbols.split('').map((sym, index) =>
-      HanziWriter.create(`hanzi-input-${index}`, sym, {
-        width: fieldSize,
-        height: fieldSize,
-        showCharacter: false,
-        showOutline,
-        showHintAfterMisses: HINT_AFTER_MISSES,
-        drawingWidth: 20,
-        ...writerColors(),
-        strokeFadeDuration: 0,
-        drawingFadeDuration: 0,
-      })
-    );
+    let cancelled = false;
+    setWritersReady(false);
+    setWriterError(false);
 
-    writers.current[0]?.quiz(quizOpts());
+    void import('hanzi-writer')
+      .then(({ default: HanziWriter }) => {
+        if (cancelled) {
+          return;
+        }
+
+        writers.current = symbols.split('').map((sym, index) =>
+          HanziWriter.create(`hanzi-input-${index}`, sym, {
+            width: fieldSize,
+            height: fieldSize,
+            showCharacter: false,
+            showOutline,
+            showHintAfterMisses: HINT_AFTER_MISSES,
+            drawingWidth: 20,
+            ...writerColors(),
+            strokeFadeDuration: 0,
+            drawingFadeDuration: 0,
+          })
+        );
+
+        setWritersReady(true);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setWriterError(true);
+        }
+      });
 
     return () => {
+      cancelled = true;
       writers.current.forEach((item) => item.target.node.remove());
       writers.current = [];
       setGuessedSymbols([]);
+      setWritersReady(false);
+      setWriterError(false);
       reset();
     };
   }, [symbols, fieldSize, showOutline]);
 
   useEffect(() => {
+    if (!writersReady) {
+      return;
+    }
     const writer = writers.current[debouncedIndex];
     if (!writer) {
       return;
@@ -134,7 +158,7 @@ export const WriteCard = ({
     } else {
       writer.quiz(quizOpts());
     }
-  }, [symbols, debouncedIndex]);
+  }, [symbols, debouncedIndex, writersReady]);
 
   const advance = async (guessed: boolean) => {
     if (isSubmittingRef.current) {
@@ -174,17 +198,33 @@ export const WriteCard = ({
           Looks like you don’t know this card yet — progress won’t update for this one.
         </div>
       )}
+      {writerError && (
+        <div
+          role='alert'
+          className='rounded-md bg-destructive/10 px-3 py-2 text-center text-sm text-destructive'
+        >
+          Couldn’t load handwriting practice. Skip this card or try again.
+        </div>
+      )}
       <div className='w-full rounded-md bg-muted p-2 text-center text-xl'>
         {translation}
         <span className='ml-2 text-sm text-muted-foreground'>({transcription})</span>
       </div>
       <div className='flex items-center justify-around'>
-        <Button variant='ghost' size='icon' onClick={() => dec()} disabled={currentIndex === 0}>
+        <Button
+          variant='ghost'
+          size='icon'
+          onClick={() => dec()}
+          disabled={currentIndex === 0 || !writersReady}
+        >
           <ChevronLeft
             className={cn('h-5 w-5', currentIndex > 0 ? 'text-foreground' : 'text-muted-foreground')}
           />
         </Button>
-        <div className='max-h-[300px] max-w-[300px] rounded-md bg-muted'>
+        <div
+          className='max-h-[300px] max-w-[300px] rounded-md bg-muted'
+          aria-busy={!writersReady && !writerError}
+        >
           {keys.map((key, index) => (
             <div
               id={`hanzi-input-${index}`}
@@ -196,7 +236,7 @@ export const WriteCard = ({
         <Button
           variant='ghost'
           size='icon'
-          disabled={currentIndex === symbols.length - 1}
+          disabled={currentIndex === symbols.length - 1 || !writersReady}
           onClick={() => inc()}
         >
           <ChevronRight

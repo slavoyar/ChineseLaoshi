@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "build:analyze": "vite build --mode analyze",
+    "preview": "vite preview --host --port 5173"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.16",
@@ -20,7 +22,6 @@
     "axios": "^1.18.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "cmdk": "^1.1.1",
     "hanzi-writer": "^3.7.3",
     "lucide-react": "^1.24.0",
     "pinyin": "^4.0.0",
@@ -44,6 +45,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-tailwindcss": "^3.18.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
+    "rollup-plugin-visualizer": "^7.0.1",
     "tailwindcss": "^3.4.19",
     "vite": "^6.4.3"
   }

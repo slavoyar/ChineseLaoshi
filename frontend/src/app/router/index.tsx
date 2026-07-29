@@ -1,8 +1,6 @@
 import { HeaderLayout } from '@app/layouts';
-import { GroupDetail } from '@pages/group-detail';
 import { Main } from '@pages/main';
 import { NotFound, RouteError } from '@pages/not-found';
-import { WritePractice } from '@pages/write-practice';
 import { Route } from '@shared/types';
 import { createBrowserRouter } from 'react-router-dom';
 
@@ -20,11 +18,17 @@ const router = createBrowserRouter([
           },
           {
             path: `${Route.Groups}/:groupId`,
-            element: <GroupDetail />,
+            lazy: async () => {
+              const { GroupDetail } = await import('@pages/group-detail');
+              return { Component: GroupDetail };
+            },
           },
           {
             path: `${Route.WritePractice}/:count/:groupId?`,
-            element: <WritePractice />,
+            lazy: async () => {
+              const { WritePractice } = await import('@pages/write-practice');
+              return { Component: WritePractice };
+            },
           },
           {
             path: '*',
