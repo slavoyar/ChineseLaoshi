@@ -32,7 +32,9 @@ export class BaseService<Entity, Create = Entity, Update = Entity> {
 
   async get<Response = Entity>(id?: string) {
     return this.request(
-      axios.get<Response, Response>(this.getUrlWithId(id), { cancelToken: this.getCancelToken('get') }),
+      axios.get<Response, Response>(this.getUrlWithId(id), {
+        cancelToken: this.getCancelToken(`get:${id ?? 'all'}`),
+      }),
       { notify: false }
     );
   }
@@ -40,7 +42,7 @@ export class BaseService<Entity, Create = Entity, Update = Entity> {
   async getList<Response = Entity[]>(id?: string) {
     return this.request(
       axios.get<Response, Response>(this.getUrlWithId(id), {
-        cancelToken: this.getCancelToken('getList'),
+        cancelToken: this.getCancelToken(`getList:${id ?? 'all'}`),
       }),
       { notify: false }
     );

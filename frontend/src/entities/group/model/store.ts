@@ -7,6 +7,7 @@ import { DEFAULT_GROUP_ICON, GroupIconKey, setGroupIcon } from '../lib/group-ico
 interface State {
   groups: Group[];
   isLoading: boolean;
+  hasLoaded: boolean;
 }
 
 interface Action {
@@ -19,17 +20,43 @@ interface Action {
   reset: () => void;
 }
 
+let inflightFetch: Promise<void> | null = null;
+let fetchEpoch = 0;
+
 const useGroupStore = create<State & Action>((set, get) => ({
   groups: [],
   isLoading: false,
+  hasLoaded: false,
   fetch: async () => {
-    set(() => ({ isLoading: true }));
-    try {
-      const response = await groupService.getList();
-      set(() => ({ groups: response ?? [], isLoading: false }));
-    } catch {
-      set(() => ({ isLoading: false }));
+    if (get().hasLoaded) {
+      return;
     }
+    if (inflightFetch) {
+      return inflightFetch;
+    }
+
+    const epoch = fetchEpoch;
+    inflightFetch = (async () => {
+      set(() => ({ isLoading: true }));
+      try {
+        const response = await groupService.getList();
+        if (epoch !== fetchEpoch) {
+          return;
+        }
+        set(() => ({ groups: response ?? [], isLoading: false, hasLoaded: true }));
+      } catch {
+        if (epoch !== fetchEpoch) {
+          return;
+        }
+        set(() => ({ isLoading: false }));
+      } finally {
+        if (epoch === fetchEpoch) {
+          inflightFetch = null;
+        }
+      }
+    })();
+
+    return inflightFetch;
   },
   create: async (name: string, iconKey: GroupIconKey = DEFAULT_GROUP_ICON) => {
     const response = await groupService.post({ name });
@@ -71,7 +98,9 @@ const useGroupStore = create<State & Action>((set, get) => ({
     }));
   },
   reset: () => {
-    set(() => ({ groups: [], isLoading: false }));
+    fetchEpoch += 1;
+    inflightFetch = null;
+    set(() => ({ groups: [], isLoading: false, hasLoaded: false }));
   },
 }));
 

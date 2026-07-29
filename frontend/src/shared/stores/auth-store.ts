@@ -1,10 +1,12 @@
-import useCardStore from '@entities/card/model/store';
-import useGroupStore from '@entities/group/model/store';
 import { authApi } from '@shared/api/auth';
 import { AuthUser } from '@shared/types/auth';
 import { create } from 'zustand';
 
-const clearSessionCaches = () => {
+const clearSessionCaches = async () => {
+  const [{ default: useCardStore }, { default: useGroupStore }] = await Promise.all([
+    import('@entities/card/model/store'),
+    import('@entities/group/model/store'),
+  ]);
   useCardStore.getState().reset();
   useGroupStore.getState().reset();
 };
@@ -41,7 +43,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
   signInWithGoogle: async (idToken) => {
     const user = await authApi.loginWithGoogle(idToken);
-    clearSessionCaches();
+    await clearSessionCaches();
     set({
       user,
       isDemo: false,
@@ -53,7 +55,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       await authApi.logout();
     } finally {
-      clearSessionCaches();
+      await clearSessionCaches();
       set({
         user: null,
         isDemo: true,
