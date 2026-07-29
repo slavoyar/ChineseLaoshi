@@ -1,4 +1,4 @@
-import { StudyMode } from '@shared/config/study';
+import { StudyMode } from '@shared/config';
 import { create } from 'zustand';
 
 type StateType = 'main' | StudyMode;

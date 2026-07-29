@@ -1,5 +1,11 @@
-import { BaseService } from '@shared/api/base-service';
-import { Card, CreateCard, GetWriteCard, UpdateCardStats, UpdateCardWord } from '@shared/api/generated';
+import {
+  BaseService,
+  Card,
+  CreateCard,
+  GetWriteCard,
+  UpdateCardStats,
+  UpdateCardWord,
+} from '@shared/api';
 import axios from 'axios';
 
 const URL = '/api/cards';

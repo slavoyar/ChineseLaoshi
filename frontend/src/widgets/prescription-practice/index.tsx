@@ -1,5 +1,5 @@
 import { WriteCard } from '@entities/card';
-import { Card } from '@shared/api/generated';
+import { Card } from '@shared/api';
 import { useEffect, useState } from 'react';
 
 interface Props {

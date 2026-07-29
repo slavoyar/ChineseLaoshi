@@ -1,4 +1,4 @@
-import { Group } from '@shared/api/generated';
+import { Group } from '@shared/api';
 import { Button } from '@shared/ui/button';
 import {
   Command,

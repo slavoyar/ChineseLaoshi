@@ -1,5 +1,4 @@
-import { Skeleton } from '@shared/ui';
-import { tileGridClassName, tileItemClassName } from '@shared/ui/tile-grid';
+import { Skeleton, tileGridClassName, tileItemClassName } from '@shared/ui';
 import { cn } from '@shared/utils';
 
 const TILE_COUNT = 6;

@@ -1,7 +1,6 @@
 import { useCardStore } from '@entities/card';
-import { isRequestCanceled, parseApiError } from '@shared/api';
-import { Word } from '@shared/api/generated';
-import { HINT_AFTER_MISSES, HINT_SKIP_PROGRESS_THRESHOLD } from '@shared/config/study';
+import { isRequestCanceled, parseApiError, Word } from '@shared/api';
+import { HINT_AFTER_MISSES, HINT_SKIP_PROGRESS_THRESHOLD } from '@shared/config';
 import { useAuthStore } from '@shared/stores';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';

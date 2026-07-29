@@ -1,6 +1,5 @@
 import { useCardStore } from '@entities/card';
-import { getColorByPercent } from '@entities/card/utils';
-import { Card } from '@shared/api/generated';
+import { Card } from '@shared/api';
 import { useDelete } from '@shared/hooks';
 import { useAuthStore } from '@shared/stores';
 import {
@@ -17,6 +16,7 @@ import {
 import { cn, getPercentFromRatio } from '@shared/utils';
 import { Circle, X } from 'lucide-react';
 
+import { getColorByPercent } from '../lib/progress';
 interface Props {
   card: Card;
   onDelete: () => void;

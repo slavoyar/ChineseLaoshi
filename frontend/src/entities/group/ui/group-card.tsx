@@ -1,11 +1,10 @@
-import { getGroupIcon } from '@entities/group/lib/group-icons';
-import { Group } from '@shared/api/generated';
+import { Group } from '@shared/api';
 import { useRequireAuth } from '@shared/hooks';
-import { TileDeleteButton } from '@shared/ui';
-import { tileItemClassName } from '@shared/ui/tile-grid';
+import { TileDeleteButton, tileItemClassName } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { KeyboardEvent } from 'react';
 
+import { getGroupIcon } from '../lib/group-icons';
 interface Props {
   group: Group;
   onNavigate: () => void;

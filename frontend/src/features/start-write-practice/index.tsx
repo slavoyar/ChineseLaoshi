@@ -1,5 +1,5 @@
-import { CARDS_PER_SESSION, StudyMode } from '@shared/config/study';
-import { PenWrite } from '@shared/icons/pen-write';
+import { CARDS_PER_SESSION, StudyMode } from '@shared/config';
+import { PenWrite } from '@shared/icons';
 import { useStateStore } from '@shared/stores';
 import { Route } from '@shared/types';
 import { Button } from '@shared/ui';

@@ -1,7 +1,7 @@
 import { useCardStore } from '@entities/card';
 import { useRequireAuth } from '@shared/hooks';
 import { Button, EmptyState } from '@shared/ui';
-import { tileGridClassName } from '@shared/ui/tile-grid';
+import { tileGridClassName } from '@shared/ui';
 import { Plus } from 'lucide-react';
 import { ReactNode, useState } from 'react';
 

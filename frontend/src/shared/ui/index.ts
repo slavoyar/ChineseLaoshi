@@ -11,3 +11,4 @@ export * from './label';
 export * from './popover';
 export * from './skeleton';
 export * from './tile-delete-button';
+export * from './tile-grid';

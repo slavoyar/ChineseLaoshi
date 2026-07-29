@@ -1,4 +1,4 @@
-import { AuthUser } from '@shared/types/auth';
+import { AuthUser } from '@shared/types';
 import axios from 'axios';
 
 import { apiRequest } from './api-error';

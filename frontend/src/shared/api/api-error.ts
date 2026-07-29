@@ -1,4 +1,4 @@
-import { useAuthStore } from '@shared/stores/auth-store';
+import { useAuthStore } from '@shared/stores';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 

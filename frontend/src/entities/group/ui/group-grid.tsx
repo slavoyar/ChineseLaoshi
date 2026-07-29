@@ -1,5 +1,5 @@
 import { useGroupStore } from '@entities/group';
-import { Group } from '@shared/api/generated';
+import { Group } from '@shared/api';
 import { useDelete } from '@shared/hooks';
 import { Route } from '@shared/types';
 import {
@@ -11,8 +11,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  tileGridClassName,
 } from '@shared/ui';
-import { tileGridClassName } from '@shared/ui/tile-grid';
 import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 

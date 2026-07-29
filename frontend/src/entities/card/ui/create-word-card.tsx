@@ -1,5 +1,5 @@
 import { useRequireAuth } from '@shared/hooks';
-import { tileItemClassName } from '@shared/ui/tile-grid';
+import { tileItemClassName } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { Plus } from 'lucide-react';
 import { ReactNode, useState } from 'react';

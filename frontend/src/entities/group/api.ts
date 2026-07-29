@@ -1,5 +1,4 @@
-import { BaseService } from '@shared/api/base-service';
-import { Group } from '@shared/api/generated';
+import { BaseService, Group } from '@shared/api';
 
 const URL = '/api/groups';
 class GroupService extends BaseService<Group> {}
