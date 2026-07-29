@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "build:analyze": "vite build --mode analyze"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.16",
@@ -44,6 +45,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-tailwindcss": "^3.18.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
+    "rollup-plugin-visualizer": "^7.0.1",
     "tailwindcss": "^3.4.19",
     "vite": "^6.4.3"
   }
