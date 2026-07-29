@@ -12,7 +12,7 @@ Use for frontend architecture: layer placement (`app` / `pages` / `features` / `
 - Prefer pages-first; extract to `features` / `entities` only when reused in 2+ places
 - Import only downward: `app → pages → widgets → features → entities → shared`
 - No cross-imports between slices on the same layer; no `entities → features`
-- This project already uses `widgets/`; do not expand it for new UI — prefer `pages`, `features`, `shared`, or `app`
+- This project already uses `widgets/` (`groups`, `study-modes`, `header`, `prescription-practice`); keep them, but do not expand the layer — new UI composition goes to `pages`, `features`, `shared`, or `app`. Collapse a widget into its destination only when next editing that screen.
 - Read skill references only when the specific situation applies (structure, cross-imports, entities, assets, migration)
 
 ### Impeccable (`impeccable`)
