@@ -22,6 +22,8 @@ export const AddWordDialog = ({ groupId, open, onOpenChange }: AddWordDialogProp
   const [transcription, setTranscription] = useState('');
   const [translation, setTranslation] = useState('');
   const [symbols, setSymbols] = useState('');
+  const [isPinyinPending, setIsPinyinPending] = useState(false);
+  const [pinyinFailed, setPinyinFailed] = useState(false);
   const symbolsRequestId = useRef(0);
 
   const createWord = useCardStore((state) => state.create);
@@ -29,6 +31,9 @@ export const AddWordDialog = ({ groupId, open, onOpenChange }: AddWordDialogProp
 
   useEffect(() => {
     if (!open) {
+      symbolsRequestId.current += 1;
+      setIsPinyinPending(false);
+      setPinyinFailed(false);
       setTranscription('');
       setTranslation('');
       setSymbols('');
@@ -39,7 +44,12 @@ export const AddWordDialog = ({ groupId, open, onOpenChange }: AddWordDialogProp
     onOpenChange(false);
   };
 
+  const canSave = Boolean(symbols && translation && transcription) && !isPinyinPending;
+
   const saveHandler = async () => {
+    if (!canSave) {
+      return;
+    }
     try {
       await createWord(groupId, { word: { transcription, translation, symbols }, groupId });
       incrementWordCount(groupId);
@@ -54,24 +64,40 @@ export const AddWordDialog = ({ groupId, open, onOpenChange }: AddWordDialogProp
 
     if (!value) {
       setTranscription('');
+      setIsPinyinPending(false);
+      setPinyinFailed(false);
       return;
     }
 
-    void import('pinyin').then(({ default: pinyin }) => {
-      if (requestId !== symbolsRequestId.current) {
-        return;
-      }
-      setTranscription(
-        pinyin(value)
-          .map((item: string[]) => item[0])
-          .join('')
-      );
-    });
+    setIsPinyinPending(true);
+    setPinyinFailed(false);
+    setTranscription('');
+    void import('pinyin')
+      .then(({ default: pinyin }) => {
+        if (requestId !== symbolsRequestId.current) {
+          return;
+        }
+        setTranscription(
+          pinyin(value)
+            .map((item: string[]) => item[0])
+            .join('')
+        );
+      })
+      .catch(() => {
+        if (requestId === symbolsRequestId.current) {
+          setPinyinFailed(true);
+        }
+      })
+      .finally(() => {
+        if (requestId === symbolsRequestId.current) {
+          setIsPinyinPending(false);
+        }
+      });
   };
 
   const handleEnter = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (symbols && translation && e.key === 'Enter') {
-      saveHandler();
+    if (canSave && e.key === 'Enter') {
+      void saveHandler();
     }
   };
 
@@ -98,9 +124,16 @@ export const AddWordDialog = ({ groupId, open, onOpenChange }: AddWordDialogProp
             <Input
               id='create-word-transcription'
               value={transcription}
-              placeholder='Enter transcription'
-              disabled
+              placeholder={pinyinFailed ? 'Enter transcription manually' : 'Enter transcription'}
+              disabled={!pinyinFailed}
+              onChange={(e) => setTranscription(e.target.value)}
+              onKeyUp={handleEnter}
             />
+            {pinyinFailed ? (
+              <p role='status' className='text-sm text-muted-foreground'>
+                Couldn’t auto-fill pinyin — enter transcription manually.
+              </p>
+            ) : null}
           </div>
           <div className='grid gap-2'>
             <Label htmlFor='create-word-translation'>Translation</Label>
@@ -117,7 +150,7 @@ export const AddWordDialog = ({ groupId, open, onOpenChange }: AddWordDialogProp
           <Button variant='outline' onClick={handleClose}>
             Cancel
           </Button>
-          <Button disabled={!symbols || !translation} onClick={saveHandler}>
+          <Button disabled={!canSave} onClick={() => void saveHandler()}>
             Create
           </Button>
         </DialogFooter>

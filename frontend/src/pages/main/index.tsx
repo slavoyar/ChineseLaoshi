@@ -1,3 +1,4 @@
+import { prefetchDeferredChunks } from '@app/prefetch-deferred';
 import { useGroupStore } from '@entities/group';
 import { useAuthStore } from '@shared/stores';
 import { Groups } from '@widgets/groups';
@@ -11,6 +12,10 @@ export const Main = () => {
   useEffect(() => {
     void fetchGroups();
   }, [fetchGroups, sessionKey]);
+
+  useEffect(() => {
+    prefetchDeferredChunks();
+  }, []);
 
   return (
     <div className='m-auto flex h-full flex-col gap-6 md:w-9/12 xl:w-7/12'>
