@@ -13,12 +13,18 @@ import {
   AlertDialogTitle,
 } from '@shared/ui';
 import { tileGridClassName } from '@shared/ui/tile-grid';
+import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { CreateGroupCard } from './create-group-card';
 import { GroupCard } from './group-card';
 
-export const GroupGrid = () => {
+interface Props {
+  renderCreateDialog: (p: { open: boolean; onOpenChange: (open: boolean) => void }) => ReactNode;
+  onPrefetchGroup?: (groupId: string) => void;
+}
+
+export const GroupGrid = ({ renderCreateDialog, onPrefetchGroup }: Props) => {
   const groups = useGroupStore((state) => state.groups);
   const deleteGroup = useGroupStore((state) => state.delete);
   const { isDeleteDialogOpen, closeDeleteDialog, deleteItem, openDeleteDialog } = useDelete<Group>();
@@ -32,13 +38,14 @@ export const GroupGrid = () => {
   return (
     <>
       <div className={tileGridClassName}>
-        <CreateGroupCard />
+        <CreateGroupCard renderDialog={renderCreateDialog} />
         {(groups ?? []).map((group) => (
           <GroupCard
             key={group.id}
             group={group}
             onNavigate={() => navigate(`${Route.Groups}/${group.id}`)}
             onDelete={() => openDeleteDialog(group)}
+            onPrefetch={() => onPrefetchGroup?.(group.id)}
           />
         ))}
       </div>

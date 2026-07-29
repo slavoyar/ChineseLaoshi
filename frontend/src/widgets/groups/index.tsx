@@ -1,3 +1,4 @@
+import { useCardStore } from '@entities/card';
 import { GroupGrid, GroupListSkeleton, useGroupStore } from '@entities/group';
 import { AddGroupDialog } from '@features/add-group';
 import { useRequireAuth } from '@shared/hooks';
@@ -34,7 +35,14 @@ export const Groups = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) 
             <AddGroupDialog open={isAddOpen} onOpenChange={setIsAddOpen} />
           </>
         ) : (
-          <GroupGrid />
+          <GroupGrid
+            onPrefetchGroup={(groupId) => {
+              void useCardStore.getState().prefetch(groupId);
+            }}
+            renderCreateDialog={({ open, onOpenChange }) => (
+              <AddGroupDialog open={open} onOpenChange={onOpenChange} />
+            )}
+          />
         )}
       </div>
     </div>

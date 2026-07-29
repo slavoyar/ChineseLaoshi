@@ -1,10 +1,9 @@
 import { useCardStore } from '@entities/card';
-import { AddWordDialog } from '@features/add-word';
 import { useRequireAuth } from '@shared/hooks';
 import { Button, EmptyState } from '@shared/ui';
 import { tileGridClassName } from '@shared/ui/tile-grid';
 import { Plus } from 'lucide-react';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 import { CardListSkeleton } from './card-list-skeleton';
 import { CreateWordCard } from './create-word-card';
@@ -14,9 +13,10 @@ interface Props {
   groupId: string;
   wordCount?: number;
   onDelete: () => void;
+  renderAddDialog: (p: { open: boolean; onOpenChange: (open: boolean) => void }) => ReactNode;
 }
 
-export const WordGrid = ({ groupId, wordCount = 0, onDelete }: Props) => {
+export const WordGrid = ({ groupId, wordCount = 0, onDelete, renderAddDialog }: Props) => {
   const [cardsPerGroup, loadingGroupIds] = useCardStore((state) => [
     state.cardsPerGroup,
     state.loadingGroupIds,
@@ -46,14 +46,14 @@ export const WordGrid = ({ groupId, wordCount = 0, onDelete }: Props) => {
             </Button>
           }
         />
-        <AddWordDialog groupId={groupId} open={isAddOpen} onOpenChange={setIsAddOpen} />
+        {renderAddDialog({ open: isAddOpen, onOpenChange: setIsAddOpen })}
       </>
     );
   }
 
   return (
     <div className={tileGridClassName}>
-      <CreateWordCard groupId={groupId} />
+      <CreateWordCard renderDialog={renderAddDialog} />
       {cards.map((card) => (
         <WordCard key={card.id} card={card} onDelete={onDelete} />
       ))}

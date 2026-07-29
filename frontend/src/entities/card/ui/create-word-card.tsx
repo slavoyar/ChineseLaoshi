@@ -1,15 +1,14 @@
-import { AddWordDialog } from '@features/add-word';
 import { useRequireAuth } from '@shared/hooks';
 import { tileItemClassName } from '@shared/ui/tile-grid';
 import { cn } from '@shared/utils';
 import { Plus } from 'lucide-react';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 interface Props {
-  groupId: string;
+  renderDialog: (p: { open: boolean; onOpenChange: (open: boolean) => void }) => ReactNode;
 }
 
-export const CreateWordCard = ({ groupId }: Props) => {
+export const CreateWordCard = ({ renderDialog }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const { gateAction } = useRequireAuth();
 
@@ -31,7 +30,7 @@ export const CreateWordCard = ({ groupId }: Props) => {
         <Plus className='h-6 w-6' aria-hidden='true' />
         <span className='text-[10px] font-medium'>Add word</span>
       </button>
-      <AddWordDialog groupId={groupId} open={isOpen} onOpenChange={setIsOpen} />
+      {renderDialog({ open: isOpen, onOpenChange: setIsOpen })}
     </>
   );
 };

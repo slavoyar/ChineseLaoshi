@@ -1,11 +1,14 @@
-import { AddGroupDialog } from '@features/add-group';
 import { useRequireAuth } from '@shared/hooks';
 import { tileItemClassName } from '@shared/ui/tile-grid';
 import { cn } from '@shared/utils';
 import { Plus } from 'lucide-react';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 
-export const CreateGroupCard = () => {
+interface Props {
+  renderDialog: (p: { open: boolean; onOpenChange: (open: boolean) => void }) => ReactNode;
+}
+
+export const CreateGroupCard = ({ renderDialog }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const { gateAction } = useRequireAuth();
 
@@ -27,7 +30,7 @@ export const CreateGroupCard = () => {
         <Plus className='h-6 w-6' aria-hidden='true' />
         <span className='text-[10px] font-medium'>Create group</span>
       </button>
-      <AddGroupDialog open={isOpen} onOpenChange={setIsOpen} />
+      {renderDialog({ open: isOpen, onOpenChange: setIsOpen })}
     </>
   );
 };
