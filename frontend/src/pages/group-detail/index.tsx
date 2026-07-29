@@ -1,5 +1,6 @@
 import { useCardStore, WordGrid } from '@entities/card';
 import { GroupEditableTitle, useGroupStore } from '@entities/group';
+import { AddWordDialog } from '@features/add-word';
 import { Route } from '@shared/types';
 import { Button, EmptyState } from '@shared/ui';
 import { StudyModes } from '@widgets/study-modes';
@@ -76,6 +77,9 @@ export const GroupDetail = () => {
               groupId={groupId}
               wordCount={group?.wordCount}
               onDelete={() => decrementWordCount(groupId)}
+              renderAddDialog={({ open, onOpenChange }) => (
+                <AddWordDialog groupId={groupId} open={open} onOpenChange={onOpenChange} />
+              )}
             />
           )}
         </div>

@@ -1,5 +1,4 @@
-import { useGroupStore } from '@entities/group';
-import { GROUP_ICON_CATALOG, GroupIconKey } from '@entities/group/lib/group-icons';
+import { GROUP_ICON_CATALOG, GroupIconKey, useGroupStore } from '@entities/group';
 import {
   Button,
   Dialog,

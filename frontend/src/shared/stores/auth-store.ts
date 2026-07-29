@@ -1,5 +1,5 @@
-import { authApi } from '@shared/api/auth';
-import { AuthUser } from '@shared/types/auth';
+import { authApi } from '@shared/api';
+import { AuthUser } from '@shared/types';
 import { create } from 'zustand';
 
 const clearSessionCaches = async () => {

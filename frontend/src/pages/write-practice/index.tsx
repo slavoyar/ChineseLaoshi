@@ -1,6 +1,6 @@
 import { cardService, useCardStore, WriteCard } from '@entities/card';
 import { isRequestCanceled } from '@shared/api';
-import { Card } from '@shared/api/generated';
+import { Card } from '@shared/api';
 import { useStateStore } from '@shared/stores';
 import { Route } from '@shared/types';
 import { PrescriptionPractice } from '@widgets/prescription-practice';

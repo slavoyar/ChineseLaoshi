@@ -1,6 +1,5 @@
 import { useCardStore } from '@entities/card';
-import { getProgressStyles } from '@entities/card/utils';
-import { Card } from '@shared/api/generated';
+import { Card } from '@shared/api';
 import { useDelete, useRequireAuth } from '@shared/hooks';
 import {
   AlertDialog,
@@ -12,10 +11,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   TileDeleteButton,
+  tileItemClassName,
 } from '@shared/ui';
-import { tileItemClassName } from '@shared/ui/tile-grid';
 import { cn } from '@shared/utils';
 
+import { getProgressStyles } from '../lib/progress';
 interface Props {
   card: Card;
   onDelete: () => void;

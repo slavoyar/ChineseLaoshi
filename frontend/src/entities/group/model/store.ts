@@ -1,4 +1,4 @@
-import { Group, UpdateGroup } from '@shared/api/generated';
+import { Group, UpdateGroup } from '@shared/api';
 import { create } from 'zustand';
 
 import groupService from '../api';

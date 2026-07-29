@@ -1,8 +1,8 @@
+import { HeaderLayout } from '@app/layouts';
 import { GroupDetail } from '@pages/group-detail';
 import { Main } from '@pages/main';
 import { NotFound, RouteError } from '@pages/not-found';
 import { WritePractice } from '@pages/write-practice';
-import { HeaderLayout } from '@shared/layouts';
 import { Route } from '@shared/types';
 import { createBrowserRouter } from 'react-router-dom';
 

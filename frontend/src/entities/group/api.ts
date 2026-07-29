@@ -1,5 +1,6 @@
-import { BaseService } from '@shared/api/base-service';
-import { Group } from '@shared/api/generated';
+// FSD prefers CRUD in shared/api; kept here next to the Zustand entity store.
+// Revisit if a third consumer appears outside this slice.
+import { BaseService, Group } from '@shared/api';
 
 const URL = '/api/groups';
 class GroupService extends BaseService<Group> {}
