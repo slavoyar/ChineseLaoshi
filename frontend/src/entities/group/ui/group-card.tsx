@@ -1,3 +1,4 @@
+import { useCardStore } from '@entities/card';
 import { getGroupIcon } from '@entities/group/lib/group-icons';
 import { Group } from '@shared/api/generated';
 import { useRequireAuth } from '@shared/hooks';
@@ -16,6 +17,10 @@ export const GroupCard = ({ group, onNavigate, onDelete }: Props) => {
   const Icon = getGroupIcon(group.id);
   const { isDemo } = useRequireAuth();
 
+  const prefetchCards = () => {
+    void useCardStore.getState().prefetch(group.id);
+  };
+
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -32,6 +37,8 @@ export const GroupCard = ({ group, onNavigate, onDelete }: Props) => {
         className='flex h-full cursor-pointer flex-col items-center justify-between rounded-lg border bg-secondary p-2 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
         onClick={onNavigate}
         onKeyDown={handleKeyDown}
+        onPointerEnter={prefetchCards}
+        onFocus={prefetchCards}
       >
         <div className='flex flex-1 items-center justify-center'>
           <Icon className='h-7 w-7 text-foreground' aria-hidden='true' />

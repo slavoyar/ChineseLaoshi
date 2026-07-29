@@ -1,4 +1,4 @@
-import { BaseService } from '@shared/api';
+import { BaseService } from '@shared/api/base-service';
 import { Card, CreateCard, GetWriteCard, UpdateCardStats, UpdateCardWord } from '@shared/api/generated';
 import axios from 'axios';
 
