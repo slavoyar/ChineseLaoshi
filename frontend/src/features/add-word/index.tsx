@@ -10,8 +10,7 @@ import {
   Input,
   Label,
 } from '@shared/ui';
-import pinyin from 'pinyin';
-import { KeyboardEvent, useEffect, useState } from 'react';
+import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 
 interface AddWordDialogProps {
   groupId: string;
@@ -23,6 +22,7 @@ export const AddWordDialog = ({ groupId, open, onOpenChange }: AddWordDialogProp
   const [transcription, setTranscription] = useState('');
   const [translation, setTranslation] = useState('');
   const [symbols, setSymbols] = useState('');
+  const symbolsRequestId = useRef(0);
 
   const createWord = useCardStore((state) => state.create);
   const incrementWordCount = useGroupStore((state) => state.incrementWordCount);
@@ -50,11 +50,23 @@ export const AddWordDialog = ({ groupId, open, onOpenChange }: AddWordDialogProp
 
   const symbolsHandler = (value: string) => {
     setSymbols(value);
-    setTranscription(
-      pinyin(value)
-        .map((item: string[]) => item[0])
-        .join('')
-    );
+    const requestId = ++symbolsRequestId.current;
+
+    if (!value) {
+      setTranscription('');
+      return;
+    }
+
+    void import('pinyin').then(({ default: pinyin }) => {
+      if (requestId !== symbolsRequestId.current) {
+        return;
+      }
+      setTranscription(
+        pinyin(value)
+          .map((item: string[]) => item[0])
+          .join('')
+      );
+    });
   };
 
   const handleEnter = (e: KeyboardEvent<HTMLInputElement>) => {
