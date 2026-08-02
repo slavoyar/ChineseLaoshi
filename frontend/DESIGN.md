@@ -22,7 +22,7 @@ colors:
   progress-mid: "#4ade80"
   progress-high: "#22c55e"
   progress-label: "#16a34a"
-  delete: "#ef4444"
+  delete: "#f87171"
 typography:
   display:
     fontFamily: "ui-sans-serif, system-ui, sans-serif"
@@ -144,7 +144,7 @@ A cool slate-dark palette: near-black blue background, light foreground, and ste
 
 ### Primary
 
-- **Stage Light** (#f8fafc / hsl(210 40% 98%)): Primary buttons, focus-adjacent highlights, and the inverted accent in dark mode. Used for committed actions (Create, Delete confirm) — not decoration.
+- **Stage Light** (#f8fafc / hsl(210 40% 98%)): Primary buttons, focus-adjacent highlights, and the inverted accent in dark mode. Used for constructive committed actions (Create, Save) — not decoration, and not irreversible delete.
 - **Stage Ink** (#0f172a / hsl(222.2 47.4% 11.2%)): Text on primary-filled controls.
 
 ### Secondary (optional; omit if the project has only one accent)
@@ -161,7 +161,7 @@ A cool slate-dark palette: near-black blue background, light foreground, and ste
 - **Soft Ink** (#f8fafc): Primary body text, tile character glyphs, headings.
 - **Supporting Gray** (#94a3b8 / hsl(215 20.2% 65.1%)): Secondary copy — transcriptions, word counts, placeholders, back links. Must remain readable on secondary surfaces (≥4.5:1 against #1e293b).
 - **Focus Ring** (#cbd5e1 / hsl(212.7 26.8% 83.9%)): 2 px focus-visible ring on interactive elements.
-- **Danger Deep** (#7f1d1d / hsl(0 62.8% 30.6%)): Destructive button fill; tile delete uses brighter red (#ef4444) at icon level for scannability.
+- **Danger Deep** (#7f1d1d / hsl(0 62.8% 30.6%)): Destructive button fill. Tile delete rests at Supporting Gray and only brightens to red (#f87171 / red-400) on hover, focus, or press — so always-visible touch chrome does not outrank characters.
 
 ### Named Rules (optional, powerful)
 
@@ -201,7 +201,6 @@ Dialogs and alert dialogs (`DialogContent`, `AlertDialogContent`) use `shadow-lg
 ### Shadow Vocabulary (if applicable)
 
 - **Modal lift** (`box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)` via Tailwind `shadow-lg`): Dialogs and alert dialogs only.
-- **Icon drop** (`filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05))`): Delete icon on tile hover for legibility against tile backgrounds.
 
 ### Named Rules (optional)
 
@@ -252,10 +251,11 @@ Not used in current surfaces. Prefer tile metadata text at micro/label sizes ins
 
 - **Grid:** `flex flex-wrap justify-center gap-2` (8px, 10px at sm).
 - **Tile size:** `aspect-square w-24` (96px), `sm:w-[104px]`. Shared via `tileItemClassName`.
-- **Group tile:** Secondary fill, centered Lucide group icon (28px), name at label size, word count at micro. Entire tile is clickable; delete button reveals on hover/focus-within.
-- **Word tile:** Secondary fill, character at display size centered, transcription micro + translation label below, progress bar footer (0.5px lines + centered percent). Top/side border color reflects mastery (see Progress Green).
+- **Group tile:** Secondary fill, centered Lucide group icon (28px), name at label size, word count at micro. Entire tile is clickable; delete button always visible when hover is unavailable, otherwise reveals on hover/focus-within.
+- **Word tile:** Secondary fill; centered stack of character (display size), transcription micro, translation label; progress bar footer (0.5px lines + centered percent). Top/side border color reflects mastery (see Progress Green).
 - **Create tile:** Dashed 2px border, secondary/50 background, Plus icon 24px, micro caption ("Create group" / "Add word"). Hover: solid secondary, primary/50 border tint.
-- **Delete affordance:** Ghost icon button, absolute top-right, red-500, opacity 0 → 100 on group/card hover or focus-within. Hover/active brighten the icon only (red-300 / red-200) with no background fill; focus-visible keeps a soft red ring. 150ms opacity/color transition; `motion-reduce:transition-none`.
+- **Delete affordance:** Ghost icon button, absolute top-right overlay, 36px hit target with the 14px icon hugged into the corner (`items-start justify-end p-1.5`). Rest color is Supporting Gray; hover/active/focus brighten to red-400 / red-300 with no background fill. Always at full opacity when `(hover: none)`; on `(hover: hover)` opacity 0 → 100 on group/card hover or focus-within (`can-hover` Tailwind variant). Soft red focus-visible ring. Does not reserve layout space — word-tile content is a centered character + metadata stack so glyphs keep the stage. 150ms opacity/color transition; `motion-reduce:transition-none`. Same visibility rule for other hover-gated tile actions (e.g. group title edit).
+- **Word tile content:** Centered vertical stack — character (`text-2xl`) then tight pinyin + translation (`gap-1.5` / `space-y-0.5`). Progress bar stays a shrink-0 footer.
 
 ### Dialogs
 
@@ -277,7 +277,7 @@ Not used in current surfaces. Prefer tile metadata text at micro/label sizes ins
 - **Do** keep Chinese characters at `text-2xl` or larger on study surfaces; metadata stays at `text-xs` / `text-[10px]`.
 - **Do** use the shared tile grid constants (`tileGridClassName`, `tileItemClassName`) for any new collection UI.
 - **Do** apply green only through `getProgressStyles()` semantics for word mastery — border, line, and label together.
-- **Do** reveal destructive actions on hover/focus-within of the parent tile, not persistently visible.
+- **Do** reveal destructive (and other secondary) actions on hover/focus-within of the parent on hover-capable pointers; always show them at full opacity when hover is unavailable.
 - **Do** honor `prefers-reduced-motion` on every transition and skeleton animation.
 - **Do** use skeleton tile grids matching final layout while groups or words load.
 - **Do** keep primary actions to one per dialog footer; Cancel is always outline variant.
@@ -288,7 +288,7 @@ Not used in current surfaces. Prefer tile metadata text at micro/label sizes ins
 - **Don't** apply generic SaaS dashboard aesthetics to study screens — no hero metrics, no gradient accents, no decorative chart colors on non-analytics views.
 - **Don't** clutter interfaces so chrome competes with characters — avoid nested cards, redundant eyebrows, or side-stripe borders on tiles.
 - **Don't** use gradient text, glassmorphism, or heavy shadows on tiles and panels.
-- **Don't** show delete buttons at full opacity by default on touch lists — use the reveal pattern.
+- **Don't** gate delete or edit icons on hover alone — touch and other no-hover devices must see them without a pointer hover.
 - **Don't** introduce a second accent color family beyond green-for-progress and red-for-destructive.
 - **Don't** use display or serif fonts for UI labels, buttons, or data.
 - **Don't** gate content visibility on entrance animations — default state must be fully readable without JS-driven reveals.

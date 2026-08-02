@@ -107,9 +107,9 @@ export const GroupEditableTitle = ({ groupId, name, className }: Props) => {
           variant='ghost'
           size='icon'
           className={cn(
-            'h-9 w-9 shrink-0 text-muted-foreground opacity-0 transition-opacity duration-150',
+            'h-9 w-9 shrink-0 text-muted-foreground opacity-100 transition-opacity duration-150',
             'hover:bg-accent hover:text-foreground',
-            'group-focus-within/title:opacity-100 group-hover/title:opacity-100',
+            'can-hover:opacity-0 can-hover:group-hover/title:opacity-100 can-hover:group-focus-within/title:opacity-100',
             'focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-ring',
             'motion-reduce:transition-none'
           )}

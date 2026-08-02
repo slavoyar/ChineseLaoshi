@@ -44,11 +44,9 @@ export const WordCard = ({ card, onDelete }: Props) => {
           )}
           aria-label={`${card.word.symbols}, ${card.word.translation}, ${progressStyles.percentLabel}% progress`}
         >
-          <div className='flex min-h-0 flex-1 flex-col items-center justify-between p-2'>
-            <div className='flex flex-1 items-center justify-center'>
-              <span className='text-2xl font-medium leading-none text-foreground'>{card.word.symbols}</span>
-            </div>
-            <div className='w-full text-center'>
+          <div className='flex min-h-0 flex-1 flex-col items-center justify-center gap-1.5 px-2 py-1.5'>
+            <span className='text-2xl font-medium leading-none text-foreground'>{card.word.symbols}</span>
+            <div className='w-full space-y-0.5 text-center'>
               <p className='truncate text-[10px] leading-tight text-muted-foreground'>
                 {card.word.transcription}
               </p>

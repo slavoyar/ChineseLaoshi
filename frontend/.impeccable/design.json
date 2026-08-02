@@ -156,11 +156,6 @@
         "name": "modal-lift",
         "value": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)",
         "purpose": "Dialogs and alert dialogs only — never tiles or panels."
-      },
-      {
-        "name": "icon-drop",
-        "value": "drop-shadow(0 1px 1px rgba(0, 0, 0, 0.05))",
-        "purpose": "Delete icon legibility on tile hover."
       }
     ],
     "motion": [
@@ -191,7 +186,7 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Default committed action — Create, Save, Delete confirm.",
+      "description": "Default constructive committed action — Create, Save.",
       "html": "<button class=\"ds-btn-primary\">Create</button>",
       "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 8px 16px; border: none; border-radius: 6px; background: #f8fafc; color: #0f172a; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; white-space: nowrap; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), opacity 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-primary:hover { opacity: 0.9; } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px #020817, 0 0 0 4px #cbd5e1; } .ds-btn-primary:disabled { opacity: 0.5; pointer-events: none; }"
     },
@@ -238,9 +233,9 @@
       "name": "Tile Delete Button",
       "kind": "button",
       "refersTo": "button-ghost",
-      "description": "Destructive icon revealed on tile hover/focus.",
-      "html": "<button class=\"ds-tile-delete\" aria-label=\"Delete\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 6h18\"/><path d=\"M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6\"/><path d=\"M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2\"/></svg></button>",
-      "css": ".ds-tile-delete { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: none; border-radius: 6px; background: transparent; color: #ef4444; cursor: pointer; transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1), background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-tile-delete:hover { background: rgba(239, 68, 68, 0.15); color: #f87171; } .ds-tile-delete:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.5); color: #f87171; } .ds-tile-delete svg { filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.05)); }"
+      "description": "Quiet secondary action at rest; brightens to red on hover/focus. Always visible when hover is unavailable.",
+      "html": "<button class=\"ds-tile-delete\" aria-label=\"Delete\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 6h18\"/><path d=\"M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6\"/><path d=\"M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2\"/></svg></button>",
+      "css": ".ds-tile-delete { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: none; border-radius: 6px; background: transparent; color: #94a3b8; cursor: pointer; transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1), color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-tile-delete:hover { background: transparent; color: #f87171; } .ds-tile-delete:active { color: #fca5a5; } .ds-tile-delete:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.4); color: #f87171; }"
     },
     {
       "name": "Skeleton Tile",
@@ -291,7 +286,7 @@
       "Do keep Chinese characters at text-2xl or larger on study surfaces; metadata stays at text-xs / text-[10px].",
       "Do use the shared tile grid constants (tileGridClassName, tileItemClassName) for any new collection UI.",
       "Do apply green only through getProgressStyles() semantics for word mastery — border, line, and label together.",
-      "Do reveal destructive actions on hover/focus-within of the parent tile, not persistently visible.",
+      "Do reveal destructive (and other secondary) actions on hover/focus-within of the parent on hover-capable pointers; always show them at full opacity when hover is unavailable.",
       "Do honor prefers-reduced-motion on every transition and skeleton animation.",
       "Do use skeleton tile grids matching final layout while groups or words load.",
       "Do keep primary actions to one per dialog footer; Cancel is always outline variant."
@@ -301,7 +296,7 @@
       "Don't apply generic SaaS dashboard aesthetics to study screens — no hero metrics, no gradient accents, or decorative chart colors on non-analytics views.",
       "Don't clutter interfaces so chrome competes with characters — avoid nested cards, redundant eyebrows, or side-stripe borders on tiles.",
       "Don't use gradient text, glassmorphism, or heavy shadows on tiles and panels.",
-      "Don't show delete buttons at full opacity by default on touch lists — use the reveal pattern.",
+      "Don't gate delete or edit icons on hover alone — touch and other no-hover devices must see them without a pointer hover.",
       "Don't introduce a second accent color family beyond green-for-progress and red-for-destructive.",
       "Don't use display or serif fonts for UI labels, buttons, or data.",
       "Don't gate content visibility on entrance animations — default state must be fully readable without JS-driven reveals."
