@@ -36,7 +36,7 @@ export const DrawPad = ({ onPick, onUndoChar, canUndo }: DrawPadProps) => {
     recognizingRef.current = true;
     try {
       const results = await recognizer.recognize(strokeData);
-      setCandidates(results);
+      setCandidates(results.slice(0, 5));
     } catch {
       setCandidates([]);
     } finally {
@@ -128,9 +128,13 @@ export const DrawPad = ({ onPick, onUndoChar, canUndo }: DrawPadProps) => {
 
   return (
     <div className='grid gap-2 rounded-md border border-border bg-secondary/40 p-2'>
-      <div className='flex min-h-11 flex-wrap gap-1.5' role='listbox' aria-label='Character candidates'>
+      <div
+        className='flex h-11 flex-nowrap items-center gap-1.5 overflow-hidden'
+        role='listbox'
+        aria-label='Character candidates'
+      >
         {candidates.length === 0 ? (
-          <p className='text-sm text-muted-foreground'>Draw a character, then pick a match.</p>
+          <p className='truncate text-sm text-muted-foreground'>Draw a character, then pick a match.</p>
         ) : (
           candidates.map((char) => (
             <Button
@@ -138,7 +142,7 @@ export const DrawPad = ({ onPick, onUndoChar, canUndo }: DrawPadProps) => {
               type='button'
               variant='outline'
               size='sm'
-              className='min-h-11 min-w-11 px-2 text-lg'
+              className='h-11 min-w-11 shrink-0 px-2 text-lg'
               role='option'
               onClick={() => handlePick(char)}
             >
