@@ -6,7 +6,15 @@ import typescriptEslint from 'typescript-eslint';
 
 export const createConfig = (options = []) =>
   typescriptEslint.config(
-    globalIgnores(['**/node_modules/**', '**/dist/**', 'frontend/public/**', '**/.env*', '**/*.md', '**/.impeccable/**']),
+    globalIgnores([
+      '**/node_modules/**',
+      '**/dist/**',
+      'frontend/public/**',
+      'frontend/src/shared/api/generated/**',
+      '**/.env*',
+      '**/*.md',
+      '**/.impeccable/**',
+    ]),
     eslint.configs.recommended,
     ...typescriptEslint.configs.recommended,
     {
