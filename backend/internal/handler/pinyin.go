@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/slavo/ChineseLaoshi/backend/internal/dto"
-	"github.com/slavo/ChineseLaoshi/backend/internal/service"
+	"github.com/slavo/ChineseLaoshi/backend/internal/pinyin"
 )
 
 type PinyinHandler struct{}
@@ -24,5 +24,5 @@ func (h *PinyinHandler) Convert(w http.ResponseWriter, r *http.Request) {
 		writeValidationError(w, "text is required")
 		return
 	}
-	writeJSON(w, http.StatusOK, service.ConvertPinyin(body.Text))
+	writeJSON(w, http.StatusOK, pinyin.Convert(body.Text))
 }
