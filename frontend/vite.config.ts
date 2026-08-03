@@ -29,8 +29,8 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('hanzi-writer')) {
             return 'hanzi-writer';
           }
-          if (id.includes('pinyin') || id.includes('segmentit')) {
-            return 'pinyin';
+          if (id.includes('@zh-keyboard') || id.includes('@tensorflow')) {
+            return 'handwriting';
           }
           return 'vendor';
         },
