@@ -10,6 +10,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.7.4
 	github.com/joho/godotenv v1.5.1
+	github.com/mozillazg/go-pinyin v0.21.0
 	google.golang.org/api v0.289.0
 )
 

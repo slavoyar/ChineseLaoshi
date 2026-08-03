@@ -13,13 +13,14 @@ import (
 )
 
 type Handlers struct {
-	Groups          *GroupHandler
-	Cards           *CardHandler
-	Words           *WordHandler
-	Auth            *AuthHandler
-	users           *repository.UserRepository
-	templateEmail   string
-	allowedOrigins  []string
+	Groups         *GroupHandler
+	Cards          *CardHandler
+	Words          *WordHandler
+	Auth           *AuthHandler
+	Pinyin         *PinyinHandler
+	users          *repository.UserRepository
+	templateEmail  string
+	allowedOrigins []string
 }
 
 func NewHandlers(
@@ -35,6 +36,7 @@ func NewHandlers(
 	h := &Handlers{
 		Words:          NewWordHandler(wordService),
 		Auth:           NewAuthHandler(authService, cookieConfig),
+		Pinyin:         NewPinyinHandler(),
 		users:          users,
 		templateEmail:  templateEmail,
 		allowedOrigins: allowedOrigins,
@@ -80,6 +82,7 @@ func (h *Handlers) Router(authenticator auth.Authenticator, enableLogger bool) h
 		})
 
 		r.Get("/words", h.Words.Search)
+		r.With(middleware.RequireAuth).Post("/pinyin", h.Pinyin.Convert)
 	})
 
 	return r

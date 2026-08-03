@@ -53,6 +53,21 @@ export interface UpdateGroup {
 }
 
 //////////
+// source: pinyin.go
+
+export interface PinyinRequest {
+  text: string;
+}
+export interface PinyinChar {
+  char: string;
+  readings: string[];
+}
+export interface PinyinResponse {
+  characters: PinyinChar[];
+  transcription: string;
+}
+
+//////////
 // source: user.go
 
 export interface User {
