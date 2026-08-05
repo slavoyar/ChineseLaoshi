@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About — Chinese Laoshi</title>
+    <meta
+      name="description"
+      content="Chinese Laoshi is a Mandarin learning app for hanzi handwriting practice and translation flashcards. Contact and open-source links."
+    />
+    <link rel="canonical" href="https://chineselaoshi.slavoyar.tech/about.html" />
+    <link rel="icon" href="/assets/icon.svg" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: hsl(222.2 84% 4.9%);
+        --fg: hsl(210 40% 98%);
+        --muted: hsl(215 20.2% 65.1%);
+        --border: hsl(217.2 32.6% 17.5%);
+        --card: hsl(222.2 84% 4.9%);
+        --link: hsl(173 58% 55%);
+        --radius: 0.5rem;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+        background: var(--bg);
+        color: var(--fg);
+        line-height: 1.6;
+      }
+
+      header {
+        border-bottom: 1px solid var(--border);
+        background: var(--card);
+      }
+
+      .bar {
+        max-width: 42rem;
+        margin: 0 auto;
+        padding: 1.25rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .brand {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--fg);
+        text-decoration: none;
+      }
+
+      .bar a.back {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.875rem;
+      }
+
+      .bar a.back:hover {
+        color: var(--fg);
+      }
+
+      main {
+        max-width: 42rem;
+        margin: 0 auto;
+        padding: 2rem 1rem 3rem;
+      }
+
+      h1 {
+        font-size: 1.75rem;
+        line-height: 1.25;
+        margin: 0 0 0.75rem;
+      }
+
+      h2 {
+        font-size: 1.125rem;
+        margin: 2rem 0 0.75rem;
+      }
+
+      p,
+      li {
+        color: var(--muted);
+      }
+
+      p {
+        margin: 0 0 1rem;
+      }
+
+      ul {
+        margin: 0 0 1rem;
+        padding-left: 1.25rem;
+      }
+
+      li {
+        margin-bottom: 0.35rem;
+      }
+
+      a {
+        color: var(--link);
+      }
+
+      a:hover {
+        text-decoration: none;
+      }
+
+      .panel {
+        margin-top: 1.5rem;
+        padding: 1rem 1.1rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+      }
+
+      .panel p {
+        margin: 0.35rem 0;
+      }
+
+      .panel strong {
+        color: var(--fg);
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="bar">
+        <a class="brand" href="/">中国老师</a>
+        <a class="back" href="/">Back to app</a>
+      </div>
+    </header>
+    <main>
+      <h1>Chinese Laoshi</h1>
+      <p>
+        Chinese Laoshi (中国老师) is a Mandarin learning app for custom flashcards, hanzi
+        handwriting practice, and translation drills — in the browser on phone, tablet, or
+        desktop.
+      </p>
+
+      <h2>Features</h2>
+      <ul>
+        <li>
+          <strong style="color: var(--fg)">Handwriting practice</strong> — write Chinese
+          characters with touch or mouse and get stroke feedback.
+        </li>
+        <li>
+          <strong style="color: var(--fg)">Translation drills</strong> — review meanings and
+          strengthen recall with flashcard study modes.
+        </li>
+        <li>
+          <strong style="color: var(--fg)">Custom word groups</strong> — build your own card
+          decks with characters, pinyin, and translations.
+        </li>
+      </ul>
+
+      <h2>Open source</h2>
+      <p>
+        The project is open source on
+        <a href="https://github.com/slavoyar/ChineseLaoshi">GitHub</a>.
+      </p>
+
+      <div class="panel">
+        <p><strong>Contact</strong></p>
+        <p>
+          Email:
+          <a href="mailto:slavoyarmc@gmail.com">slavoyarmc@gmail.com</a>
+        </p>
+        <p>
+          GitHub:
+          <a href="https://github.com/slavoyar/ChineseLaoshi"
+            >github.com/slavoyar/ChineseLaoshi</a
+          >
+        </p>
+        <p>
+          App:
+          <a href="https://chineselaoshi.slavoyar.tech/"
+            >chineselaoshi.slavoyar.tech</a
+          >
+        </p>
+      </div>
+    </main>
+  </body>
+</html>
