@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/slavo/ChineseLaoshi/backend/internal/apperrors"
@@ -121,6 +122,44 @@ func TestCardRepository_GetWriteCards(t *testing.T) {
 	}
 	if len(list) != 2 {
 		t.Fatalf("expected 2 cards, got %d", len(list))
+	}
+}
+
+func TestCardRepository_GetWriteCardsOrdersDueThenNew(t *testing.T) {
+	_, _, cards, _, _, _, userID := setupRepos(t)
+	ctx := context.Background()
+
+	past := time.Now().UTC().Add(-time.Hour)
+	future := time.Now().UTC().Add(48 * time.Hour)
+	reviewState := 2 // fsrs.Review
+	newState := 0    // fsrs.New
+	stability := 4.0
+
+	// UUID(1) due now (past), UUID(2) future New — within same group.
+	if _, err := cards.UpdateCard(ctx, nil, repository.UpdateCardInput{
+		ID: testutil.GetUUID(1), Due: &past, State: &reviewState, Stability: &stability,
+	}); err != nil {
+		t.Fatalf("update due: %v", err)
+	}
+	if _, err := cards.UpdateCard(ctx, nil, repository.UpdateCardInput{
+		ID: testutil.GetUUID(2), Due: &future, State: &newState,
+	}); err != nil {
+		t.Fatalf("update new: %v", err)
+	}
+
+	groupID := testutil.GetUUID(1)
+	list, err := cards.GetWriteCards(ctx, 2, userID, &groupID)
+	if err != nil {
+		t.Fatalf("get write cards: %v", err)
+	}
+	if len(list) != 2 {
+		t.Fatalf("expected 2, got %d", len(list))
+	}
+	if list[0].Card.ID != testutil.GetUUID(1) {
+		t.Fatalf("expected due card first, got %s", list[0].Card.ID)
+	}
+	if list[1].Card.ID != testutil.GetUUID(2) {
+		t.Fatalf("expected new card second, got %s", list[1].Card.ID)
 	}
 }
 
@@ -255,7 +294,7 @@ func TestCardRepository_CreateUpdateDelete(t *testing.T) {
 		t.Fatalf("commit: %v", err)
 	}
 
-	row, err := cards.GetCardByID(ctx, card.ID)
+	row, err := cards.GetCardByID(ctx, card.Card.ID)
 	if err != nil {
 		t.Fatalf("get card: %v", err)
 	}
@@ -270,9 +309,9 @@ func TestCardRepository_CreateUpdateDelete(t *testing.T) {
 
 	progress := 0.5
 	updated, err := cards.UpdateCard(ctx, nil, repository.UpdateCardInput{
-		ID: card.ID, Progress: &progress,
+		ID: card.Card.ID, Progress: &progress,
 	})
-	if err != nil || updated.Progress != 0.5 {
+	if err != nil || updated.Card.Progress != 0.5 {
 		t.Fatalf("update card: %v %+v", err, updated)
 	}
 
@@ -281,7 +320,7 @@ func TestCardRepository_CreateUpdateDelete(t *testing.T) {
 		t.Fatalf("begin tx: %v", err)
 	}
 	defer tx.Rollback(ctx)
-	if err := cards.DeleteCard(ctx, tx, card.ID); err != nil {
+	if err := cards.DeleteCard(ctx, tx, card.Card.ID); err != nil {
 		t.Fatalf("delete card: %v", err)
 	}
 	if err := words.DeleteWord(ctx, tx, word.ID); err != nil {
@@ -462,7 +501,63 @@ func TestCardRepository_UpdateCardWithTx(t *testing.T) {
 	updated, err := cards.UpdateCard(ctx, tx, repository.UpdateCardInput{
 		ID: testutil.GetUUID(1), ShowCount: &showCount,
 	})
-	if err != nil || updated.ShowCount != 5 {
+	if err != nil || updated.Card.ShowCount != 5 {
 		t.Fatalf("update with tx: %v %+v", err, updated)
+	}
+}
+
+func TestCardRepository_UpdateCardFSRSFields(t *testing.T) {
+	_, _, cards, _, _, _, _ := setupRepos(t)
+	ctx := context.Background()
+
+	wordID := testutil.GetUUID(3)
+	due := time.Now().UTC().Add(72 * time.Hour)
+	lastReview := time.Now().UTC().Add(-48 * time.Hour)
+	progress := 0.72
+	showCount := 4
+	stability := 6.5
+	difficulty := 4.2
+	elapsed := 2
+	scheduled := 3
+	reps := 5
+	lapses := 1
+	state := 2
+
+	updated, err := cards.UpdateCard(ctx, nil, repository.UpdateCardInput{
+		ID:            testutil.GetUUID(1),
+		WordID:        &wordID,
+		Progress:      &progress,
+		ShowCount:     &showCount,
+		Due:           &due,
+		Stability:     &stability,
+		Difficulty:    &difficulty,
+		ElapsedDays:   &elapsed,
+		ScheduledDays: &scheduled,
+		Reps:          &reps,
+		Lapses:        &lapses,
+		State:         &state,
+		LastReview:    &lastReview,
+	})
+	if err != nil {
+		t.Fatalf("update fsrs fields: %v", err)
+	}
+	row := updated.Card
+	if row.WordID != wordID || row.Progress != progress || row.ShowCount != showCount {
+		t.Fatalf("unexpected basic fields: %+v", row)
+	}
+	if row.Stability != stability || row.Difficulty != difficulty {
+		t.Fatalf("unexpected stability/difficulty: %+v", row)
+	}
+	if row.ElapsedDays != elapsed || row.ScheduledDays != scheduled {
+		t.Fatalf("unexpected day fields: %+v", row)
+	}
+	if row.Reps != reps || row.Lapses != lapses || row.State != state {
+		t.Fatalf("unexpected counters/state: %+v", row)
+	}
+	if row.LastReview == nil {
+		t.Fatal("expected lastReview")
+	}
+	if row.Due.IsZero() {
+		t.Fatal("expected due")
 	}
 }

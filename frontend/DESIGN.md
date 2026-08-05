@@ -153,7 +153,7 @@ A cool slate-dark palette: near-black blue background, light foreground, and ste
 
 ### Tertiary (optional)
 
-- **Mastery Green** (#4ade80 mid, #22c55e high, #16a34a label): Progress borders, divider lines, and percent labels on word tiles when recall exceeds 50%. Never used for generic success toasts or decorative accents.
+- **Mastery Green** (#4ade80 mid, #22c55e high, #16a34a label): Progress borders and percent labels on word tiles when recall exceeds 50%. Never used for generic success toasts or decorative accents.
 
 ### Neutral
 
@@ -167,7 +167,7 @@ A cool slate-dark palette: near-black blue background, light foreground, and ste
 
 **The Character Spotlight Rule.** Primary and green accents combined occupy ≤15% of any study screen. If color is everywhere, characters stop feeling like the hero.
 
-**The Progress Green Rule.** Green appears only on word-tile mastery indicators (border, divider line, percent label) and inline save confirmations. It never decorates navigation, headers, or empty states.
+**The Progress Green Rule.** Green appears only on word-tile mastery indicators (border and percent label) and inline save confirmations. It never decorates navigation, headers, or empty states.
 
 ## 3. Typography
 
@@ -196,7 +196,7 @@ A cool slate-dark palette: near-black blue background, light foreground, and ste
 
 Flat-by-default with tonal layering. The app does not use ambient card shadows on content surfaces; depth is communicated through `border` (#1e293b), `bg-secondary` tiles on `bg-card` panels, and occasional `shadow-lg` on modal overlays only.
 
-Dialogs and alert dialogs (`DialogContent`, `AlertDialogContent`) use `shadow-lg` plus an 80% black scrim (`bg-black/80`) to lift above the stage. Hover states shift background color (`hover:bg-accent`, `hover:bg-secondary/80`) rather than raising elements. Word tiles add a 2 px top/side border tint for progress — structural color, not shadow.
+Dialogs and alert dialogs (`DialogContent`, `AlertDialogContent`) use `shadow-lg` plus an 80% black scrim (`bg-black/80`) to lift above the stage. Hover states shift background color (`hover:bg-accent`, `hover:bg-secondary/80`) rather than raising elements. Word tiles use a continuous 2 px border tint for progress — structural color, not shadow.
 
 ### Shadow Vocabulary (if applicable)
 
@@ -252,10 +252,10 @@ Not used in current surfaces. Prefer tile metadata text at micro/label sizes ins
 - **Grid:** `flex flex-wrap justify-center gap-2` (8px, 10px at sm).
 - **Tile size:** `aspect-square w-24` (96px), `sm:w-[104px]`. Shared via `tileItemClassName`.
 - **Group tile:** Secondary fill, centered Lucide group icon (28px), name at label size, word count at micro. Entire tile is clickable; delete button always visible when hover is unavailable, otherwise reveals on hover/focus-within.
-- **Word tile:** Secondary fill; centered stack of character (display size), transcription micro, translation label; progress bar footer (0.5px lines + centered percent). Top/side border color reflects mastery (see Progress Green).
+- **Word tile:** Secondary fill; centered stack of character (display size), transcription micro, translation label; continuous 2 px progress border with the mastery percent centered on the bottom edge (card fill interrupts the stroke so corners stay clean). Border color reflects mastery (see Progress Green).
 - **Create tile:** Dashed 2px border, secondary/50 background, Plus icon 24px, micro caption ("Create group" / "Add word"). Hover: solid secondary, primary/50 border tint.
 - **Delete affordance:** Ghost icon button, absolute top-right overlay, 36px hit target with the 14px icon hugged into the corner (`items-start justify-end p-1.5`). Rest color is Supporting Gray; hover/active/focus brighten to red-400 / red-300 with no background fill. Always at full opacity when `(hover: none)`; on `(hover: hover)` opacity 0 → 100 on group/card hover or focus-within (`can-hover` Tailwind variant). Soft red focus-visible ring. Does not reserve layout space — word-tile content is a centered character + metadata stack so glyphs keep the stage. 150ms opacity/color transition; `motion-reduce:transition-none`. Same visibility rule for other hover-gated tile actions (e.g. group title edit).
-- **Word tile content:** Centered vertical stack — character (`text-2xl`) then tight pinyin + translation (`gap-1.5` / `space-y-0.5`). Progress bar stays a shrink-0 footer.
+- **Word tile content:** Centered vertical stack — character (`text-2xl`) then tight pinyin + translation (`gap-1.5` / `space-y-0.5`). Progress percent sits on the bottom border, not as a separate footer bar.
 
 ### Dialogs
 

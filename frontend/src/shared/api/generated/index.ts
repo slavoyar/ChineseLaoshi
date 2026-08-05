@@ -9,9 +9,6 @@ export interface Card {
   progress: number /* float64 */;
   word: Word;
   showCount: number /* int */;
-  step: number /* float64 */;
-  isWinStreak: boolean;
-  streak: number /* int */;
 }
 export interface CreateCardWord {
   id?: string;

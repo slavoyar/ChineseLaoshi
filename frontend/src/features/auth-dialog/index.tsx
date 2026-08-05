@@ -1,10 +1,9 @@
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
+import { messageForApiError, parseApiError } from '@shared/api';
 import { useAuthStore } from '@shared/stores';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@shared/ui';
 import { cn } from '@shared/utils';
-import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import { useState } from 'react';
-
-import { messageForApiError, parseApiError } from '@shared/api';
 
 export const AuthDialog = () => {
   const [isOpen, closeAuthDialog, signInWithGoogle] = useAuthStore((state) => [

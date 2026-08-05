@@ -1,5 +1,5 @@
-import { apiRequest } from '@shared/api/api-error';
-import type { PinyinRequest, PinyinResponse } from '@shared/api/generated';
+import { apiRequest } from './api-error';
+import type { PinyinRequest, PinyinResponse } from './generated';
 import axios, { type CancelTokenSource } from 'axios';
 
 const URL = '/api/pinyin';

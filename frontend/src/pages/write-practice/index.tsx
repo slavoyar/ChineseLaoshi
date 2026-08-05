@@ -90,7 +90,5 @@ export const WritePractice = () => {
     }
   };
 
-  return (
-    <div className='flex h-full items-center justify-center'>{current && getWidget(current)}</div>
-  );
+  return <div className='flex h-full items-center justify-center'>{current && getWidget(current)}</div>;
 };

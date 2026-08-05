@@ -74,13 +74,10 @@ export const parseApiError = (err: unknown): ApiError => {
       const body = data as Record<string, unknown>;
       const code = isErrorCode(body.code) ? body.code : 'internalError';
       const message = typeof body.message === 'string' ? body.message : GENERIC_MESSAGE;
-      const details = Array.isArray(body.details)
-        ? body.details.filter(isValidationDetail)
-        : undefined;
+      const details = Array.isArray(body.details) ? body.details.filter(isValidationDetail) : undefined;
       return {
         code,
-        statusCode:
-          typeof body.statusCode === 'number' ? body.statusCode : (err.response.status ?? 500),
+        statusCode: typeof body.statusCode === 'number' ? body.statusCode : (err.response.status ?? 500),
         message,
         details,
       };
@@ -140,10 +137,7 @@ export const notifyApiError = (err: unknown, options: ApiRequestOptions = {}): n
   throw err;
 };
 
-export const apiRequest = async <T>(
-  promise: Promise<T>,
-  options: ApiRequestOptions = {}
-): Promise<T> => {
+export const apiRequest = async <T>(promise: Promise<T>, options: ApiRequestOptions = {}): Promise<T> => {
   try {
     return await promise;
   } catch (err) {

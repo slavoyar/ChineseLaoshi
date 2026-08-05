@@ -67,9 +67,8 @@ export class BaseService<Entity, Create = Entity, Update = Entity> {
   }
 
   delete(id: string) {
-    return this.request(
-      axios.delete(`${this.url}/${id}`, { cancelToken: this.getCancelToken('delete') }),
-      { notify: true }
-    );
+    return this.request(axios.delete(`${this.url}/${id}`, { cancelToken: this.getCancelToken('delete') }), {
+      notify: true,
+    });
   }
 }

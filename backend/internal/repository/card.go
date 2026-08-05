@@ -14,25 +14,42 @@ import (
 )
 
 type CardRow struct {
-	ID          string
-	GroupID     string
-	WordID      string
-	ShowCount   int
-	Progress    float64
-	Step        float64
-	IsWinStreak bool
-	Streak      int
-	UpdatedAt   time.Time
+	ID            string
+	GroupID       string
+	WordID        string
+	ShowCount     int
+	Progress      float64
+	Due           time.Time
+	Stability     float64
+	Difficulty    float64
+	ElapsedDays   int
+	ScheduledDays int
+	Reps          int
+	Lapses        int
+	State         int
+	LastReview    *time.Time
+	UpdatedAt     time.Time
+}
+
+type CardWithWord struct {
+	Card CardRow
+	Word dto.Word
 }
 
 type UpdateCardInput struct {
-	ID          string
-	WordID      *string
-	Progress    *float64
-	ShowCount   *int
-	Step        *float64
-	IsWinStreak *bool
-	Streak      *int
+	ID            string
+	WordID        *string
+	Progress      *float64
+	ShowCount     *int
+	Due           *time.Time
+	Stability     *float64
+	Difficulty    *float64
+	ElapsedDays   *int
+	ScheduledDays *int
+	Reps          *int
+	Lapses        *int
+	State         *int
+	LastReview    *time.Time
 }
 
 type CardRepository struct {
@@ -43,38 +60,44 @@ func NewCardRepository(pool *pgxpool.Pool) *CardRepository {
 	return &CardRepository{pool: pool}
 }
 
-func cardToDTO(row CardRow, word dto.Word) dto.Card {
-	return dto.Card{
-		ID:          row.ID,
-		GroupID:     row.GroupID,
-		Progress:    row.Progress,
-		Word:        word,
-		ShowCount:   row.ShowCount,
-		Step:        row.Step,
-		IsWinStreak: row.IsWinStreak,
-		Streak:      row.Streak,
-	}
+const cardSelectCols = `c.id, c."groupId", c."wordId", c."showCount", c.progress,
+	c.due, c.stability, c.difficulty, c."elapsedDays", c."scheduledDays",
+	c.reps, c.lapses, c.state, c."lastReview", c."updatedAt"`
+
+const cardReturningCols = `id, "groupId", "wordId", "showCount", progress,
+	due, stability, difficulty, "elapsedDays", "scheduledDays",
+	reps, lapses, state, "lastReview", "updatedAt"`
+
+func (r *CardRepository) scanCardRow(row pgx.Row) (CardRow, error) {
+	var c CardRow
+	err := row.Scan(
+		&c.ID, &c.GroupID, &c.WordID, &c.ShowCount, &c.Progress,
+		&c.Due, &c.Stability, &c.Difficulty, &c.ElapsedDays, &c.ScheduledDays,
+		&c.Reps, &c.Lapses, &c.State, &c.LastReview, &c.UpdatedAt,
+	)
+	return c, err
 }
 
-func (r *CardRepository) scanCardWithWord(row pgx.Row) (dto.Card, error) {
+func (r *CardRepository) scanCardWithWord(row pgx.Row) (CardWithWord, error) {
 	var c CardRow
 	var w dto.Word
 	err := row.Scan(
-		&c.ID, &c.GroupID, &c.WordID, &c.ShowCount, &c.Progress, &c.Step, &c.IsWinStreak, &c.Streak, &c.UpdatedAt,
+		&c.ID, &c.GroupID, &c.WordID, &c.ShowCount, &c.Progress,
+		&c.Due, &c.Stability, &c.Difficulty, &c.ElapsedDays, &c.ScheduledDays,
+		&c.Reps, &c.Lapses, &c.State, &c.LastReview, &c.UpdatedAt,
 		&w.ID, &w.Symbols, &w.Transcription, &w.Translation,
 	)
 	if err != nil {
-		return dto.Card{}, err
+		return CardWithWord{}, err
 	}
-	return cardToDTO(c, w), nil
+	return CardWithWord{Card: c, Word: w}, nil
 }
 
 func (r *CardRepository) GetCardByID(ctx context.Context, id string) (CardRow, error) {
-	var c CardRow
-	err := r.pool.QueryRow(ctx, `
-		SELECT id, "groupId", "wordId", "showCount", progress, step, "isWinStreak", streak, "updatedAt"
+	c, err := r.scanCardRow(r.pool.QueryRow(ctx, `
+		SELECT `+cardReturningCols+`
 		FROM "Card" WHERE id = $1
-	`, id).Scan(&c.ID, &c.GroupID, &c.WordID, &c.ShowCount, &c.Progress, &c.Step, &c.IsWinStreak, &c.Streak, &c.UpdatedAt)
+	`, id))
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return CardRow{}, apperrors.New(apperrors.EntityNotFoundError)
@@ -108,9 +131,9 @@ func (r *CardRepository) AssertOwnedByUser(ctx context.Context, cardID, userID s
 	return nil
 }
 
-func (r *CardRepository) GetCardsByGroupID(ctx context.Context, groupID, userID string) ([]dto.Card, error) {
+func (r *CardRepository) GetCardsByGroupID(ctx context.Context, groupID, userID string) ([]CardWithWord, error) {
 	rows, err := r.pool.Query(ctx, `
-		SELECT c.id, c."groupId", c."wordId", c."showCount", c.progress, c.step, c."isWinStreak", c.streak, c."updatedAt",
+		SELECT `+cardSelectCols+`,
 		       w.id, w.symbols, w.transcription, w.translation
 		FROM "Card" c
 		JOIN "Word" w ON w.id = c."wordId"
@@ -122,7 +145,7 @@ func (r *CardRepository) GetCardsByGroupID(ctx context.Context, groupID, userID 
 	}
 	defer rows.Close()
 
-	cards := make([]dto.Card, 0)
+	cards := make([]CardWithWord, 0)
 	for rows.Next() {
 		card, err := r.scanCardWithWord(rows)
 		if err != nil {
@@ -133,18 +156,15 @@ func (r *CardRepository) GetCardsByGroupID(ctx context.Context, groupID, userID 
 	return cards, rows.Err()
 }
 
-func (r *CardRepository) CreateCard(ctx context.Context, tx pgx.Tx, groupID, wordID string) (dto.Card, error) {
+func (r *CardRepository) CreateCard(ctx context.Context, tx pgx.Tx, groupID, wordID string) (CardWithWord, error) {
 	id := uuid.NewString()
-	row := tx.QueryRow(ctx, `
+	c, err := r.scanCardRow(tx.QueryRow(ctx, `
 		INSERT INTO "Card" (id, "groupId", "wordId", "updatedAt")
 		VALUES ($1, $2, $3, NOW())
-		RETURNING id, "groupId", "wordId", "showCount", progress, step, "isWinStreak", streak, "updatedAt"
-	`, id, groupID, wordID)
-
-	var c CardRow
-	err := row.Scan(&c.ID, &c.GroupID, &c.WordID, &c.ShowCount, &c.Progress, &c.Step, &c.IsWinStreak, &c.Streak, &c.UpdatedAt)
+		RETURNING `+cardReturningCols+`
+	`, id, groupID, wordID))
 	if err != nil {
-		return dto.Card{}, err
+		return CardWithWord{}, err
 	}
 
 	var w dto.Word
@@ -152,13 +172,13 @@ func (r *CardRepository) CreateCard(ctx context.Context, tx pgx.Tx, groupID, wor
 		SELECT id, symbols, transcription, translation FROM "Word" WHERE id = $1
 	`, wordID).Scan(&w.ID, &w.Symbols, &w.Transcription, &w.Translation)
 	if err != nil {
-		return dto.Card{}, err
+		return CardWithWord{}, err
 	}
 
-	return cardToDTO(c, w), nil
+	return CardWithWord{Card: c, Word: w}, nil
 }
 
-func (r *CardRepository) UpdateCard(ctx context.Context, tx pgx.Tx, data UpdateCardInput) (dto.Card, error) {
+func (r *CardRepository) UpdateCard(ctx context.Context, tx pgx.Tx, data UpdateCardInput) (CardWithWord, error) {
 	query := `UPDATE "Card" SET "updatedAt" = NOW()`
 	args := []any{data.ID}
 	argPos := 2
@@ -178,38 +198,62 @@ func (r *CardRepository) UpdateCard(ctx context.Context, tx pgx.Tx, data UpdateC
 		args = append(args, *data.ShowCount)
 		argPos++
 	}
-	if data.Step != nil {
-		query += fmt.Sprintf(`, step = $%d`, argPos)
-		args = append(args, *data.Step)
+	if data.Due != nil {
+		query += fmt.Sprintf(`, due = $%d`, argPos)
+		args = append(args, *data.Due)
 		argPos++
 	}
-	if data.IsWinStreak != nil {
-		query += fmt.Sprintf(`, "isWinStreak" = $%d`, argPos)
-		args = append(args, *data.IsWinStreak)
+	if data.Stability != nil {
+		query += fmt.Sprintf(`, stability = $%d`, argPos)
+		args = append(args, *data.Stability)
 		argPos++
 	}
-	if data.Streak != nil {
-		query += fmt.Sprintf(`, streak = $%d`, argPos)
-		args = append(args, *data.Streak)
+	if data.Difficulty != nil {
+		query += fmt.Sprintf(`, difficulty = $%d`, argPos)
+		args = append(args, *data.Difficulty)
 		argPos++
+	}
+	if data.ElapsedDays != nil {
+		query += fmt.Sprintf(`, "elapsedDays" = $%d`, argPos)
+		args = append(args, *data.ElapsedDays)
+		argPos++
+	}
+	if data.ScheduledDays != nil {
+		query += fmt.Sprintf(`, "scheduledDays" = $%d`, argPos)
+		args = append(args, *data.ScheduledDays)
+		argPos++
+	}
+	if data.Reps != nil {
+		query += fmt.Sprintf(`, reps = $%d`, argPos)
+		args = append(args, *data.Reps)
+		argPos++
+	}
+	if data.Lapses != nil {
+		query += fmt.Sprintf(`, lapses = $%d`, argPos)
+		args = append(args, *data.Lapses)
+		argPos++
+	}
+	if data.State != nil {
+		query += fmt.Sprintf(`, state = $%d`, argPos)
+		args = append(args, *data.State)
+		argPos++
+	}
+	if data.LastReview != nil {
+		query += fmt.Sprintf(`, "lastReview" = $%d`, argPos)
+		args = append(args, *data.LastReview)
 	}
 
-	query += fmt.Sprintf(` WHERE id = $1
-		RETURNING id, "groupId", "wordId", "showCount", progress, step, "isWinStreak", streak, "updatedAt"`)
+	query += ` WHERE id = $1 RETURNING ` + cardReturningCols
 
 	var c CardRow
 	var err error
 	if tx != nil {
-		err = tx.QueryRow(ctx, query, args...).Scan(
-			&c.ID, &c.GroupID, &c.WordID, &c.ShowCount, &c.Progress, &c.Step, &c.IsWinStreak, &c.Streak, &c.UpdatedAt,
-		)
+		c, err = r.scanCardRow(tx.QueryRow(ctx, query, args...))
 	} else {
-		err = r.pool.QueryRow(ctx, query, args...).Scan(
-			&c.ID, &c.GroupID, &c.WordID, &c.ShowCount, &c.Progress, &c.Step, &c.IsWinStreak, &c.Streak, &c.UpdatedAt,
-		)
+		c, err = r.scanCardRow(r.pool.QueryRow(ctx, query, args...))
 	}
 	if err != nil {
-		return dto.Card{}, err
+		return CardWithWord{}, err
 	}
 
 	var w dto.Word
@@ -223,10 +267,10 @@ func (r *CardRepository) UpdateCard(ctx context.Context, tx pgx.Tx, data UpdateC
 		`, c.WordID).Scan(&w.ID, &w.Symbols, &w.Transcription, &w.Translation)
 	}
 	if err != nil {
-		return dto.Card{}, err
+		return CardWithWord{}, err
 	}
 
-	return cardToDTO(c, w), nil
+	return CardWithWord{Card: c, Word: w}, nil
 }
 
 func (r *CardRepository) DeleteCard(ctx context.Context, tx pgx.Tx, id string) error {
@@ -245,9 +289,9 @@ func (r *CardRepository) DeleteCardByGroupID(ctx context.Context, groupID string
 	return err
 }
 
-func (r *CardRepository) GetWriteCards(ctx context.Context, count int, userID string, groupID *string) ([]dto.Card, error) {
+func (r *CardRepository) GetWriteCards(ctx context.Context, count int, userID string, groupID *string) ([]CardWithWord, error) {
 	query := `
-		SELECT c.id, c."groupId", c."wordId", c."showCount", c.progress, c.step, c."isWinStreak", c.streak, c."updatedAt",
+		SELECT ` + cardSelectCols + `,
 		       w.id, w.symbols, w.transcription, w.translation
 		FROM "Card" c
 		JOIN "Word" w ON w.id = c."wordId"
@@ -261,7 +305,15 @@ func (r *CardRepository) GetWriteCards(ctx context.Context, count int, userID st
 		args = append(args, *groupID)
 	}
 
-	query += ` ORDER BY c.progress ASC LIMIT ` + strconv.Itoa(count)
+	query += `
+		ORDER BY
+			CASE
+				WHEN c.due <= NOW() THEN 0
+				WHEN c.state = 0 THEN 1
+				ELSE 2
+			END,
+			c.due ASC
+		LIMIT ` + strconv.Itoa(count)
 
 	rows, err := r.pool.Query(ctx, query, args...)
 	if err != nil {
@@ -269,7 +321,7 @@ func (r *CardRepository) GetWriteCards(ctx context.Context, count int, userID st
 	}
 	defer rows.Close()
 
-	var cards []dto.Card
+	var cards []CardWithWord
 	for rows.Next() {
 		card, err := r.scanCardWithWord(rows)
 		if err != nil {
@@ -278,7 +330,7 @@ func (r *CardRepository) GetWriteCards(ctx context.Context, count int, userID st
 		cards = append(cards, card)
 	}
 	if cards == nil {
-		cards = []dto.Card{}
+		cards = []CardWithWord{}
 	}
 	return cards, rows.Err()
 }

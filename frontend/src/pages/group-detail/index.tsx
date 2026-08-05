@@ -61,11 +61,7 @@ export const GroupDetail = () => {
             Back
           </Link>
           {group ? (
-            <GroupEditableTitle
-              groupId={group.id}
-              name={group.name}
-              className='justify-center text-center'
-            />
+            <GroupEditableTitle groupId={group.id} name={group.name} className='justify-center text-center' />
           ) : (
             <h1 className='text-center text-2xl text-foreground'>Loading…</h1>
           )}
