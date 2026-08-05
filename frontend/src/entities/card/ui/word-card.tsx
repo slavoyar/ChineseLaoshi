@@ -39,12 +39,12 @@ export const WordCard = ({ card, onDelete }: Props) => {
       <div className={cn('group/card relative', tileItemClassName)}>
         <div
           className={cn(
-            'flex h-full flex-col overflow-hidden rounded-lg border-x-2 border-t-2 bg-secondary',
+            'relative flex h-full flex-col overflow-visible rounded-lg border-2 bg-secondary',
             progressStyles.border
           )}
           aria-label={`${card.word.symbols}, ${card.word.translation}, ${progressStyles.percentLabel}% progress`}
         >
-          <div className='flex min-h-0 flex-1 flex-col items-center justify-center gap-1.5 px-2 py-1.5'>
+          <div className='flex min-h-0 flex-1 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-[inherit] px-2 pb-3 pt-1.5'>
             <span className='text-2xl font-medium leading-none text-foreground'>{card.word.symbols}</span>
             <div className='w-full space-y-0.5 text-center'>
               <p className='truncate text-[10px] leading-tight text-muted-foreground'>
@@ -55,20 +55,14 @@ export const WordCard = ({ card, onDelete }: Props) => {
               </p>
             </div>
           </div>
-          <div className='relative flex h-3.5 shrink-0 items-center'>
-            <div className='flex w-full items-center'>
-              <div className={cn('h-0.5 flex-1', progressStyles.line)} />
-              <span
-                className={cn(
-                  'mx-0.5 shrink-0 px-0.5 text-[10px] font-semibold tabular-nums leading-none',
-                  progressStyles.label
-                )}
-              >
-                {progressStyles.percentLabel}%
-              </span>
-              <div className={cn('h-0.5 flex-1', progressStyles.line)} />
-            </div>
-          </div>
+          <span
+            className={cn(
+              'absolute bottom-0 left-1/2 z-10 -translate-x-1/2 translate-y-1/2 bg-secondary px-1 text-[10px] font-semibold tabular-nums leading-none',
+              progressStyles.label
+            )}
+          >
+            {progressStyles.percentLabel}%
+          </span>
         </div>
         {!isDemo && (
           <TileDeleteButton

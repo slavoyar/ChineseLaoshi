@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/slavo/ChineseLaoshi/backend/internal/apperrors"
@@ -121,6 +122,44 @@ func TestCardRepository_GetWriteCards(t *testing.T) {
 	}
 	if len(list) != 2 {
 		t.Fatalf("expected 2 cards, got %d", len(list))
+	}
+}
+
+func TestCardRepository_GetWriteCardsOrdersDueThenNew(t *testing.T) {
+	_, _, cards, _, _, _, userID := setupRepos(t)
+	ctx := context.Background()
+
+	past := time.Now().UTC().Add(-time.Hour)
+	future := time.Now().UTC().Add(48 * time.Hour)
+	reviewState := 2 // fsrs.Review
+	newState := 0    // fsrs.New
+	stability := 4.0
+
+	// UUID(1) due now (past), UUID(2) future New — within same group.
+	if _, err := cards.UpdateCard(ctx, nil, repository.UpdateCardInput{
+		ID: testutil.GetUUID(1), Due: &past, State: &reviewState, Stability: &stability,
+	}); err != nil {
+		t.Fatalf("update due: %v", err)
+	}
+	if _, err := cards.UpdateCard(ctx, nil, repository.UpdateCardInput{
+		ID: testutil.GetUUID(2), Due: &future, State: &newState,
+	}); err != nil {
+		t.Fatalf("update new: %v", err)
+	}
+
+	groupID := testutil.GetUUID(1)
+	list, err := cards.GetWriteCards(ctx, 2, userID, &groupID)
+	if err != nil {
+		t.Fatalf("get write cards: %v", err)
+	}
+	if len(list) != 2 {
+		t.Fatalf("expected 2, got %d", len(list))
+	}
+	if list[0].Card.ID != testutil.GetUUID(1) {
+		t.Fatalf("expected due card first, got %s", list[0].Card.ID)
+	}
+	if list[1].Card.ID != testutil.GetUUID(2) {
+		t.Fatalf("expected new card second, got %s", list[1].Card.ID)
 	}
 }
 

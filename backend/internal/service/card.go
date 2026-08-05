@@ -55,7 +55,19 @@ func rowToFSRSCard(row repository.CardRow) fsrs.Card {
 }
 
 func (s *CardService) progressFor(row repository.CardRow, now time.Time) float64 {
-	return s.fsrs.GetRetrievability(rowToFSRSCard(row), now)
+	state := fsrs.State(row.State)
+	if state == fsrs.New {
+		return 0
+	}
+	r := s.fsrs.GetRetrievability(rowToFSRSCard(row), now)
+	// Right after a review R≈1 even for Again. Keep Learning/Relearning mastery visually low
+	// until the card graduates to Review; scheduling still uses full FSRS state.
+	if state == fsrs.Learning || state == fsrs.Relearning {
+		if r > 0.45 {
+			return 0.45
+		}
+	}
+	return r
 }
 
 func (s *CardService) toDTO(cw repository.CardWithWord, now time.Time) dto.Card {
@@ -238,7 +250,17 @@ func (s *CardService) UpdateCardStats(ctx context.Context, data dto.UpdateCardSt
 	}
 
 	next := s.fsrs.Next(rowToFSRSCard(card), now, rating).Card
-	progress := s.fsrs.GetRetrievability(next, now)
+	progress := s.progressFor(repository.CardRow{
+		Due:           next.Due,
+		Stability:     next.Stability,
+		Difficulty:    next.Difficulty,
+		ElapsedDays:   int(next.ElapsedDays),
+		ScheduledDays: int(next.ScheduledDays),
+		Reps:          int(next.Reps),
+		Lapses:        int(next.Lapses),
+		State:         int(next.State),
+		LastReview:    &next.LastReview,
+	}, now)
 	showCount := card.ShowCount + 1
 	elapsedDays := int(next.ElapsedDays)
 	scheduledDays := int(next.ScheduledDays)

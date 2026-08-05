@@ -28,6 +28,18 @@ func TestCards_GetByGroup(t *testing.T) {
 	if len(body) != 2 {
 		t.Fatalf("expected 2 cards, got %d", len(body))
 	}
+	card := body[0]
+	for _, key := range []string{"step", "streak", "isWinStreak"} {
+		if _, ok := card[key]; ok {
+			t.Fatalf("legacy field %q should be omitted from Card JSON", key)
+		}
+	}
+	if _, ok := card["progress"]; !ok {
+		t.Fatal("expected progress field")
+	}
+	if _, ok := card["showCount"]; !ok {
+		t.Fatal("expected showCount field")
+	}
 }
 
 func TestCards_CreateWithNewWord(t *testing.T) {
