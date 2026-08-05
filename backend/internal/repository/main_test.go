@@ -505,3 +505,59 @@ func TestCardRepository_UpdateCardWithTx(t *testing.T) {
 		t.Fatalf("update with tx: %v %+v", err, updated)
 	}
 }
+
+func TestCardRepository_UpdateCardFSRSFields(t *testing.T) {
+	_, _, cards, _, _, _, _ := setupRepos(t)
+	ctx := context.Background()
+
+	wordID := testutil.GetUUID(3)
+	due := time.Now().UTC().Add(72 * time.Hour)
+	lastReview := time.Now().UTC().Add(-48 * time.Hour)
+	progress := 0.72
+	showCount := 4
+	stability := 6.5
+	difficulty := 4.2
+	elapsed := 2
+	scheduled := 3
+	reps := 5
+	lapses := 1
+	state := 2
+
+	updated, err := cards.UpdateCard(ctx, nil, repository.UpdateCardInput{
+		ID:            testutil.GetUUID(1),
+		WordID:        &wordID,
+		Progress:      &progress,
+		ShowCount:     &showCount,
+		Due:           &due,
+		Stability:     &stability,
+		Difficulty:    &difficulty,
+		ElapsedDays:   &elapsed,
+		ScheduledDays: &scheduled,
+		Reps:          &reps,
+		Lapses:        &lapses,
+		State:         &state,
+		LastReview:    &lastReview,
+	})
+	if err != nil {
+		t.Fatalf("update fsrs fields: %v", err)
+	}
+	row := updated.Card
+	if row.WordID != wordID || row.Progress != progress || row.ShowCount != showCount {
+		t.Fatalf("unexpected basic fields: %+v", row)
+	}
+	if row.Stability != stability || row.Difficulty != difficulty {
+		t.Fatalf("unexpected stability/difficulty: %+v", row)
+	}
+	if row.ElapsedDays != elapsed || row.ScheduledDays != scheduled {
+		t.Fatalf("unexpected day fields: %+v", row)
+	}
+	if row.Reps != reps || row.Lapses != lapses || row.State != state {
+		t.Fatalf("unexpected counters/state: %+v", row)
+	}
+	if row.LastReview == nil {
+		t.Fatal("expected lastReview")
+	}
+	if row.Due.IsZero() {
+		t.Fatal("expected due")
+	}
+}
