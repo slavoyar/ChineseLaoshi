@@ -11,12 +11,7 @@ interface Props {
 
 export const CardList = ({ groupId, wordCount, onDelete, renderAddDialog }: Props) => {
   return (
-    <WordGrid
-      groupId={groupId}
-      wordCount={wordCount}
-      onDelete={onDelete}
-      renderAddDialog={renderAddDialog}
-    />
+    <WordGrid groupId={groupId} wordCount={wordCount} onDelete={onDelete} renderAddDialog={renderAddDialog} />
   );
 };
 

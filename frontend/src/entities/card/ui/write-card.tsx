@@ -21,8 +21,7 @@ interface Props extends Word {
 const symbolKeys = (symbols: string, id: string) =>
   symbols.split('').map((symbol, index) => `${id}-${symbol}-${index}`);
 
-const cssHex = (name: string) =>
-  getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const cssHex = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
 const writerColors = () => {
   const stroke = cssHex('--hanzi-stroke');
@@ -167,8 +166,7 @@ export const WriteCard = ({
     isSubmittingRef.current = true;
 
     const cardId = id;
-    const shouldUpdateStats =
-      updateStats && !isDemo && hintCountRef.current < HINT_SKIP_PROGRESS_THRESHOLD;
+    const shouldUpdateStats = updateStats && !isDemo && hintCountRef.current < HINT_SKIP_PROGRESS_THRESHOLD;
     onNext();
 
     try {

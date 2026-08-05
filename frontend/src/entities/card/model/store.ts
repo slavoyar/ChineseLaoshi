@@ -1,7 +1,7 @@
 import { Card, CreateCard } from '@shared/api';
+import { create } from 'zustand';
 
 import cardService from '../api';
-import { create } from 'zustand';
 
 interface State {
   cardsPerGroup: Record<string, Card[]>;

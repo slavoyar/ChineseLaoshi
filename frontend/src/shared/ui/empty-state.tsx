@@ -39,9 +39,7 @@ export const EmptyState = ({
         {motif}
       </div>
       <div className={cn('flex max-w-md flex-col', isCompact ? 'gap-1' : 'gap-2')}>
-        <h2 className={cn('font-semibold text-foreground', isCompact ? 'text-lg' : 'text-2xl')}>
-          {title}
-        </h2>
+        <h2 className={cn('font-semibold text-foreground', isCompact ? 'text-lg' : 'text-2xl')}>{title}</h2>
         {description ? <p className='text-sm text-muted-foreground'>{description}</p> : null}
       </div>
       {action ? <div className='flex flex-wrap items-center justify-center gap-3'>{action}</div> : null}
