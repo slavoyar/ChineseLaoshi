@@ -1,14 +1,11 @@
 package dto
 
 type Card struct {
-	ID          string  `json:"id"`
-	GroupID     string  `json:"groupId"`
-	Progress    float64 `json:"progress"`
-	Word        Word    `json:"word"`
-	ShowCount   int     `json:"showCount"`
-	Step        float64 `json:"step"`
-	IsWinStreak bool    `json:"isWinStreak"`
-	Streak      int     `json:"streak"`
+	ID        string  `json:"id"`
+	GroupID   string  `json:"groupId"`
+	Progress  float64 `json:"progress"`
+	Word      Word    `json:"word"`
+	ShowCount int     `json:"showCount"`
 }
 
 type CreateCardWord struct {

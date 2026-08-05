@@ -255,7 +255,7 @@ func TestCardRepository_CreateUpdateDelete(t *testing.T) {
 		t.Fatalf("commit: %v", err)
 	}
 
-	row, err := cards.GetCardByID(ctx, card.ID)
+	row, err := cards.GetCardByID(ctx, card.Card.ID)
 	if err != nil {
 		t.Fatalf("get card: %v", err)
 	}
@@ -270,9 +270,9 @@ func TestCardRepository_CreateUpdateDelete(t *testing.T) {
 
 	progress := 0.5
 	updated, err := cards.UpdateCard(ctx, nil, repository.UpdateCardInput{
-		ID: card.ID, Progress: &progress,
+		ID: card.Card.ID, Progress: &progress,
 	})
-	if err != nil || updated.Progress != 0.5 {
+	if err != nil || updated.Card.Progress != 0.5 {
 		t.Fatalf("update card: %v %+v", err, updated)
 	}
 
@@ -281,7 +281,7 @@ func TestCardRepository_CreateUpdateDelete(t *testing.T) {
 		t.Fatalf("begin tx: %v", err)
 	}
 	defer tx.Rollback(ctx)
-	if err := cards.DeleteCard(ctx, tx, card.ID); err != nil {
+	if err := cards.DeleteCard(ctx, tx, card.Card.ID); err != nil {
 		t.Fatalf("delete card: %v", err)
 	}
 	if err := words.DeleteWord(ctx, tx, word.ID); err != nil {
@@ -462,7 +462,7 @@ func TestCardRepository_UpdateCardWithTx(t *testing.T) {
 	updated, err := cards.UpdateCard(ctx, tx, repository.UpdateCardInput{
 		ID: testutil.GetUUID(1), ShowCount: &showCount,
 	})
-	if err != nil || updated.ShowCount != 5 {
+	if err != nil || updated.Card.ShowCount != 5 {
 		t.Fatalf("update with tx: %v %+v", err, updated)
 	}
 }

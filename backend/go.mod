@@ -11,6 +11,7 @@ require (
 	github.com/jackc/pgx/v5 v5.7.4
 	github.com/joho/godotenv v1.5.1
 	github.com/mozillazg/go-pinyin v0.21.0
+	github.com/open-spaced-repetition/go-fsrs/v3 v3.3.1
 	github.com/yngpiu/pinyin-pro-go v0.0.0-20260627161159-30549cfd9d96
 	google.golang.org/api v0.289.0
 )

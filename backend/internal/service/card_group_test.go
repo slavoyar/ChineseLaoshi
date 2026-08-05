@@ -3,6 +3,7 @@ package service_test
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/slavo/ChineseLaoshi/backend/internal/apperrors"
 	"github.com/slavo/ChineseLaoshi/backend/internal/dto"
@@ -227,12 +228,28 @@ func TestCardService_GetWriteCardsWithGroupFilter(t *testing.T) {
 
 func TestCardService_UpdateCardStatsWinStreak(t *testing.T) {
 	_, svc, userID := setupFullServices(t)
-	for i := 0; i < 2; i++ {
-		if err := svc.UpdateCardStats(context.Background(), dto.UpdateCardStats{
-			ID: testutil.GetUUID(1), Guessed: true,
-		}, userID); err != nil {
-			t.Fatalf("update stats iteration %d: %v", i, err)
-		}
+	app := testutil.SetupTestApp(t)
+	cardRepo := repository.NewCardRepository(app.Pool())
+	cardID := testutil.GetUUID(1)
+
+	if err := svc.UpdateCardStats(context.Background(), dto.UpdateCardStats{
+		ID: cardID, Guessed: true,
+	}, userID); err != nil {
+		t.Fatalf("update stats: %v", err)
+	}
+
+	row, err := cardRepo.GetCardByID(context.Background(), cardID)
+	if err != nil {
+		t.Fatalf("get card: %v", err)
+	}
+	if row.Reps < 1 {
+		t.Fatalf("expected reps after good review, got %d", row.Reps)
+	}
+	if row.LastReview == nil {
+		t.Fatal("expected lastReview to be set")
+	}
+	if !row.Due.After(time.Now().Add(-time.Minute)) {
+		t.Fatalf("expected due to be scheduled, got %v", row.Due)
 	}
 }
 
@@ -268,24 +285,47 @@ func TestCardService_DeleteCardRemovesOrphanWord(t *testing.T) {
 	}
 }
 
-func TestCardService_UpdateCardStatsProgressCaps(t *testing.T) {
+func TestCardService_UpdateCardStatsGoodAndAgain(t *testing.T) {
 	_, svc, userID := setupFullServices(t)
 	app := testutil.SetupTestApp(t)
 	cardRepo := repository.NewCardRepository(app.Pool())
 	cardID := testutil.GetUUID(1)
-	for i := 0; i < 20; i++ {
-		if err := svc.UpdateCardStats(context.Background(), dto.UpdateCardStats{
-			ID: cardID, Guessed: true,
-		}, userID); err != nil {
-			t.Fatalf("update stats %d: %v", i, err)
-		}
+
+	if err := svc.UpdateCardStats(context.Background(), dto.UpdateCardStats{
+		ID: cardID, Guessed: true,
+	}, userID); err != nil {
+		t.Fatalf("good review: %v", err)
 	}
-	row, err := cardRepo.GetCardByID(context.Background(), cardID)
+	afterGood, err := cardRepo.GetCardByID(context.Background(), cardID)
 	if err != nil {
-		t.Fatalf("get card: %v", err)
+		t.Fatalf("get after good: %v", err)
 	}
-	if row.Progress != 1 {
-		t.Fatalf("expected progress capped at 1, got %f", row.Progress)
+	if afterGood.Progress < 0 || afterGood.Progress > 1 {
+		t.Fatalf("progress out of range: %f", afterGood.Progress)
+	}
+	if afterGood.Stability <= 0 {
+		t.Fatalf("expected positive stability after good, got %f", afterGood.Stability)
+	}
+	goodDue := afterGood.Due
+
+	if err := svc.UpdateCardStats(context.Background(), dto.UpdateCardStats{
+		ID: cardID, Guessed: false,
+	}, userID); err != nil {
+		t.Fatalf("again review: %v", err)
+	}
+	afterAgain, err := cardRepo.GetCardByID(context.Background(), cardID)
+	if err != nil {
+		t.Fatalf("get after again: %v", err)
+	}
+	if afterAgain.Due.IsZero() {
+		t.Fatal("expected due after again")
+	}
+	if !afterAgain.Due.Before(goodDue.Add(24 * time.Hour)) {
+		// Failures should not schedule further out than a successful long interval.
+		t.Fatalf("expected again due sooner than far-future good due: again=%v good=%v", afterAgain.Due, goodDue)
+	}
+	if afterAgain.Progress < 0 || afterAgain.Progress > 1 {
+		t.Fatalf("progress out of range after again: %f", afterAgain.Progress)
 	}
 }
 
