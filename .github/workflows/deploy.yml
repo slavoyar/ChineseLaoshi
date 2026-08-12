@@ -1,160 +1,54 @@
-name: Deploy to Coolify
-
+# Keep this workflow name: branch protection requires
+# "Lint, build and test frontend / lint-and-build".
+name: Lint, build and test frontend
 on:
-  workflow_run:
-    workflows:
-      - Lint, build and test frontend
-      - Lint, build and test backend
-    types:
-      - completed
+  push:
+    branches:
+      - production
+  pull_request:
     branches:
       - production
   workflow_dispatch:
-
-concurrency:
-  group: chineselaoshi-production-deploy
-  cancel-in-progress: true
 
 env:
   IMAGE_NAME: chineselaoshi
   REGISTRY: ghcr.io
 
 jobs:
-  build-and-deploy:
-    if: >
-      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/production') ||
-      (github.event_name == 'workflow_run' &&
-       github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.head_branch == 'production')
+  lint-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "23.9.0"
+
+      - run: npm install
+
+      - run: npm run lint
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: npm run build
+
+  deploy:
+    needs: lint-and-build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/production'
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-      actions: read
-      checks: read
     steps:
-      - name: Ensure SHA is tip and required CI is green
-        if: github.event_name == 'workflow_run'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HEAD: ${{ github.event.workflow_run.head_sha }}
-          REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
+      - uses: actions/checkout@v4
 
-          TIP=$(gh api "repos/${REPO}/commits/production" --jq .sha)
-          if [ "$TIP" != "$HEAD" ]; then
-            echo "Skipping deploy: workflow SHA $HEAD is not tip of production ($TIP)"
-            exit 0
-          fi
-
-          check_state() {
-            local name="$1"
-            gh api "repos/${REPO}/commits/${HEAD}/check-runs" --paginate \
-              --jq "[.check_runs[] | select(.name == \"${name}\")] | sort_by(.id) | reverse | .[0] | {status: (.status // \"missing\"), conclusion: (.conclusion // \"\")}"
-          }
-
-          wait_check() {
-            local name="$1"
-            local i status conclusion
-            for i in $(seq 1 90); do
-              status=$(check_state "$name" | jq -r .status)
-              conclusion=$(check_state "$name" | jq -r .conclusion)
-              if [ "$status" = "completed" ]; then
-                if [ "$conclusion" = "success" ]; then
-                  echo "Check ${name}: success"
-                  return 0
-                fi
-                echo "Check ${name} failed: ${conclusion}"
-                exit 1
-              fi
-              echo "Waiting for ${name} (status=${status})..."
-              sleep 10
-            done
-            echo "Timed out waiting for ${name}"
-            exit 1
-          }
-
-          # Backend CI is path-filtered on the whole push; the head commit alone
-          # may be frontend-only. Wait if a backend check appears; if it never
-          # starts within ~60s, treat backend CI as not applicable.
-          wait_backend_if_started() {
-            local i status conclusion seen=0
-            for i in $(seq 1 90); do
-              status=$(check_state "lint-build-and-test" | jq -r .status)
-              conclusion=$(check_state "lint-build-and-test" | jq -r .conclusion)
-              if [ "$status" != "missing" ]; then
-                seen=1
-              fi
-              if [ "$seen" -eq 0 ] && [ "$i" -ge 6 ]; then
-                echo "Backend check never started; skipping backend CI wait"
-                return 0
-              fi
-              if [ "$status" = "completed" ]; then
-                if [ "$conclusion" = "success" ]; then
-                  echo "Check lint-build-and-test: success"
-                  return 0
-                fi
-                echo "Check lint-build-and-test failed: ${conclusion}"
-                exit 1
-              fi
-              echo "Waiting for lint-build-and-test (status=${status})..."
-              sleep 10
-            done
-            echo "Timed out waiting for lint-build-and-test"
-            exit 1
-          }
-
-          wait_check "lint-and-build"
-          wait_backend_if_started
-
-          TIP=$(gh api "repos/${REPO}/commits/production" --jq .sha)
-          if [ "$TIP" != "$HEAD" ]; then
-            echo "Skipping deploy: production moved to $TIP during CI wait"
-            exit 0
-          fi
-
-          echo "TIP_OK=1" >> "$GITHUB_ENV"
-          echo "DEPLOY_SHA=${HEAD}" >> "$GITHUB_ENV"
-
-      - name: Checkout repository
-        if: github.event_name == 'workflow_dispatch' || env.TIP_OK == '1'
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
-
-      - name: Resolve image SHA
-        if: github.event_name == 'workflow_dispatch' || env.TIP_OK == '1'
-        id: meta
-        run: echo "sha=${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
-        env:
-          GITHUB_SHA: ${{ env.DEPLOY_SHA || github.sha }}
-
-      - name: Re-check tip before publish
-        if: github.event_name == 'workflow_run' && env.TIP_OK == '1'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HEAD: ${{ env.DEPLOY_SHA }}
-          REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          TIP=$(gh api "repos/${REPO}/commits/production" --jq .sha)
-          if [ "$TIP" != "$HEAD" ]; then
-            echo "Aborting: production tip is $TIP, deploy SHA is $HEAD"
-            exit 1
-          fi
-
-      - name: Log in to container registry
-        if: github.event_name == 'workflow_dispatch' || env.TIP_OK == '1'
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker image
-        if: github.event_name == 'workflow_dispatch' || env.TIP_OK == '1'
-        uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v6
         with:
           context: .
           push: true
@@ -162,34 +56,10 @@ jobs:
             VITE_GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
-            ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:sha-${{ steps.meta.outputs.sha }}
-
-      - name: Re-check tip before Coolify webhook
-        if: github.event_name == 'workflow_run' && env.TIP_OK == '1'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HEAD: ${{ env.DEPLOY_SHA }}
-          REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          TIP=$(gh api "repos/${REPO}/commits/production" --jq .sha)
-          if [ "$TIP" != "$HEAD" ]; then
-            echo "Aborting webhook: production tip is $TIP, deploy SHA is $HEAD"
-            exit 1
-          fi
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
 
       - name: Trigger Coolify deploy
-        if: github.event_name == 'workflow_dispatch' || env.TIP_OK == '1'
-        env:
-          COOLIFY_WEBHOOK: ${{ secrets.COOLIFY_WEBHOOK }}
-          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
-        run: |
-          set -euo pipefail
-          WEBHOOK="${COOLIFY_WEBHOOK}"
-          case "${WEBHOOK}" in
-            *\?*) WEBHOOK="${WEBHOOK}&force=true" ;;
-            *) WEBHOOK="${WEBHOOK}?force=true" ;;
-          esac
-          curl --fail --silent --show-error \
-            --request GET "${WEBHOOK}" \
-            --header "Authorization: Bearer ${COOLIFY_TOKEN}"
+        run: >
+          curl --fail --silent --show-error
+          --request GET "${{ secrets.COOLIFY_WEBHOOK }}"
+          --header "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}"

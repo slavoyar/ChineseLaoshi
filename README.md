@@ -24,9 +24,10 @@ Live URL: **https://chineselaoshi.slavoyar.tech**
 
 ### Deploy
 
-Push to `production` runs CI first; deploy starts after frontend CI succeeds and, when backend paths change, after backend CI succeeds. It builds and pushes `ghcr.io/<owner>/chineselaoshi:latest` and `:sha-<commit>`, then triggers Coolify via webhook. Manual runs are allowed only from the `production` branch.
+- **Pull request** to `production`: lint + frontend build only (no image push).
+- **Push** to `production` (or manual run on that branch): lint + frontend build, then push `ghcr.io/<owner>/chineselaoshi:latest` and `:sha-<commit>`, then Coolify webhook.
 
-Required GitHub Actions secrets: `COOLIFY_WEBHOOK`, `COOLIFY_TOKEN`, `GOOGLE_CLIENT_ID`. Configure application runtime environment in Coolify (not in this workflow).
+Required GitHub Actions secrets: `COOLIFY_WEBHOOK`, `COOLIFY_TOKEN`, `GOOGLE_CLIENT_ID`. Configure application runtime environment in Coolify (not in this workflow). If Coolify should always pull, include `force=true` in the webhook URL secret.
 
 ## Contact
 For questions or suggestions, please reach out to slavoyarmc@gmail.com.
