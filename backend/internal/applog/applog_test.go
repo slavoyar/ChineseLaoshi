@@ -207,3 +207,41 @@ func TestTelegramSend(t *testing.T) {
 		t.Fatalf("payload = %#v", payload)
 	}
 }
+
+func TestNotifySends(t *testing.T) {
+	var gotBody string
+	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		b, _ := io.ReadAll(r.Body)
+		gotBody = string(b)
+		w.WriteHeader(http.StatusOK)
+	}))
+	t.Cleanup(srv.Close)
+
+	n := NewTelegram(srv.URL, "tok", "chat1")
+	if n == nil {
+		t.Fatal("expected notifier")
+	}
+	n.client.Transport = srv.Client().Transport
+	Install(io.Discard, n)
+	t.Cleanup(func() { log.SetOutput(os.Stderr) })
+
+	Notify("server started")
+	Flush()
+
+	var payload struct {
+		Text string `json:"text"`
+	}
+	if err := json.Unmarshal([]byte(gotBody), &payload); err != nil {
+		t.Fatal(err)
+	}
+	if payload.Text != "server started" {
+		t.Fatalf("payload = %#v", payload)
+	}
+}
+
+func TestNotifyNilNoPanic(t *testing.T) {
+	Install(io.Discard, nil)
+	t.Cleanup(func() { log.SetOutput(os.Stderr) })
+	Notify("server started")
+	Flush()
+}

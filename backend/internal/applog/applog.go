@@ -137,6 +137,24 @@ func Flush() {
 	}
 }
 
+func Notify(text string) {
+	w := installed.Load()
+	if w == nil || w.n == nil || text == "" {
+		return
+	}
+	w.mu.Lock()
+	w.wg.Add(1)
+	w.mu.Unlock()
+	go func() {
+		defer w.wg.Done()
+		ctx, cancel := context.WithTimeout(context.Background(), notifyTimeout)
+		defer cancel()
+		if sendErr := w.n.Send(ctx, redact(text)); sendErr != nil {
+			fmt.Fprintln(w.stderr, "telegram notify failed")
+		}
+	}()
+}
+
 func Fatal(v ...any) {
 	log.Print(v...)
 	Flush()

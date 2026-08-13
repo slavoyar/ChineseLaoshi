@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -75,9 +76,14 @@ func main() {
 		ReadHeaderTimeout: 10 * time.Second,
 	}
 
+	ln, err := net.Listen("tcp", server.Addr)
+	if err != nil {
+		applog.Fatalf("ERROR server failed: %v", err)
+	}
+	log.Printf("INFO server listening on :%s", cfg.Port)
+	applog.Notify(startedMessage())
 	go func() {
-		log.Printf("INFO server listening on :%s", cfg.Port)
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := server.Serve(ln); err != nil && err != http.ErrServerClosed {
 			applog.Fatalf("ERROR server failed: %v", err)
 		}
 	}()
@@ -92,4 +98,15 @@ func main() {
 		log.Printf("ERROR shutdown error: %v", err)
 	}
 	applog.Flush()
+}
+
+func startedMessage() string {
+	msg := "Chinese Laoshi server started"
+	if sha := os.Getenv("SOURCE_COMMIT"); sha != "" {
+		if len(sha) > 12 {
+			sha = sha[:12]
+		}
+		msg += " " + sha
+	}
+	return msg
 }
