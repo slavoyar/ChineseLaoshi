@@ -34,7 +34,7 @@ func (h *AuthHandler) GoogleLogin(w http.ResponseWriter, r *http.Request) {
 
 	user, token, err := h.service.LoginWithGoogle(r.Context(), body.IDToken)
 	if err != nil {
-		log.Printf("google login failed: %v", err)
+		log.Printf("WARN google login failed: %v", err)
 		mapHandlerError(w, err)
 		return
 	}

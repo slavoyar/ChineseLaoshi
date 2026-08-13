@@ -19,9 +19,14 @@ func Logger(next http.Handler) http.Handler {
 		start := time.Now()
 		ww := middleware.NewWrapResponseWriter(w, r.ProtoMajor)
 		next.ServeHTTP(ww, r)
+		level := "INFO"
+		if ww.Status() >= 500 {
+			level = "ERROR"
+		}
 		log.Printf(
-			"[%s] %s %s %d - %s",
-			time.Now().Format(time.RFC3339),
+			"%s req=%s %s %s %d %s",
+			level,
+			middleware.GetReqID(r.Context()),
 			r.Method,
 			r.URL.String(),
 			ww.Status(),
@@ -58,7 +63,7 @@ func Recoverer(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			if rec := recover(); rec != nil {
-				log.Printf("panic: %v", rec)
+				log.Printf("ERROR panic: %v", rec)
 				http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			}
 		}()
@@ -82,7 +87,7 @@ func writeError(w http.ResponseWriter, err error) {
 		return
 	}
 
-	log.Printf("internal error: %v", err)
+	log.Printf("ERROR internal error: %v", err)
 	ae := apperrors.New(apperrors.InternalError)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(ae.StatusCode)

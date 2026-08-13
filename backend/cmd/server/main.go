@@ -22,22 +22,22 @@ func main() {
 	ctx := context.Background()
 
 	if cfg.JWTSecret == "" {
-		log.Fatal("JWT_SECRET is required")
+		log.Fatal("ERROR JWT_SECRET is required")
 	}
 	if cfg.GoogleClientID == "" {
-		log.Fatal("GOOGLE_CLIENT_ID is required")
+		log.Fatal("ERROR GOOGLE_CLIENT_ID is required")
 	}
 
 	migrationsPath := db.MigrationsPath()
 
 	database, err := db.Bootstrap(ctx, cfg, migrationsPath)
 	if err != nil {
-		log.Fatalf("database bootstrap failed: %v", err)
+		log.Fatalf("ERROR database bootstrap failed: %v", err)
 	}
 	defer database.Close()
 
 	if err := db.EnsureTemplateData(ctx, database.Pool, cfg.TemplateEmail); err != nil {
-		log.Fatalf("seed failed: %v", err)
+		log.Fatalf("ERROR seed failed: %v", err)
 	}
 
 	userRepo := repository.NewUserRepository(database.Pool)
@@ -74,9 +74,9 @@ func main() {
 	}
 
 	go func() {
-		log.Printf("server listening on :%s", cfg.Port)
+		log.Printf("INFO server listening on :%s", cfg.Port)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("server failed: %v", err)
+			log.Fatalf("ERROR server failed: %v", err)
 		}
 	}()
 
@@ -87,6 +87,6 @@ func main() {
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := server.Shutdown(shutdownCtx); err != nil {
-		log.Printf("shutdown error: %v", err)
+		log.Printf("ERROR shutdown error: %v", err)
 	}
 }
