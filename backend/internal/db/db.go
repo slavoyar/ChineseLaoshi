@@ -32,7 +32,7 @@ func Bootstrap(ctx context.Context, cfg config.Config, migrationsPath string) (*
 
 		embedded = embeddedpostgres.NewDatabase(embeddedPostgresConfig(cfg))
 
-		log.Printf("starting embedded postgres on :%d", cfg.EmbeddedPGPort)
+		log.Printf("INFO starting embedded postgres on :%d", cfg.EmbeddedPGPort)
 		if err := embedded.Start(); err != nil {
 			return nil, fmt.Errorf("start embedded postgres: %w", err)
 		}

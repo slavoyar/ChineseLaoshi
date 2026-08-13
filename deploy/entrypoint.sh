@@ -16,7 +16,7 @@ while [ "$i" -lt 90 ]; do
     break
   fi
   if ! kill -0 "$server_pid" 2>/dev/null; then
-    echo "backend exited before becoming ready" >&2
+    echo "ERROR backend exited before becoming ready" >&2
     wait "$server_pid" || true
     exit 1
   fi

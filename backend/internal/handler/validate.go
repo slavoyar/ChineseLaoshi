@@ -136,6 +136,6 @@ func mapHandlerError(w http.ResponseWriter, err error) {
 		writeJSON(w, ae.StatusCode, ae)
 		return
 	}
-	log.Printf("handler error: %v", err)
+	log.Printf("ERROR handler error: %v", err)
 	writeJSON(w, http.StatusInternalServerError, apperrors.New(apperrors.InternalError))
 }
