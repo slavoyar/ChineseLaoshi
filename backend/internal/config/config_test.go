@@ -42,3 +42,24 @@ func TestLoadAllowedOriginsExplicit(t *testing.T) {
 		t.Fatalf("unexpected first origin: %q", cfg.AllowedOrigins[0])
 	}
 }
+
+func TestLoadTelegramRelay(t *testing.T) {
+	t.Setenv("TELEGRAM_BOT_TOKEN", "")
+	t.Setenv("TELEGRAM_CHAT_ID", "")
+	t.Setenv("TELEGRAM_RELAY_BASE", "")
+	cfg := Load()
+	if cfg.TelegramRelayBase != "" {
+		t.Fatalf("empty relay = %q", cfg.TelegramRelayBase)
+	}
+
+	t.Setenv("TELEGRAM_RELAY_BASE", "https://relay.example/")
+	t.Setenv("TELEGRAM_BOT_TOKEN", "tok")
+	t.Setenv("TELEGRAM_CHAT_ID", "123")
+	cfg = Load()
+	if cfg.TelegramRelayBase != "https://relay.example" {
+		t.Fatalf("trimmed relay = %q", cfg.TelegramRelayBase)
+	}
+	if cfg.TelegramBotToken != "tok" || cfg.TelegramChatID != "123" {
+		t.Fatalf("token/chat = %q %q", cfg.TelegramBotToken, cfg.TelegramChatID)
+	}
+}

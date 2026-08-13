@@ -24,5 +24,8 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
+      TELEGRAM_RELAY_BASE: ${TELEGRAM_RELAY_BASE:-}
     volumes:
       - ${PG_DATA_HOST_PATH:-./data}:/app/data

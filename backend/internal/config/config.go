@@ -10,24 +10,27 @@ import (
 )
 
 const (
-	TemplateProvider        = "system"
-	TemplateProviderSubject = "template"
+	TemplateProvider         = "system"
+	TemplateProviderSubject  = "template"
 	DefaultTemplateEmail    = "demo-template@chineselaoshi.local"
 	DefaultSessionTTL       = 7 * 24 * time.Hour
 )
 
 type Config struct {
-	Port             string
-	DBURL            string
-	DataDir          string
-	TemplateEmail    string
-	NodeEnv          string
-	EmbeddedPGPort   uint32
-	GoogleClientID   string
-	JWTSecret        string
-	CookieSecure     bool
-	SessionTTL       time.Duration
-	AllowedOrigins   []string
+	Port              string
+	DBURL             string
+	DataDir           string
+	TemplateEmail     string
+	NodeEnv           string
+	EmbeddedPGPort    uint32
+	GoogleClientID    string
+	JWTSecret         string
+	CookieSecure      bool
+	SessionTTL        time.Duration
+	AllowedOrigins    []string
+	TelegramBotToken  string
+	TelegramChatID    string
+	TelegramRelayBase string
 }
 
 func Load() Config {
@@ -89,16 +92,19 @@ func Load() Config {
 	}
 
 	return Config{
-		Port:           port,
-		DBURL:          os.Getenv("DB_URL"),
-		DataDir:        dataDir,
-		TemplateEmail:  templateEmail,
-		NodeEnv:        nodeEnv,
-		EmbeddedPGPort: embeddedPort,
-		GoogleClientID: os.Getenv("GOOGLE_CLIENT_ID"),
-		JWTSecret:      os.Getenv("JWT_SECRET"),
-		CookieSecure:   cookieSecure,
-		SessionTTL:     sessionTTL,
-		AllowedOrigins: allowedOrigins,
+		Port:              port,
+		DBURL:             os.Getenv("DB_URL"),
+		DataDir:           dataDir,
+		TemplateEmail:     templateEmail,
+		NodeEnv:           nodeEnv,
+		EmbeddedPGPort:    embeddedPort,
+		GoogleClientID:    os.Getenv("GOOGLE_CLIENT_ID"),
+		JWTSecret:         os.Getenv("JWT_SECRET"),
+		CookieSecure:      cookieSecure,
+		SessionTTL:        sessionTTL,
+		AllowedOrigins:    allowedOrigins,
+		TelegramBotToken:  os.Getenv("TELEGRAM_BOT_TOKEN"),
+		TelegramChatID:    os.Getenv("TELEGRAM_CHAT_ID"),
+		TelegramRelayBase: strings.TrimRight(os.Getenv("TELEGRAM_RELAY_BASE"), "/"),
 	}
 }

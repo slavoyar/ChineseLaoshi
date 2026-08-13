@@ -27,7 +27,7 @@ Live URL: **https://chineselaoshi.slavoyar.tech**
 - **Pull request** to `production`: lint + frontend build only (no image push).
 - **Push** to `production` (or manual run on that branch): lint + frontend build, then push `ghcr.io/<owner>/chineselaoshi:latest` and `:sha-<commit>`, then Coolify webhook.
 
-Required GitHub Actions secrets: `COOLIFY_WEBHOOK`, `COOLIFY_TOKEN`, `GOOGLE_CLIENT_ID`. Configure application runtime environment in Coolify (not in this workflow). If Coolify should always pull, include `force=true` in the webhook URL secret.
+Required GitHub Actions secrets: `COOLIFY_WEBHOOK`, `COOLIFY_TOKEN`, `GOOGLE_CLIENT_ID`. Configure application runtime environment in Coolify (not in this workflow). For ERROR log Telegram notifies, set `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, and `TELEGRAM_RELAY_BASE`. If Coolify should always pull, include `force=true` in the webhook URL secret.
 
 ## Contact
 For questions or suggestions, please reach out to slavoyarmc@gmail.com.

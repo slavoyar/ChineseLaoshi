@@ -56,6 +56,9 @@ Copy `backend/.env.example` to `backend/.env` and fill in values. `npm run dev:b
 | `SESSION_TTL_HOURS` | `168` (7 days) | Session cookie lifetime |
 | `ALLOWED_ORIGINS` | non-prod: `http://localhost:5173`, `http://127.0.0.1:5173`; production: *(empty = reject all)* | Origins allowed for **all** `/api` requests (Origin/Referer). Always set explicitly in production. |
 | `NODE_ENV` | *(empty)* | `production` enables secure cookies and disables localhost origin defaults. `test` disables request logging. |
+| `TELEGRAM_BOT_TOKEN` | *(empty)* | Optional. BotFather token. Empty = stderr-only logs (no Telegram). |
+| `TELEGRAM_CHAT_ID` | *(empty)* | Optional. Destination chat. Empty = no Telegram. |
+| `TELEGRAM_RELAY_BASE` | *(empty)* | `https://` base of the Telegram Caddy relay. Required together with token and chat. HTTP is rejected. Do not call `api.telegram.org` from the app host. Telegram Bot API puts the token in the URL path; configure the relay so access logs do not record `/bot*` URLs. |
 
 > **Security:** The Vite dev proxy must target the **local** backend only (`http://localhost:3000`). Do not proxy local frontend traffic to production — production rejects non-allowlisted origins (including localhost).
 

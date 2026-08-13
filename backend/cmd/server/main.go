@@ -3,12 +3,14 @@ package main
 import (
 	"context"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"github.com/slavo/ChineseLaoshi/backend/internal/applog"
 	"github.com/slavo/ChineseLaoshi/backend/internal/auth"
 	"github.com/slavo/ChineseLaoshi/backend/internal/config"
 	"github.com/slavo/ChineseLaoshi/backend/internal/db"
@@ -19,25 +21,26 @@ import (
 
 func main() {
 	cfg := config.Load()
+	applog.Install(os.Stderr, applog.NewTelegram(cfg.TelegramRelayBase, cfg.TelegramBotToken, cfg.TelegramChatID))
 	ctx := context.Background()
 
 	if cfg.JWTSecret == "" {
-		log.Fatal("ERROR JWT_SECRET is required")
+		applog.Fatal("ERROR JWT_SECRET is required")
 	}
 	if cfg.GoogleClientID == "" {
-		log.Fatal("ERROR GOOGLE_CLIENT_ID is required")
+		applog.Fatal("ERROR GOOGLE_CLIENT_ID is required")
 	}
 
 	migrationsPath := db.MigrationsPath()
 
 	database, err := db.Bootstrap(ctx, cfg, migrationsPath)
 	if err != nil {
-		log.Fatalf("ERROR database bootstrap failed: %v", err)
+		applog.Fatalf("ERROR database bootstrap failed: %v", err)
 	}
 	defer database.Close()
 
 	if err := db.EnsureTemplateData(ctx, database.Pool, cfg.TemplateEmail); err != nil {
-		log.Fatalf("ERROR seed failed: %v", err)
+		applog.Fatalf("ERROR seed failed: %v", err)
 	}
 
 	userRepo := repository.NewUserRepository(database.Pool)
@@ -73,10 +76,15 @@ func main() {
 		ReadHeaderTimeout: 10 * time.Second,
 	}
 
+	ln, err := net.Listen("tcp", server.Addr)
+	if err != nil {
+		applog.Fatalf("ERROR server failed: %v", err)
+	}
+	log.Printf("INFO server listening on :%s", cfg.Port)
+	applog.Notify(startedMessage())
 	go func() {
-		log.Printf("INFO server listening on :%s", cfg.Port)
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("ERROR server failed: %v", err)
+		if err := server.Serve(ln); err != nil && err != http.ErrServerClosed {
+			applog.Fatalf("ERROR server failed: %v", err)
 		}
 	}()
 
@@ -89,4 +97,16 @@ func main() {
 	if err := server.Shutdown(shutdownCtx); err != nil {
 		log.Printf("ERROR shutdown error: %v", err)
 	}
+	applog.Flush()
+}
+
+func startedMessage() string {
+	msg := "Chinese Laoshi server started"
+	if sha := os.Getenv("SOURCE_COMMIT"); sha != "" {
+		if len(sha) > 12 {
+			sha = sha[:12]
+		}
+		msg += " " + sha
+	}
+	return msg
 }
