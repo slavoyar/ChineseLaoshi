@@ -4,7 +4,7 @@ import { useStateStore } from '@shared/stores';
 import { Route } from '@shared/types';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
-import { BookOpen, type LucideIcon } from 'lucide-react';
+import { BookOpen, Languages, TextQuote, type LucideIcon } from 'lucide-react';
 import type { ComponentType, SVGProps } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,9 +23,19 @@ const modeConfig: Record<StudyMode, { label: string; icon: ModeIcon; iconWrapCla
     iconWrapClass: 'bg-[hsl(var(--chart-2)/0.12)] text-[hsl(var(--chart-2))]',
   },
   prescription: {
-    label: 'Prescription',
+    label: 'Stroke order',
     icon: BookOpen,
     iconWrapClass: 'bg-[hsl(var(--chart-1)/0.12)] text-[hsl(var(--chart-1))]',
+  },
+  pinyin: {
+    label: 'Pinyin',
+    icon: Languages,
+    iconWrapClass: 'bg-[hsl(var(--chart-3)/0.12)] text-[hsl(var(--chart-3))]',
+  },
+  translation: {
+    label: 'Translation',
+    icon: TextQuote,
+    iconWrapClass: 'bg-[hsl(var(--chart-4)/0.12)] text-[hsl(var(--chart-4))]',
   },
 };
 
@@ -65,5 +75,7 @@ export const StudyModeControls = ({ groupId, disabled, className }: StudyModeCon
   <div className={cn('flex w-full flex-wrap justify-center gap-3', className)}>
     <StudyModeButton mode='write' groupId={groupId} disabled={disabled} />
     <StudyModeButton mode='prescription' groupId={groupId} disabled={disabled} />
+    <StudyModeButton mode='pinyin' groupId={groupId} disabled={disabled} />
+    <StudyModeButton mode='translation' groupId={groupId} disabled={disabled} />
   </div>
 );

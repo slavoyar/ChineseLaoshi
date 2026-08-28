@@ -302,3 +302,17 @@ func (s *CardService) GetWriteCards(ctx context.Context, data dto.GetWriteCard, 
 	}
 	return s.toDTOs(rows), nil
 }
+
+func (s *CardService) GetQuizDistractors(ctx context.Context, cardID, userID string) ([]dto.Word, error) {
+	if err := s.cards.AssertOwnedByUser(ctx, cardID, userID); err != nil {
+		return nil, err
+	}
+	words, err := s.cards.GetQuizDistractors(ctx, cardID, userID)
+	if err != nil {
+		return nil, err
+	}
+	if words == nil {
+		words = []dto.Word{}
+	}
+	return words, nil
+}

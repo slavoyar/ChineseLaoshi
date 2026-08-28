@@ -226,6 +226,40 @@ func TestCardService_GetWriteCardsWithGroupFilter(t *testing.T) {
 	}
 }
 
+func TestCardService_GetQuizDistractors(t *testing.T) {
+	_, svc, userID := setupFullServices(t)
+	words, err := svc.GetQuizDistractors(context.Background(), testutil.GetUUID(1), userID)
+	if err != nil {
+		t.Fatalf("get distractors: %v", err)
+	}
+	if len(words) == 0 {
+		t.Fatal("expected at least one distractor")
+	}
+	for _, w := range words {
+		if w.ID == testutil.GetUUID(1) {
+			t.Fatal("distractors must not include the card's own word")
+		}
+	}
+}
+
+func TestCardService_GetQuizDistractorsNotFound(t *testing.T) {
+	_, svc, userID := setupFullServices(t)
+	_, err := svc.GetQuizDistractors(context.Background(), testutil.GetUUID(404), userID)
+	ae, ok := apperrors.IsAppError(err)
+	if !ok || ae.Code != apperrors.EntityNotFoundError {
+		t.Fatalf("expected not found, got %v", err)
+	}
+}
+
+func TestCardService_GetQuizDistractorsNotOwned(t *testing.T) {
+	_, svc, _ := setupFullServices(t)
+	_, err := svc.GetQuizDistractors(context.Background(), testutil.GetUUID(1), testutil.GetUUID(404))
+	ae, ok := apperrors.IsAppError(err)
+	if !ok || ae.Code != apperrors.EntityNotFoundError {
+		t.Fatalf("expected not found, got %v", err)
+	}
+}
+
 func TestCardService_UpdateCardStatsWinStreak(t *testing.T) {
 	_, svc, userID := setupFullServices(t)
 	app := testutil.SetupTestApp(t)
