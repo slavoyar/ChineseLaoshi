@@ -1,6 +1,6 @@
 interface TelegramWebApp {
   initData: string;
-  initDataUnsafe: { user?: { id: number } };
+  initDataUnsafe: { user?: { id: number; language_code?: string } };
   colorScheme: 'light' | 'dark';
   ready: () => void;
   expand: () => void;
@@ -19,8 +19,7 @@ declare global {
   }
 }
 
-export const getTelegramWebApp = (): TelegramWebApp | null =>
-  window.Telegram?.WebApp ?? null;
+export const getTelegramWebApp = (): TelegramWebApp | null => window.Telegram?.WebApp ?? null;
 
 export const isTelegramMiniApp = (): boolean => {
   const webApp = getTelegramWebApp();

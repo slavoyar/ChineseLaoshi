@@ -1,12 +1,12 @@
 import { authApi } from '@shared/api';
+import i18n from '@shared/lib/i18n';
 import { clearSessionToken, setSessionToken } from '@shared/lib/session-token';
 import { getTelegramInitData, isTelegramMiniApp } from '@shared/lib/telegram';
 import { AuthUser } from '@shared/types';
-import { create } from 'zustand';
 import { toast } from 'react-toastify';
+import { create } from 'zustand';
 
-const TELEGRAM_SIGN_IN_ERROR =
-  'Could not sign in with Telegram. Close and reopen the mini app to retry.';
+const TELEGRAM_SIGN_IN_ERROR = () => i18n.t('auth.telegramSignInError');
 
 const clearSessionCaches = async () => {
   const [{ default: useCardStore }, { default: useGroupStore }] = await Promise.all([
@@ -51,7 +51,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         return;
       } catch {
         set({ user: null, isDemo: true, isTelegramApp: true, isBootstrapped: true });
-        toast.error(TELEGRAM_SIGN_IN_ERROR);
+        toast.error(TELEGRAM_SIGN_IN_ERROR());
         return;
       }
     }
@@ -115,7 +115,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       void useAuthStore
         .getState()
         .signInWithTelegram()
-        .catch(() => toast.error(TELEGRAM_SIGN_IN_ERROR));
+        .catch(() => toast.error(TELEGRAM_SIGN_IN_ERROR()));
       return;
     }
     set({ isDemoGateOpen: true });

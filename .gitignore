@@ -30,6 +30,9 @@ dist-ssr
 *.sw?
 
 # Go backend
-frontend/e2e/.auth/
+backend/data/
 backend/server
 backend/server.exe
+
+# Playwright auth state
+frontend/e2e/.auth/
