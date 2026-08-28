@@ -1,5 +1,4 @@
-import cardService from '@entities/card/api';
-import { useCardStore } from '@entities/card';
+import { cardService } from '@entities/card';
 import { Card, Word, isRequestCanceled, parseApiError } from '@shared/api';
 import { useAuthStore } from '@shared/stores';
 import { Button } from '@shared/ui';
@@ -55,12 +54,12 @@ const buildOptions = (card: Card, distractors: Word[], mode: QuizMode): QuizOpti
 
 export const QuizCard = ({ card, mode, onNext, onAbort }: Props) => {
   const isDemo = useAuthStore((state) => state.isDemo);
-  const updateCardStats = useCardStore((state) => state.updateStats);
 
   const [options, setOptions] = useState<QuizOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const isSubmittingRef = useRef(false);
+  const hasMultipleChoicesRef = useRef(false);
 
   const correctOptionId = useMemo(() => card.word.id, [card.word.id]);
 
@@ -75,13 +74,17 @@ export const QuizCard = ({ card, mode, onNext, onAbort }: Props) => {
         if (!active) {
           return;
         }
-        setOptions(buildOptions(card, distractors, mode));
+        const built = buildOptions(card, distractors, mode);
+        hasMultipleChoicesRef.current = built.length >= 2;
+        setOptions(built);
       })
       .catch(() => {
         if (!active) {
           return;
         }
-        setOptions(buildOptions(card, [], mode));
+        const built = buildOptions(card, [], mode);
+        hasMultipleChoicesRef.current = built.length >= 2;
+        setOptions(built);
       })
       .finally(() => {
         if (active) {
@@ -104,7 +107,7 @@ export const QuizCard = ({ card, mode, onNext, onAbort }: Props) => {
     onNext();
 
     try {
-      if (!isDemo) {
+      if (!isDemo && hasMultipleChoicesRef.current) {
         await cardService.updateCardStats(cardId, guessed);
       }
     } catch (err) {
