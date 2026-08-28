@@ -1,0 +1,68 @@
+# PR and push to production: lint, build, and browser e2e.
+# Deploy is a separate workflow (Deploy — Production) triggered after push CI succeeds.
+name: CI — Frontend
+
+on:
+  push:
+    branches:
+      - production
+  pull_request:
+    branches:
+      - production
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "23.9.0"
+          cache: npm
+
+      - run: npm install
+
+      - run: npm run lint
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: npm run build
+
+  e2e:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "23.9.0"
+          cache: npm
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache-dependency-path: backend/go.sum
+
+      - run: npm install
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright browsers
+        working-directory: ./frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright e2e
+        working-directory: ./frontend
+        env:
+          CI: true
+          JWT_SECRET: e2e-ci-jwt-secret
+          GOOGLE_CLIENT_ID: e2e-google-client-id
+          COOKIE_SECURE: "false"
+        run: npm run test:e2e

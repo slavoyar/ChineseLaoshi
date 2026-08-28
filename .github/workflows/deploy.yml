@@ -1,46 +1,30 @@
-# Keep this workflow name: branch protection requires
-# "Lint, build and test frontend / lint-and-build".
-name: Lint, build and test frontend
+# Runs only after CI — Frontend succeeds on a push to production.
+# Does not run on pull requests.
+name: Deploy — Production
+
 on:
-  push:
-    branches:
-      - production
-  pull_request:
-    branches:
-      - production
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["CI — Frontend"]
+    types: [completed]
+    branches: [production]
 
 env:
   IMAGE_NAME: chineselaoshi
   REGISTRY: ghcr.io
 
 jobs:
-  lint-and-build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "23.9.0"
-
-      - run: npm install
-
-      - run: npm run lint
-
-      - name: Build frontend
-        working-directory: ./frontend
-        run: npm run build
-
   deploy:
-    needs: lint-and-build
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/production'
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - uses: docker/login-action@v3
         with:
@@ -56,7 +40,7 @@ jobs:
             VITE_GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
-            ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:sha-${{ github.event.workflow_run.head_sha }}
 
       - name: Trigger Coolify deploy
         run: >

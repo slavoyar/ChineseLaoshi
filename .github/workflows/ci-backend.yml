@@ -1,0 +1,62 @@
+# Runs only when backend or generated API types change.
+name: CI — Backend
+
+on:
+  pull_request:
+    paths:
+      - "backend/**"
+      - "frontend/src/shared/api/generated/**"
+    branches:
+      - production
+  push:
+    paths:
+      - "backend/**"
+      - "frontend/src/shared/api/generated/**"
+    branches:
+      - production
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache-dependency-path: backend/go.sum
+
+      - name: Verify generated types
+        run: |
+          go install github.com/gzuidhof/tygo@latest
+          tygo generate
+          git diff --exit-code frontend/src/shared/api/generated/index.ts
+
+      - name: Download Go modules
+        working-directory: ./backend
+        run: go mod download
+
+      - name: Test backend with coverage
+        working-directory: ./backend
+        run: |
+          go test ./... -count=1 -p 1
+          bash scripts/check-coverage.sh
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache-dependency-path: backend/go.sum
+
+      - name: Download Go modules
+        working-directory: ./backend
+        run: go mod download
+
+      - name: Build backend
+        working-directory: ./backend
+        run: go build -o /dev/null ./cmd/server

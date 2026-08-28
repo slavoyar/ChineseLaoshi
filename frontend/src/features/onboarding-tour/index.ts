@@ -1,5 +1,6 @@
 import 'driver.js/dist/driver.css';
 
+import { useGroupStore } from '@entities/group';
 import i18n from '@shared/lib/i18n';
 import { isTelegramMiniApp } from '@shared/lib/telegram';
 import { useAuthStore } from '@shared/stores';
@@ -61,15 +62,25 @@ export const useOnboardingTour = () => {
     state.isBootstrapped,
     state.completeOnboarding,
   ]);
+  const [isGroupsLoading, groupsHasLoaded] = useGroupStore((state) => [state.isLoading, state.hasLoaded]);
   const startedRef = useRef(false);
 
   useEffect(() => {
-    if (!isBootstrapped || isDemo || !user || user.onboardingCompleted || startedRef.current) {
+    if (
+      !isBootstrapped ||
+      isDemo ||
+      !user ||
+      user.onboardingCompleted ||
+      startedRef.current ||
+      isGroupsLoading ||
+      !groupsHasLoaded
+    ) {
       return;
     }
 
     const firstTarget = document.querySelector('[data-tour="brand"]');
-    if (!firstTarget) {
+    const createGroupTarget = document.querySelector('[data-tour="create-group"]');
+    if (!firstTarget || !createGroupTarget) {
       return;
     }
 
@@ -110,5 +121,5 @@ export const useOnboardingTour = () => {
       window.clearTimeout(timer);
       tourDriver.destroy();
     };
-  }, [completeOnboarding, isBootstrapped, isDemo, user]);
+  }, [completeOnboarding, groupsHasLoaded, isBootstrapped, isDemo, isGroupsLoading, user]);
 };
