@@ -35,27 +35,33 @@ export const Header = () => {
         >
           <button
             type='button'
-            className='cursor-pointer text-2xl font-bold text-foreground'
+            className='shrink-0 cursor-pointer text-2xl font-bold text-foreground'
             onClick={() => navigate(Route.Root)}
           >
             {APP_NAME}
           </button>
 
           {!isTelegramApp && (
-            <div className='flex items-center gap-3'>
-              <div className='flex items-center gap-2 text-foreground'>
+            <div className='flex min-w-0 shrink items-center gap-2 sm:gap-3'>
+              <div className='flex min-w-0 items-center gap-2 text-foreground'>
                 {user?.avatarUrl ? (
-                  <img src={user.avatarUrl} alt='' className='h-8 w-8 rounded-full object-cover' />
+                  <img
+                    src={user.avatarUrl}
+                    alt=''
+                    className='h-8 w-8 shrink-0 rounded-full object-cover'
+                  />
                 ) : (
-                  <span className='rounded-full bg-primary p-2 text-primary-foreground'>
+                  <span className='shrink-0 rounded-full bg-primary p-2 text-primary-foreground'>
                     <User className='h-4 w-4' aria-hidden='true' />
                   </span>
                 )}
-                <div className='text-sm font-medium'>{user?.name ?? 'Demo'}</div>
+                <div className='min-w-0 max-w-[7rem] truncate text-sm font-medium sm:max-w-[10rem]'>
+                  {user?.name ?? 'Demo'}
+                </div>
               </div>
 
               {isDemo ? (
-                <Button type='button' size='sm' onClick={openAuthDialog}>
+                <Button type='button' size='sm' className='shrink-0' onClick={openAuthDialog}>
                   Sign up
                 </Button>
               ) : (
