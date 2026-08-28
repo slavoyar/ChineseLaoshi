@@ -11,6 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/slavo/ChineseLaoshi/backend/internal/apperrors"
 	"github.com/slavo/ChineseLaoshi/backend/internal/dto"
+	"unicode/utf8"
 )
 
 type CardRow struct {
