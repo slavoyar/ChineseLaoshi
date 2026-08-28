@@ -1,4 +1,4 @@
-export type AuthProvider = 'google';
+export type AuthProvider = 'google' | 'telegram';
 
 export interface AuthUser {
   id: string;
@@ -6,4 +6,9 @@ export interface AuthUser {
   email: string;
   avatarUrl: string;
   provider: AuthProvider;
+}
+
+export interface TelegramLoginResponse {
+  user: AuthUser;
+  token: string;
 }

@@ -10,9 +10,10 @@ const APP_NAME = '中国老师';
 
 export const Header = () => {
   const navigate = useNavigate();
-  const [user, isDemo, signOut, openAuthDialog] = useAuthStore((state) => [
+  const [user, isDemo, isTelegramApp, signOut, openAuthDialog] = useAuthStore((state) => [
     state.user,
     state.isDemo,
+    state.isTelegramApp,
     state.signOut,
     state.openAuthDialog,
   ]);
@@ -35,36 +36,40 @@ export const Header = () => {
           </button>
 
           <div className='flex items-center gap-3'>
-            <div className='flex items-center gap-2 text-foreground'>
-              {user?.avatarUrl ? (
-                <img src={user.avatarUrl} alt='' className='h-8 w-8 rounded-full object-cover' />
-              ) : (
-                <span className='rounded-full bg-primary p-2 text-primary-foreground'>
-                  <User className='h-4 w-4' aria-hidden='true' />
-                </span>
-              )}
-              <div className='text-sm font-medium'>{user?.name ?? 'Demo'}</div>
-            </div>
+            {!isTelegramApp && (
+              <>
+                <div className='flex items-center gap-2 text-foreground'>
+                  {user?.avatarUrl ? (
+                    <img src={user.avatarUrl} alt='' className='h-8 w-8 rounded-full object-cover' />
+                  ) : (
+                    <span className='rounded-full bg-primary p-2 text-primary-foreground'>
+                      <User className='h-4 w-4' aria-hidden='true' />
+                    </span>
+                  )}
+                  <div className='text-sm font-medium'>{user?.name ?? 'Demo'}</div>
+                </div>
 
-            {isDemo ? (
-              <Button type='button' size='sm' onClick={openAuthDialog}>
-                Sign up
-              </Button>
-            ) : (
-              <button
-                type='button'
-                className='rounded p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground'
-                aria-label='Sign out'
-                onClick={onSignOut}
-              >
-                <LogOut className='h-4 w-4' />
-              </button>
+                {isDemo ? (
+                  <Button type='button' size='sm' onClick={openAuthDialog}>
+                    Sign up
+                  </Button>
+                ) : (
+                  <button
+                    type='button'
+                    className='rounded p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground'
+                    aria-label='Sign out'
+                    onClick={onSignOut}
+                  >
+                    <LogOut className='h-4 w-4' />
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>
       </div>
-      <AuthDialog />
-      <DemoGateDialog />
+      {!isTelegramApp && <AuthDialog />}
+      {!isTelegramApp && <DemoGateDialog />}
     </>
   );
 };

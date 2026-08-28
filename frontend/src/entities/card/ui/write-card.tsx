@@ -13,6 +13,7 @@ interface Props extends Word {
   isNextDisabled?: boolean;
   updateStats?: boolean;
   showOutline?: boolean;
+  paused?: boolean;
   onNext: () => void;
   onAbort?: () => void;
   onComplete?: () => void;
@@ -41,6 +42,7 @@ export const WriteCard = ({
   isNextDisabled = false,
   updateStats = true,
   showOutline = false,
+  paused = false,
   onNext,
   onAbort,
   onComplete,
@@ -145,7 +147,7 @@ export const WriteCard = ({
   }, [symbols, fieldSize, showOutline]);
 
   useEffect(() => {
-    if (!writersReady) {
+    if (!writersReady || paused) {
       return;
     }
     const writer = writers.current[debouncedIndex];
@@ -157,7 +159,20 @@ export const WriteCard = ({
     } else {
       writer.quiz(quizOpts());
     }
-  }, [symbols, debouncedIndex, writersReady]);
+  }, [symbols, debouncedIndex, writersReady, paused]);
+
+  useEffect(() => {
+    if (!writersReady || !paused) {
+      return;
+    }
+    writers.current.forEach((writer) => {
+      try {
+        writer.cancelQuiz();
+      } catch {
+        // writer may not be in quiz mode
+      }
+    });
+  }, [paused, writersReady]);
 
   const advance = async (guessed: boolean) => {
     if (isSubmittingRef.current) {

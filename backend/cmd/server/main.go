@@ -55,7 +55,11 @@ func main() {
 
 	tokenService := auth.NewTokenService(cfg.JWTSecret, cfg.SessionTTL)
 	googleVerifier := auth.NewGoogleVerifier(cfg.GoogleClientID)
-	authService := service.NewAuthService(userRepo, cloneRepo, googleVerifier, tokenService, cfg.TemplateEmail)
+	var telegramVerifier auth.TelegramInitDataVerifier
+	if cfg.TelegramMiniAppBotToken != "" {
+		telegramVerifier = auth.NewTelegramInitDataVerifier(cfg.TelegramMiniAppBotToken)
+	}
+	authService := service.NewAuthService(userRepo, cloneRepo, googleVerifier, telegramVerifier, tokenService, cfg.TemplateEmail)
 	authenticator := auth.NewSessionAuthenticator(tokenService, userRepo)
 
 	cookieConfig := auth.CookieConfig{Secure: cfg.CookieSecure, TTL: cfg.SessionTTL}

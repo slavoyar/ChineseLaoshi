@@ -1,4 +1,4 @@
-import { AuthUser } from '@shared/types';
+import { AuthUser, TelegramLoginResponse } from '@shared/types';
 import axios from 'axios';
 
 import { apiRequest } from './api-error';
@@ -11,5 +11,10 @@ export const authApi = {
     apiRequest(axios.post<{ idToken: string }, AuthUser>(`${AUTH_URL}/google`, { idToken }), {
       notify: false,
     }),
+  loginWithTelegram: (initData: string) =>
+    apiRequest(
+      axios.post<{ initData: string }, TelegramLoginResponse>(`${AUTH_URL}/telegram`, { initData }),
+      { notify: false }
+    ),
   logout: () => apiRequest(axios.post<void, void>(`${AUTH_URL}/logout`), { notify: true }),
 };

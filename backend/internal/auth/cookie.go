@@ -2,6 +2,7 @@ package auth
 
 import (
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -36,6 +37,16 @@ func ClearSessionCookie(w http.ResponseWriter, cfg CookieConfig) {
 }
 
 func SessionTokenFromRequest(r *http.Request) (string, error) {
+	if header := r.Header.Get("Authorization"); header != "" {
+		const prefix = "Bearer "
+		if strings.HasPrefix(header, prefix) {
+			token := strings.TrimSpace(header[len(prefix):])
+			if token != "" {
+				return token, nil
+			}
+		}
+	}
+
 	cookie, err := r.Cookie(SessionCookieName)
 	if err != nil {
 		return "", err

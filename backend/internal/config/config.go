@@ -28,9 +28,10 @@ type Config struct {
 	CookieSecure      bool
 	SessionTTL        time.Duration
 	AllowedOrigins    []string
-	TelegramBotToken  string
-	TelegramChatID    string
-	TelegramRelayBase string
+	TelegramBotToken       string
+	TelegramMiniAppBotToken string
+	TelegramChatID         string
+	TelegramRelayBase      string
 }
 
 func Load() Config {
@@ -103,8 +104,9 @@ func Load() Config {
 		CookieSecure:      cookieSecure,
 		SessionTTL:        sessionTTL,
 		AllowedOrigins:    allowedOrigins,
-		TelegramBotToken:  os.Getenv("TELEGRAM_BOT_TOKEN"),
-		TelegramChatID:    os.Getenv("TELEGRAM_CHAT_ID"),
-		TelegramRelayBase: strings.TrimRight(os.Getenv("TELEGRAM_RELAY_BASE"), "/"),
+		TelegramBotToken:        os.Getenv("TELEGRAM_BOT_TOKEN"),
+		TelegramMiniAppBotToken: os.Getenv("TELEGRAM_MINIAPP_BOT_TOKEN"),
+		TelegramChatID:          os.Getenv("TELEGRAM_CHAT_ID"),
+		TelegramRelayBase:       strings.TrimRight(os.Getenv("TELEGRAM_RELAY_BASE"), "/"),
 	}
 }

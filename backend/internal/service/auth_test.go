@@ -39,7 +39,7 @@ func newAuthService(t *testing.T, google auth.GoogleTokenVerifier) *service.Auth
 	userRepo := repository.NewUserRepository(app.Pool())
 	cloneRepo := repository.NewCloneRepository(app.Pool())
 	tokenService := auth.NewTokenService("test-jwt-secret", config.DefaultSessionTTL)
-	return service.NewAuthService(userRepo, cloneRepo, google, tokenService, config.DefaultTemplateEmail)
+	return service.NewAuthService(userRepo, cloneRepo, google, nil, tokenService, config.DefaultTemplateEmail)
 }
 
 func TestAuthService_LoginWithGoogleInvalidToken(t *testing.T) {
@@ -109,7 +109,7 @@ func TestAuthService_LoginEnsuresStarterContent(t *testing.T) {
 	google := fakeGoogleVerifier{identity: auth.GoogleIdentity{
 		Subject: "no-groups-subject", Email: "nostarter@example.com", EmailVerified: true, Name: "No Starter",
 	}}
-	svc := service.NewAuthService(users, cloneRepo, google, tokenService, config.DefaultTemplateEmail)
+	svc := service.NewAuthService(users, cloneRepo, google, nil, tokenService, config.DefaultTemplateEmail)
 
 	ctx := context.Background()
 	user, err := users.CreateSSOUser(ctx, "nostarter", "nostarter@example.com", "google", "no-groups-subject", "")
