@@ -1,6 +1,6 @@
 // FSD prefers CRUD in shared/api; kept here next to the Zustand entity store.
 // Revisit if a third consumer appears outside this slice.
-import { BaseService, Card, CreateCard, GetWriteCard, UpdateCardStats, UpdateCardWord } from '@shared/api';
+import { BaseService, Card, CreateCard, GetWriteCard, UpdateCardStats, UpdateCardWord, Word } from '@shared/api';
 import axios from 'axios';
 
 const URL = '/api/cards';
@@ -13,6 +13,16 @@ class CardService extends BaseService<Card, CreateCard, UpdateCardWord> {
         { count, groupId },
         { cancelToken: this.getCancelToken('getCardsWritePractice') }
       ),
+      { notify: true }
+    );
+  }
+
+  getQuizDistractors(cardId: string): Promise<Word[]> {
+    return this.request(
+      axios.get<Word[]>(`${this.url}/distractors`, {
+        params: { cardId },
+        cancelToken: this.getCancelToken('getQuizDistractors'),
+      }),
       { notify: true }
     );
   }

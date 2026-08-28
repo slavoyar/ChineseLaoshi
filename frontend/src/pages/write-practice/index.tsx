@@ -4,6 +4,7 @@ import { Card } from '@shared/api';
 import { useStateStore } from '@shared/stores';
 import { Route } from '@shared/types';
 import { PrescriptionPractice } from '@widgets/prescription-practice';
+import { QuizCard } from '@features/study-quiz';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -85,6 +86,17 @@ export const WritePractice = () => {
         );
       case 'prescription':
         return <PrescriptionPractice key={card.id} card={card} onNext={onNext} />;
+      case 'pinyin':
+      case 'translation':
+        return (
+          <QuizCard
+            key={card.id}
+            card={card}
+            mode={state}
+            onNext={onNext}
+            onAbort={resetAndExit}
+          />
+        );
       default:
         throw new Error('Unknown state');
     }

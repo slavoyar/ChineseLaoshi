@@ -126,6 +126,27 @@ func (h *CardHandler) GetWriteCards(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, cards)
 }
 
+func (h *CardHandler) GetDistractors(w http.ResponseWriter, r *http.Request) {
+	userID, err := h.resolve(r)
+	if err != nil {
+		mapHandlerError(w, err)
+		return
+	}
+
+	cardID := r.URL.Query().Get("cardId")
+	if cardID == "" || !isUUID(cardID) {
+		writeValidationError(w, "cardId is required")
+		return
+	}
+
+	words, err := h.service.GetQuizDistractors(r.Context(), cardID, userID)
+	if err != nil {
+		mapHandlerError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, words)
+}
+
 func (h *CardHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	user, err := middleware.UserFromContext(r.Context())
 	if err != nil {

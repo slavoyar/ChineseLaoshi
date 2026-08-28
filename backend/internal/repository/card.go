@@ -11,6 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/slavo/ChineseLaoshi/backend/internal/apperrors"
 	"github.com/slavo/ChineseLaoshi/backend/internal/dto"
+	"unicode/utf8"
 )
 
 type CardRow struct {
@@ -333,4 +334,50 @@ func (r *CardRepository) GetWriteCards(ctx context.Context, count int, userID st
 		cards = []CardWithWord{}
 	}
 	return cards, rows.Err()
+}
+
+func (r *CardRepository) GetQuizDistractors(ctx context.Context, cardID, userID string) ([]dto.Word, error) {
+	var groupID, symbols string
+	err := r.pool.QueryRow(ctx, `
+		SELECT c."groupId", w.symbols
+		FROM "Card" c
+		JOIN "Word" w ON w.id = c."wordId"
+		JOIN "Group" g ON g.id = c."groupId"
+		WHERE c.id = $1 AND g."userId" = $2
+	`, cardID, userID).Scan(&groupID, &symbols)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, apperrors.New(apperrors.EntityNotFoundError)
+		}
+		return nil, err
+	}
+
+	symbolLen := utf8.RuneCountInString(symbols)
+
+	rows, err := r.pool.Query(ctx, `
+		SELECT w.id, w.symbols, w.transcription, w.translation
+		FROM "Card" c
+		JOIN "Word" w ON w.id = c."wordId"
+		JOIN "Group" g ON g.id = c."groupId"
+		WHERE g."userId" = $1
+		  AND c.id != $2
+		  AND char_length(w.symbols) = $3
+		GROUP BY w.id, w.symbols, w.transcription, w.translation
+		ORDER BY MIN(CASE WHEN c."groupId" = $4 THEN 0 ELSE 1 END), random()
+		LIMIT 10
+	`, userID, cardID, symbolLen, groupID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	words := make([]dto.Word, 0)
+	for rows.Next() {
+		var w dto.Word
+		if err := rows.Scan(&w.ID, &w.Symbols, &w.Transcription, &w.Translation); err != nil {
+			return nil, err
+		}
+		words = append(words, w)
+	}
+	return words, rows.Err()
 }

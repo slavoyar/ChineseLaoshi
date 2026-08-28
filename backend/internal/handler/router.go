@@ -73,6 +73,7 @@ func (h *Handlers) Router(authenticator auth.Authenticator, enableLogger bool) h
 		})
 
 		r.Route("/cards", func(r chi.Router) {
+			r.Get("/distractors", h.Cards.GetDistractors)
 			r.Get("/{groupId}", h.Cards.ListByGroup)
 			r.Post("/study/write", h.Cards.GetWriteCards)
 			r.With(middleware.RequireAuth).Post("/", h.Cards.Create)
