@@ -164,5 +164,5 @@ export const WritePractice = () => {
     }
   };
 
-  return <div className='flex h-full items-center justify-center'>{current && getWidget(current)}</div>;
+  return <div className='flex h-full w-full items-center justify-center px-3 py-3 sm:px-4 sm:py-4'>{current && getWidget(current)}</div>;
 };

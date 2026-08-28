@@ -16,6 +16,8 @@ interface StudyModeButtonProps {
 
 type ModeIcon = LucideIcon | ComponentType<SVGProps<SVGSVGElement>>;
 
+const STUDY_MODE_ORDER: StudyMode[] = ['write', 'prescription', 'mixed', 'pinyin', 'translation'];
+
 const modeConfig: Record<StudyMode, { label: string; icon: ModeIcon; iconWrapClass: string }> = {
   write: {
     label: 'Handwriting',
@@ -48,6 +50,7 @@ export const StudyModeButton = ({ mode, groupId, disabled = false }: StudyModeBu
   const setState = useStateStore((state) => state.setState);
   const navigate = useNavigate();
   const { label, icon: Icon, iconWrapClass } = modeConfig[mode];
+  const isMixed = mode === 'mixed';
 
   const handleStart = () => {
     setState(mode);
@@ -59,13 +62,24 @@ export const StudyModeButton = ({ mode, groupId, disabled = false }: StudyModeBu
     <Button
       variant='outline'
       disabled={disabled}
-      className='flex h-auto min-w-[7.5rem] flex-col items-center gap-3 rounded-xl p-4 [&_svg]:size-6'
+      className={cn(
+        'flex h-auto w-full flex-col items-center gap-2 rounded-lg p-2.5 sm:gap-3 sm:rounded-xl sm:p-3.5 md:min-w-0 md:p-4',
+        'max-md:flex-row max-md:justify-center max-md:gap-2 max-md:px-2.5 max-md:py-2',
+        isMixed &&
+          'max-md:col-span-2 max-md:mx-auto max-md:max-w-[11.5rem] md:col-start-3 md:row-start-1',
+        '[&_svg]:size-5 sm:[&_svg]:size-6'
+      )}
       onClick={handleStart}
     >
-      <span className={cn('flex size-11 items-center justify-center rounded-lg', iconWrapClass)}>
+      <span
+        className={cn(
+          'flex size-9 shrink-0 items-center justify-center rounded-md sm:size-10 md:size-11 md:rounded-lg',
+          iconWrapClass
+        )}
+      >
         <Icon />
       </span>
-      <span className='text-sm font-medium'>{label}</span>
+      <span className='text-xs font-medium leading-tight sm:text-sm'>{label}</span>
     </Button>
   );
 };
@@ -77,11 +91,14 @@ interface StudyModeControlsProps {
 }
 
 export const StudyModeControls = ({ groupId, disabled, className }: StudyModeControlsProps) => (
-  <div className={cn('flex w-full flex-wrap justify-center gap-3', className)}>
-    <StudyModeButton mode='write' groupId={groupId} disabled={disabled} />
-    <StudyModeButton mode='prescription' groupId={groupId} disabled={disabled} />
-    <StudyModeButton mode='pinyin' groupId={groupId} disabled={disabled} />
-    <StudyModeButton mode='translation' groupId={groupId} disabled={disabled} />
-    <StudyModeButton mode='mixed' groupId={groupId} disabled={disabled} />
+  <div
+    className={cn(
+      'grid w-full max-w-xl grid-cols-2 gap-2 sm:max-w-none sm:gap-2.5 md:mx-auto md:max-w-3xl md:grid-cols-5 md:gap-3',
+      className
+    )}
+  >
+    {STUDY_MODE_ORDER.map((mode) => (
+      <StudyModeButton key={mode} mode={mode} groupId={groupId} disabled={disabled} />
+    ))}
   </div>
 );
