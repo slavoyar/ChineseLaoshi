@@ -11,6 +11,7 @@ interface Props {
   card: Card;
   mode: QuizMode;
   paused?: boolean;
+  initialDistractors?: Word[];
   onNext: () => void;
   onAbort?: () => void;
 }
@@ -53,7 +54,7 @@ const buildOptions = (card: Card, distractors: Word[], mode: QuizMode): QuizOpti
   return shuffle(options);
 };
 
-export const QuizCard = ({ card, mode, paused = false, onNext, onAbort }: Props) => {
+export const QuizCard = ({ card, mode, paused = false, initialDistractors, onNext, onAbort }: Props) => {
   const isDemo = useAuthStore((state) => state.isDemo);
 
   const [options, setOptions] = useState<QuizOption[]>([]);
@@ -66,37 +67,39 @@ export const QuizCard = ({ card, mode, paused = false, onNext, onAbort }: Props)
 
   useEffect(() => {
     let active = true;
-    setLoading(true);
     setSelectedId(null);
 
+    const applyDistractors = (distractors: Word[]) => {
+      if (!active) {
+        return;
+      }
+      const built = buildOptions(card, distractors, mode);
+      hasMultipleChoicesRef.current = built.length >= 2;
+      setOptions(built);
+      setLoading(false);
+    };
+
+    if (initialDistractors !== undefined) {
+      applyDistractors(initialDistractors);
+      return () => {
+        active = false;
+      };
+    }
+
+    setLoading(true);
     cardService
       .getQuizDistractors(card.id)
       .then((distractors) => {
-        if (!active) {
-          return;
-        }
-        const built = buildOptions(card, distractors, mode);
-        hasMultipleChoicesRef.current = built.length >= 2;
-        setOptions(built);
+        applyDistractors(distractors);
       })
       .catch(() => {
-        if (!active) {
-          return;
-        }
-        const built = buildOptions(card, [], mode);
-        hasMultipleChoicesRef.current = built.length >= 2;
-        setOptions(built);
-      })
-      .finally(() => {
-        if (active) {
-          setLoading(false);
-        }
+        applyDistractors([]);
       });
 
     return () => {
       active = false;
     };
-  }, [card, mode]);
+  }, [card, mode, initialDistractors]);
 
   const advance = async (guessed: boolean) => {
     if (isSubmittingRef.current) {
