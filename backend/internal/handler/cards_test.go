@@ -283,6 +283,58 @@ func TestCards_GetWriteCardsValidation(t *testing.T) {
 	}
 }
 
+func TestCards_GetDistractors(t *testing.T) {
+	app := testutil.SetupTestApp(t)
+	res, err := http.Get(app.Server.URL + "/api/cards/distractors?cardId=" + testutil.GetUUID(1))
+	if err != nil {
+		t.Fatalf("request failed: %v", err)
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		t.Fatalf("expected 200, got %d", res.StatusCode)
+	}
+
+	var words []map[string]any
+	if err := json.NewDecoder(res.Body).Decode(&words); err != nil {
+		t.Fatalf("decode failed: %v", err)
+	}
+	if len(words) == 0 {
+		t.Fatal("expected at least one distractor")
+	}
+}
+
+func TestCards_GetDistractorsValidation(t *testing.T) {
+	app := testutil.SetupTestApp(t)
+	urls := []string{
+		app.Server.URL + "/api/cards/distractors",
+		app.Server.URL + "/api/cards/distractors?cardId=bad",
+	}
+	for _, url := range urls {
+		res, err := http.Get(url)
+		if err != nil {
+			t.Fatalf("request failed: %v", err)
+		}
+		res.Body.Close()
+		if res.StatusCode != http.StatusBadRequest {
+			t.Fatalf("expected 400 for %s, got %d", url, res.StatusCode)
+		}
+	}
+}
+
+func TestCards_GetDistractorsNotFound(t *testing.T) {
+	app := testutil.SetupTestApp(t)
+	res, err := http.Get(app.Server.URL + "/api/cards/distractors?cardId=" + testutil.GetUUID(404))
+	if err != nil {
+		t.Fatalf("request failed: %v", err)
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusNotFound {
+		t.Fatalf("expected 404, got %d", res.StatusCode)
+	}
+}
+
 func TestCards_CreateUnauthorized(t *testing.T) {
 	app := testutil.SetupStrictAuthApp(t)
 	payload := map[string]any{
