@@ -1,6 +1,7 @@
 import { useCardStore } from '@entities/card';
 import { GroupGrid, GroupListSkeleton, useGroupStore } from '@entities/group';
 import { AddGroupDialog } from '@features/add-group';
+import { testIds } from '@shared/config';
 import { useRequireAuth } from '@shared/hooks';
 import { Button, EmptyState } from '@shared/ui';
 import { cn } from '@shared/utils';
@@ -28,7 +29,11 @@ export const Groups = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) 
               title={t('groups.emptyTitle')}
               description={t('groups.emptyDescription')}
               action={
-                <Button data-tour='create-group' onClick={() => gateAction(() => setIsAddOpen(true))}>
+                <Button
+                  data-tour='create-group'
+                  data-testid={testIds.group.createTrigger}
+                  onClick={() => gateAction(() => setIsAddOpen(true))}
+                >
                   <Plus aria-hidden='true' />
                   {t('groups.createGroup')}
                 </Button>

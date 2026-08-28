@@ -64,6 +64,32 @@ func TestUserRepository_GetByIDNotFound(t *testing.T) {
 	}
 }
 
+func TestUserRepository_SetOnboardingCompleted(t *testing.T) {
+	users, _, _, _, _, _, userID := setupRepos(t)
+	ctx := context.Background()
+
+	if err := users.SetOnboardingCompleted(ctx, userID, true); err != nil {
+		t.Fatalf("set onboarding completed: %v", err)
+	}
+
+	user, err := users.GetByID(ctx, userID)
+	if err != nil {
+		t.Fatalf("get by id: %v", err)
+	}
+	if !user.OnboardingCompleted {
+		t.Fatal("expected onboardingCompleted true")
+	}
+}
+
+func TestUserRepository_SetOnboardingCompletedNotFound(t *testing.T) {
+	users, _, _, _, _, _, _ := setupRepos(t)
+	err := users.SetOnboardingCompleted(context.Background(), testutil.GetUUID(404), true)
+	ae, ok := apperrors.IsAppError(err)
+	if !ok || ae.Code != apperrors.EntityNotFoundError {
+		t.Fatalf("expected not found, got %v", err)
+	}
+}
+
 func TestUserRepository_CreateSSOUser(t *testing.T) {
 	users, _, _, _, _, _, _ := setupRepos(t)
 	user, err := users.CreateSSOUser(context.Background(), "NewUser", "sso-new@example.com", "google", "sso-subject-new", "http://pic")

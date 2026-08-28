@@ -247,6 +247,28 @@ func TestAuthService_Me(t *testing.T) {
 	}
 }
 
+func TestAuthService_CompleteOnboarding(t *testing.T) {
+	svc := newAuthService(t, fakeGoogleVerifier{})
+	userID := testutil.GetUUID(1)
+
+	dto, err := svc.CompleteOnboarding(context.Background(), userID)
+	if err != nil {
+		t.Fatalf("complete onboarding: %v", err)
+	}
+	if !dto.OnboardingCompleted {
+		t.Fatalf("expected onboarding completed, got %+v", dto)
+	}
+}
+
+func TestAuthService_CompleteOnboardingNotFound(t *testing.T) {
+	svc := newAuthService(t, fakeGoogleVerifier{})
+	_, err := svc.CompleteOnboarding(context.Background(), testutil.GetUUID(404))
+	ae, ok := apperrors.IsAppError(err)
+	if !ok || ae.Code != apperrors.EntityNotFoundError {
+		t.Fatalf("expected not found, got %v", err)
+	}
+}
+
 func setupGroupService(t *testing.T) (*service.GroupService, string) {
 	t.Helper()
 	app := testutil.SetupTestApp(t)

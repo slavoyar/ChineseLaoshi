@@ -1,8 +1,13 @@
 import { expect, test } from '@playwright/test';
 
 import { e2e } from './locators';
+import { seedE2eUser } from './seed-e2e-user';
 
 test.describe('Authenticated CRUD', () => {
+  test.beforeAll(async () => {
+    await seedE2eUser();
+  });
+
   test('creates group, adds word, renames group, deletes word', async ({ page }) => {
     test.setTimeout(60_000);
     test.skip(

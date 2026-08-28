@@ -3,9 +3,9 @@ import path from 'node:path';
 
 import { chromium } from '@playwright/test';
 import jwt from 'jsonwebtoken';
-import pg from 'pg';
 
-export const E2E_USER_ID = 'e2e00000-0000-0000-0000-000000000001';
+import { E2E_USER_ID } from './seed-e2e-user';
+
 const SESSION_COOKIE = 'cl_session';
 
 async function readJwtSecret(): Promise<string> {
@@ -36,28 +36,6 @@ async function globalSetup() {
     console.warn(String(error));
     fs.writeFileSync(path.join(authDir, 'user.json'), JSON.stringify({ cookies: [], origins: [] }));
     return;
-  }
-
-  const dbUrl =
-    process.env.E2E_DB_URL ??
-    process.env.DB_URL ??
-    'postgres://postgres:postgres@localhost:5433/chineselaoshi?sslmode=disable';
-
-  const client = new pg.Client({ connectionString: dbUrl });
-  try {
-    await client.connect();
-    await client.query(
-      `
-      INSERT INTO "User" (id, username, email, password, provider, provider_subject, avatar_url, "onboardingCompleted")
-      VALUES ($1, 'e2e-user', 'e2e@chineselaoshi.local', NULL, 'google', 'e2e-playwright', '', true)
-      ON CONFLICT (id) DO UPDATE SET "onboardingCompleted" = true
-    `,
-      [E2E_USER_ID]
-    );
-  } catch (error) {
-    console.warn('E2E user seed skipped:', error);
-  } finally {
-    await client.end().catch(() => undefined);
   }
 
   const token = jwt.sign(
