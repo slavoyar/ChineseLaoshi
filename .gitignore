@@ -30,6 +30,6 @@ dist-ssr
 *.sw?
 
 # Go backend
-backend/data/
+frontend/e2e/.auth/
 backend/server
 backend/server.exe
