@@ -237,10 +237,12 @@ func TestAuthService_LoginEnsuresStarterContent(t *testing.T) {
 
 func TestAuthService_Me(t *testing.T) {
 	svc := newAuthService(t, fakeGoogleVerifier{})
-	dto := svc.Me(context.Background(), auth.UserContext{
-		ID: "1", Username: "test", Email: "a@b.com", AvatarURL: "pic", Provider: "google",
-	})
-	if dto.ID != "1" || dto.Name != "test" || dto.Email != "a@b.com" {
+	userID := testutil.GetUUID(1)
+	dto, err := svc.Me(context.Background(), auth.UserContext{ID: userID})
+	if err != nil {
+		t.Fatalf("me: %v", err)
+	}
+	if dto.ID != userID {
 		t.Fatalf("unexpected dto: %+v", dto)
 	}
 }

@@ -9,7 +9,7 @@ interface Props {
 }
 
 export const StudyModes = ({ groupId, disabled, showLabel = true, className }: Props) => (
-  <div className={cn('flex flex-col gap-1.5 sm:gap-2', className)}>
+  <div className={cn('flex flex-col gap-1.5 sm:gap-2', className)} data-tour='study-modes'>
     {showLabel && (
       <h1 className='text-center text-lg font-semibold text-foreground sm:text-xl'>Study modes</h1>
     )}

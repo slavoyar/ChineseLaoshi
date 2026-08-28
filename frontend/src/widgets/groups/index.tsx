@@ -16,7 +16,7 @@ export const Groups = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) 
 
   return (
     <div className={cn('flex min-h-0 flex-col gap-5 md:gap-10', className)} {...props}>
-      <div className='min-h-0 flex-1 overflow-auto'>
+      <div className='min-h-0 flex-1 overflow-auto' data-tour='groups'>
         {isLoading ? (
           <GroupListSkeleton />
         ) : isEmpty ? (
@@ -26,7 +26,7 @@ export const Groups = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) 
               title='No groups yet'
               description='Everything loaded fine — you just have not created a group. Add one to start building vocabulary.'
               action={
-                <Button onClick={() => gateAction(() => setIsAddOpen(true))}>
+                <Button data-tour='create-group' onClick={() => gateAction(() => setIsAddOpen(true))}>
                   <Plus aria-hidden='true' />
                   Create group
                 </Button>

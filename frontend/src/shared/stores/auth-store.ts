@@ -33,6 +33,7 @@ interface AuthState {
   openDemoGate: () => void;
   closeDemoGate: () => void;
   openAuthFromDemoGate: () => void;
+  completeOnboarding: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -121,4 +122,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
   closeDemoGate: () => set({ isDemoGateOpen: false }),
   openAuthFromDemoGate: () => set({ isDemoGateOpen: false, isAuthDialogOpen: true }),
+  completeOnboarding: async () => {
+    const user = await authApi.completeOnboarding();
+    set({ user });
+  },
 }));

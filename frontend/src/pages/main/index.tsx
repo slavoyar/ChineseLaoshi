@@ -1,5 +1,6 @@
 import { prefetchDeferredChunks } from '@app/prefetch-deferred';
 import { useGroupStore } from '@entities/group';
+import { useOnboardingTour } from '@features/onboarding-tour';
 import { useAuthStore } from '@shared/stores';
 import { Groups } from '@widgets/groups';
 import { StudyModes } from '@widgets/study-modes';
@@ -8,6 +9,8 @@ import { useEffect } from 'react';
 export const Main = () => {
   const fetchGroups = useGroupStore((state) => state.fetch);
   const sessionKey = useAuthStore((state) => state.user?.id ?? 'demo');
+
+  useOnboardingTour();
 
   useEffect(() => {
     void fetchGroups();

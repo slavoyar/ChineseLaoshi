@@ -20,6 +20,7 @@ export const CreateGroupCard = ({ renderDialog }: Props) => {
     <>
       <button
         type='button'
+        data-tour='create-group'
         aria-label='Create group'
         className={cn(
           'flex flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-muted-foreground/40 bg-secondary/50 p-2 text-muted-foreground transition-colors hover:border-primary/50 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',

@@ -83,5 +83,24 @@ func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 		mapHandlerError(w, err)
 		return
 	}
-	writeJSON(w, http.StatusOK, h.service.Me(r.Context(), user))
+	dto, err := h.service.Me(r.Context(), user)
+	if err != nil {
+		mapHandlerError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, dto)
+}
+
+func (h *AuthHandler) CompleteOnboarding(w http.ResponseWriter, r *http.Request) {
+	user, err := middleware.UserFromContext(r.Context())
+	if err != nil {
+		mapHandlerError(w, err)
+		return
+	}
+	dto, err := h.service.CompleteOnboarding(r.Context(), user.ID)
+	if err != nil {
+		mapHandlerError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, dto)
 }

@@ -35,6 +35,7 @@ export const Header = () => {
         >
           <button
             type='button'
+            data-tour='brand'
             className='shrink-0 cursor-pointer text-2xl font-bold text-foreground'
             onClick={() => navigate(Route.Root)}
           >
@@ -42,7 +43,7 @@ export const Header = () => {
           </button>
 
           {!isTelegramApp && (
-            <div className='flex min-w-0 shrink items-center gap-2 sm:gap-3'>
+            <div className='flex min-w-0 shrink items-center gap-2 sm:gap-3' data-tour='profile'>
               <div className='flex min-w-0 items-center gap-2 text-foreground'>
                 {user?.avatarUrl ? (
                   <img
