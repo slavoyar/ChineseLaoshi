@@ -1,9 +1,10 @@
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import { messageForApiError, parseApiError } from '@shared/api';
+import { isDarkTheme, subscribeThemeChange } from '@shared/lib/theme';
 import { useAuthStore } from '@shared/stores';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@shared/ui';
 import { cn } from '@shared/utils';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export const AuthDialog = () => {
   const [isOpen, closeAuthDialog, signInWithGoogle] = useAuthStore((state) => [
@@ -13,6 +14,15 @@ export const AuthDialog = () => {
   ]);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [googleTheme, setGoogleTheme] = useState<'outline' | 'filled_blue'>(() =>
+    isDarkTheme() ? 'filled_blue' : 'outline'
+  );
+
+  useEffect(() => {
+    const sync = () => setGoogleTheme(isDarkTheme() ? 'filled_blue' : 'outline');
+    sync();
+    return subscribeThemeChange(sync);
+  }, []);
 
   const onGoogleSuccess = async (response: CredentialResponse) => {
     if (!response.credential) {
@@ -42,7 +52,7 @@ export const AuthDialog = () => {
               onSuccess={onGoogleSuccess}
               onError={() => setError('Google sign-in was cancelled or failed.')}
               useOneTap={false}
-              theme='outline'
+              theme={googleTheme}
               size='large'
               width='320'
               text='continue_with'

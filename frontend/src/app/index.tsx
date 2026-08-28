@@ -1,9 +1,10 @@
 import './styles/index.css';
 import './axios';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { AuthBootstrap } from '@app/auth-bootstrap';
 import router from '@app/router';
-import { initSystemTheme, isDarkTheme } from '@shared/lib/theme';
+import { initSystemTheme, isDarkTheme, subscribeThemeChange } from '@shared/lib/theme';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
@@ -22,10 +23,7 @@ const AppShell = () => {
   useEffect(() => {
     const sync = () => setToastTheme(isDarkTheme() ? 'dark' : 'light');
     sync();
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', sync);
-    return () => {
-      window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', sync);
-    };
+    return subscribeThemeChange(sync);
   }, []);
 
   return (

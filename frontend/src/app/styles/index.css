@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    color-scheme: light;
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
@@ -36,6 +37,7 @@
   }
 
   .dark {
+    color-scheme: dark;
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
@@ -105,4 +107,16 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--muted-foreground) / 0.6);
+}
+
+.Toastify__toast-theme--light {
+  --toastify-color-light: hsl(var(--background));
+  --toastify-text-color-light: hsl(var(--foreground));
+  --toastify-color-progress-light: hsl(var(--primary));
+}
+
+.Toastify__toast-theme--dark {
+  --toastify-color-dark: hsl(var(--card));
+  --toastify-text-color-dark: hsl(var(--foreground));
+  --toastify-color-progress-dark: hsl(var(--primary));
 }

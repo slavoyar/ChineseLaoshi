@@ -152,20 +152,20 @@ export const DrawPad = ({ onPick, onUndoChar, canUndo }: DrawPadProps) => {
         )}
       </div>
 
-      <div className='relative h-44 touch-none overflow-hidden rounded-md bg-white sm:h-52'>
+      <div className='relative h-44 touch-none overflow-hidden rounded-md border border-input bg-white sm:h-52 dark:border-border'>
         {!ready && !loadError ? (
-          <div className='absolute inset-0 flex flex-col items-center justify-center gap-2 text-sm text-slate-600'>
+          <div className='absolute inset-0 flex flex-col items-center justify-center gap-2 text-sm text-muted-foreground'>
             <span>Loading handwriting…</span>
-            <div className='h-1.5 w-40 overflow-hidden rounded-full bg-slate-200'>
+            <div className='h-1.5 w-40 overflow-hidden rounded-full bg-muted'>
               <div
-                className='h-full bg-slate-700 transition-[width]'
+                className='h-full bg-primary transition-[width]'
                 style={{ width: `${Math.round(progress * 100)}%` }}
               />
             </div>
           </div>
         ) : null}
         {loadError ? (
-          <div className='absolute inset-0 flex items-center justify-center p-4 text-center text-sm text-slate-600'>
+          <div className='absolute inset-0 flex items-center justify-center p-4 text-center text-sm text-muted-foreground'>
             Couldn’t load handwriting recognition. Type or paste instead.
           </div>
         ) : (
