@@ -140,7 +140,7 @@ export const QuizCard = ({ card, mode, paused = false, onNext, onAbort }: Props)
   return (
     <div className='flex w-full max-w-md flex-col gap-3 rounded-2xl border bg-card p-3 sm:gap-4 sm:p-4 md:w-[500px]'>
       <p className='text-center text-xs text-muted-foreground sm:text-sm'>{promptLabel}</p>
-      <div className='rounded-md bg-muted py-5 text-center text-3xl font-medium tracking-wide sm:py-8 sm:text-4xl'>
+      <div className='rounded-md bg-muted py-8 text-center text-6xl font-medium tracking-wide sm:py-12 sm:text-7xl'>
         {card.word.symbols}
       </div>
       <div
