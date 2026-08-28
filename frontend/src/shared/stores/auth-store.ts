@@ -3,6 +3,10 @@ import { clearSessionToken, setSessionToken } from '@shared/lib/session-token';
 import { getTelegramInitData, isTelegramMiniApp } from '@shared/lib/telegram';
 import { AuthUser } from '@shared/types';
 import { create } from 'zustand';
+import { toast } from 'react-toastify';
+
+const TELEGRAM_SIGN_IN_ERROR =
+  'Could not sign in with Telegram. Close and reopen the mini app to retry.';
 
 const clearSessionCaches = async () => {
   const [{ default: useCardStore }, { default: useGroupStore }] = await Promise.all([
@@ -46,6 +50,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         return;
       } catch {
         set({ user: null, isDemo: true, isTelegramApp: true, isBootstrapped: true });
+        toast.error(TELEGRAM_SIGN_IN_ERROR);
         return;
       }
     }
@@ -72,9 +77,12 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (!payload) {
       throw new Error('Missing Telegram initData');
     }
+    const previousUserId = useAuthStore.getState().user?.id;
     const { user, token } = await authApi.loginWithTelegram(payload);
     setSessionToken(token);
-    await clearSessionCaches();
+    if (!previousUserId || previousUserId !== user.id) {
+      await clearSessionCaches();
+    }
     set({
       user,
       isDemo: false,
@@ -101,7 +109,16 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
   openAuthDialog: () => set({ isAuthDialogOpen: true }),
   closeAuthDialog: () => set({ isAuthDialogOpen: false }),
-  openDemoGate: () => set({ isDemoGateOpen: true }),
+  openDemoGate: () => {
+    if (isTelegramMiniApp()) {
+      void useAuthStore
+        .getState()
+        .signInWithTelegram()
+        .catch(() => toast.error(TELEGRAM_SIGN_IN_ERROR));
+      return;
+    }
+    set({ isDemoGateOpen: true });
+  },
   closeDemoGate: () => set({ isDemoGateOpen: false }),
   openAuthFromDemoGate: () => set({ isDemoGateOpen: false, isAuthDialogOpen: true }),
 }));

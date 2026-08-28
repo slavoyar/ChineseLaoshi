@@ -3,6 +3,7 @@ import { DemoGateDialog } from '@features/demo-gate-dialog';
 import { useAuthStore } from '@shared/stores';
 import { Route } from '@shared/types';
 import { Button } from '@shared/ui';
+import { cn } from '@shared/utils';
 import { LogOut, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,7 +27,12 @@ export const Header = () => {
   return (
     <>
       <div className='h-[80px] w-full shrink-0 border-b bg-card'>
-        <div className='m-auto flex h-full items-center justify-between p-4 md:w-9/12 xl:w-7/12'>
+        <div
+          className={cn(
+            'm-auto flex h-full items-center p-4 md:w-9/12 xl:w-7/12',
+            isTelegramApp ? 'justify-center' : 'justify-between',
+          )}
+        >
           <button
             type='button'
             className='cursor-pointer text-2xl font-bold text-foreground'
@@ -35,37 +41,35 @@ export const Header = () => {
             {APP_NAME}
           </button>
 
-          <div className='flex items-center gap-3'>
-            {!isTelegramApp && (
-              <>
-                <div className='flex items-center gap-2 text-foreground'>
-                  {user?.avatarUrl ? (
-                    <img src={user.avatarUrl} alt='' className='h-8 w-8 rounded-full object-cover' />
-                  ) : (
-                    <span className='rounded-full bg-primary p-2 text-primary-foreground'>
-                      <User className='h-4 w-4' aria-hidden='true' />
-                    </span>
-                  )}
-                  <div className='text-sm font-medium'>{user?.name ?? 'Demo'}</div>
-                </div>
-
-                {isDemo ? (
-                  <Button type='button' size='sm' onClick={openAuthDialog}>
-                    Sign up
-                  </Button>
+          {!isTelegramApp && (
+            <div className='flex items-center gap-3'>
+              <div className='flex items-center gap-2 text-foreground'>
+                {user?.avatarUrl ? (
+                  <img src={user.avatarUrl} alt='' className='h-8 w-8 rounded-full object-cover' />
                 ) : (
-                  <button
-                    type='button'
-                    className='rounded p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground'
-                    aria-label='Sign out'
-                    onClick={onSignOut}
-                  >
-                    <LogOut className='h-4 w-4' />
-                  </button>
+                  <span className='rounded-full bg-primary p-2 text-primary-foreground'>
+                    <User className='h-4 w-4' aria-hidden='true' />
+                  </span>
                 )}
-              </>
-            )}
-          </div>
+                <div className='text-sm font-medium'>{user?.name ?? 'Demo'}</div>
+              </div>
+
+              {isDemo ? (
+                <Button type='button' size='sm' onClick={openAuthDialog}>
+                  Sign up
+                </Button>
+              ) : (
+                <button
+                  type='button'
+                  className='rounded p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground'
+                  aria-label='Sign out'
+                  onClick={onSignOut}
+                >
+                  <LogOut className='h-4 w-4' />
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
       {!isTelegramApp && <AuthDialog />}

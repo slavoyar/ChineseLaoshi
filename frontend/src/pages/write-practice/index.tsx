@@ -24,6 +24,7 @@ export const WritePractice = () => {
   const sessionCardsRef = useRef<Card[]>([]);
   const cardFacesRef = useRef<Record<string, MixedFace>>({});
   const remainingRef = useRef<Card[]>([]);
+  const sessionModeRef = useRef<'main' | StudyMode>('main');
   const paused = useStudyPauseStore((state) => state.paused);
 
   const reset = useCardStore((state) => state.reset);
@@ -36,23 +37,28 @@ export const WritePractice = () => {
     navigate(Route.Root);
   };
 
-  const persistSession = (cards: Card[], index: number, faces: Record<string, MixedFace>) => {
-    if (state === 'main' || !count) {
+  const persistSession = (
+    mode: 'main' | StudyMode,
+    cards: Card[],
+    index: number,
+    faces: Record<string, MixedFace>,
+  ) => {
+    if (mode === 'main' || !count) {
       return;
     }
     saveStudySession({
-      mode: state,
+      mode,
       groupId,
       count,
       cards,
       currentIndex: index,
-      cardFaces: state === 'mixed' ? faces : undefined,
+      cardFaces: mode === 'mixed' ? faces : undefined,
     });
   };
 
   const restoreFromSnapshot = (): boolean => {
     const snapshot = loadStudySession();
-    if (!snapshot || snapshot.mode !== state || snapshot.count !== count) {
+    if (!snapshot || snapshot.count !== count) {
       return false;
     }
     if ((snapshot.groupId ?? undefined) !== groupId) {
@@ -60,6 +66,14 @@ export const WritePractice = () => {
     }
     if (snapshot.cards.length === 0) {
       return false;
+    }
+    if (state !== 'main' && snapshot.mode !== state) {
+      return false;
+    }
+
+    if (state === 'main') {
+      sessionModeRef.current = snapshot.mode;
+      setState(snapshot.mode);
     }
 
     sessionCardsRef.current = snapshot.cards;
@@ -76,7 +90,7 @@ export const WritePractice = () => {
   useEffect(() => {
     let active = true;
 
-    if (state === 'main' || !count) {
+    if (!count) {
       navigate(Route.Root);
       return;
     }
@@ -85,6 +99,11 @@ export const WritePractice = () => {
       return () => {
         active = false;
       };
+    }
+
+    if (state === 'main') {
+      navigate(Route.Root);
+      return;
     }
 
     cardService
@@ -103,12 +122,13 @@ export const WritePractice = () => {
         if (state === 'mixed') {
           cardFacesRef.current = assignMixedFaces(data);
         }
+        sessionModeRef.current = state;
 
         const [first, ...rest] = data;
         remainingRef.current = rest;
         setCurrentIndex(0);
         setCurrent(first);
-        persistSession(data, 0, cardFacesRef.current);
+        persistSession(state, data, 0, cardFacesRef.current);
       })
       .catch((err) => {
         if (!active || isRequestCanceled(err)) {
@@ -133,7 +153,7 @@ export const WritePractice = () => {
     const nextIndex = currentIndex + 1;
     setCurrentIndex(nextIndex);
     setCurrent(next);
-    persistSession(sessionCardsRef.current, nextIndex, cardFacesRef.current);
+    persistSession(state, sessionCardsRef.current, nextIndex, cardFacesRef.current);
   };
 
   const renderFace = (card: Card, face: MixedFace): ReactNode => {
@@ -169,7 +189,8 @@ export const WritePractice = () => {
   };
 
   const getWidget = (card: Card): ReactNode => {
-    switch (state) {
+    const mode = state === 'main' ? sessionModeRef.current : state;
+    switch (mode) {
       case 'write':
         return renderFace(card, 'write');
       case 'prescription':
@@ -180,7 +201,7 @@ export const WritePractice = () => {
           <QuizCard
             key={card.id}
             card={card}
-            mode={state}
+            mode={mode}
             paused={paused}
             onNext={onNext}
             onAbort={resetAndExit}

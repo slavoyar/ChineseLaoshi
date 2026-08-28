@@ -1,11 +1,5 @@
 import { useAuthStore, useStudyPauseStore } from '@shared/stores';
-import {
-  initTelegramTheme,
-  initTelegramWebApp,
-  isTelegramMiniApp,
-  onTelegramActivated,
-  onTelegramDeactivated,
-} from '@shared/lib/telegram';
+import { isTelegramMiniApp, onTelegramActivated, onTelegramDeactivated } from '@shared/lib/telegram';
 import { useEffect } from 'react';
 
 export const TelegramLifecycle = () => {
@@ -17,12 +11,12 @@ export const TelegramLifecycle = () => {
       return;
     }
 
-    initTelegramWebApp();
-    initTelegramTheme();
-
     const offDeactivated = onTelegramDeactivated(() => setPaused(true));
     const offActivated = onTelegramActivated(() => {
       setPaused(false);
+      if (useAuthStore.getState().user) {
+        return;
+      }
       void signInWithTelegram().catch(() => undefined);
     });
 

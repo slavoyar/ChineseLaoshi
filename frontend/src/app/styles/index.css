@@ -120,3 +120,40 @@ body {
   --toastify-text-color-dark: hsl(var(--foreground));
   --toastify-color-progress-dark: hsl(var(--primary));
 }
+
+:root {
+  --toast-footer-clearance: 2.25rem;
+  --toast-edge-gap: 0.75rem;
+  --toast-bottom-offset: calc(
+    var(--toast-footer-clearance) + var(--toast-edge-gap) +
+      max(env(safe-area-inset-bottom, 0px), var(--tg-content-safe-bottom, 0px))
+  );
+}
+
+.app-toast-container.Toastify__toast-container--bottom-center {
+  bottom: var(--toast-bottom-offset) !important;
+  left: 50% !important;
+  transform: translateX(-50%);
+  width: min(calc(100% - 1.5rem), 24rem);
+  padding: 0;
+}
+
+.app-toast-container.Toastify__toast-container--top-right {
+  top: calc(1rem + env(safe-area-inset-top, 0px)) !important;
+  right: calc(1rem + env(safe-area-inset-right, 0px)) !important;
+}
+
+.app-toast-container .Toastify__toast {
+  min-height: auto;
+  margin-bottom: 0.5rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px hsl(0 0% 0% / 0.12);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  padding: 0.75rem 1rem;
+}
+
+.dark .app-toast-container .Toastify__toast {
+  box-shadow: 0 8px 24px hsl(0 0% 0% / 0.35);
+}

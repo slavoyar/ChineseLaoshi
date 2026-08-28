@@ -18,15 +18,6 @@ export const randomMixedFace = (): MixedFace =>
 export const assignMixedFaces = (cards: { id: string }[]): Record<string, MixedFace> =>
   Object.fromEntries(cards.map((card) => [card.id, randomMixedFace()]));
 
-export interface StudySessionSnapshot {
-  mode: StudyMode;
-  groupId?: string;
-  count: string;
-  cards: Card[];
-  currentIndex: number;
-  cardFaces?: Record<string, MixedFace>;
-}
-
 export const saveStudySession = (snapshot: StudySessionSnapshot): void => {
   try {
     sessionStorage.setItem(STUDY_SESSION_KEY, JSON.stringify(snapshot));

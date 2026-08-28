@@ -38,6 +38,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   server: {
+    allowedHosts: true,
     // Always proxy to the local backend. Do not point this at production —
     // prod ALLOWED_ORIGINS rejects localhost and other non-SPA origins.
     proxy: {
