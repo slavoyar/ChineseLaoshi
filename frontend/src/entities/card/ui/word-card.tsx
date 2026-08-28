@@ -36,10 +36,10 @@ export const WordCard = ({ card, onDelete }: Props) => {
 
   return (
     <>
-      <div className={cn('group/card relative', tileItemClassName)}>
+      <div className={cn('group/card relative pb-1.5', tileItemClassName)}>
         <div
           className={cn(
-            'relative flex h-full flex-col overflow-visible rounded-lg border-2 bg-secondary',
+            'relative flex h-full flex-col overflow-hidden rounded-lg border-2 bg-secondary',
             progressStyles.border
           )}
           aria-label={`${card.word.symbols}, ${card.word.translation}, ${progressStyles.percentLabel}% progress`}
@@ -57,7 +57,7 @@ export const WordCard = ({ card, onDelete }: Props) => {
           </div>
           <span
             className={cn(
-              'absolute bottom-0 left-1/2 z-10 -translate-x-1/2 translate-y-1/2 bg-secondary px-1 text-[10px] font-semibold tabular-nums leading-none',
+              'absolute bottom-0 left-1/2 z-10 max-w-[calc(100%-0.75rem)] -translate-x-1/2 translate-y-1/2 truncate bg-secondary px-0.5 text-[9px] font-semibold tabular-nums leading-none',
               progressStyles.label
             )}
           >
