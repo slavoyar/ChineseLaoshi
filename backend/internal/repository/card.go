@@ -11,7 +11,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/slavo/ChineseLaoshi/backend/internal/apperrors"
 	"github.com/slavo/ChineseLaoshi/backend/internal/dto"
-	"unicode/utf8"
 )
 
 type CardRow struct {
@@ -352,8 +351,6 @@ func (r *CardRepository) GetQuizDistractors(ctx context.Context, cardID, userID 
 		return nil, err
 	}
 
-	symbolLen := utf8.RuneCountInString(symbols)
-
 	rows, err := r.pool.Query(ctx, `
 		SELECT w.id, w.symbols, w.transcription, w.translation
 		FROM "Card" c
@@ -361,11 +358,11 @@ func (r *CardRepository) GetQuizDistractors(ctx context.Context, cardID, userID 
 		JOIN "Group" g ON g.id = c."groupId"
 		WHERE g."userId" = $1
 		  AND c.id != $2
-		  AND char_length(w.symbols) = $3
+		  AND char_length(w.symbols) = char_length($3::text)
 		GROUP BY w.id, w.symbols, w.transcription, w.translation
 		ORDER BY MIN(CASE WHEN c."groupId" = $4 THEN 0 ELSE 1 END), random()
 		LIMIT 10
-	`, userID, cardID, symbolLen, groupID)
+	`, userID, cardID, symbols, groupID)
 	if err != nil {
 		return nil, err
 	}

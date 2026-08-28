@@ -23,7 +23,7 @@ class CardService extends BaseService<Card, CreateCard, UpdateCardWord> {
         params: { cardId },
         cancelToken: this.getCancelToken('getQuizDistractors'),
       }),
-      { notify: true }
+      { notify: false }
     );
   }
 
