@@ -10,6 +10,7 @@
     />
     <link rel="canonical" href="https://chineselaoshi.slavoyar.tech/about.html" />
     <link rel="icon" href="/assets/icon.svg" />
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
       :root {
         color-scheme: light dark;
@@ -40,6 +41,8 @@
       body {
         margin: 0;
         min-height: 100dvh;
+        padding-top: var(--tg-content-safe-top, var(--tg-safe-top, 0px));
+        padding-bottom: var(--tg-content-safe-bottom, var(--tg-safe-bottom, 0px));
         font-family:
           ui-sans-serif,
           system-ui,
@@ -203,5 +206,34 @@
         </p>
       </div>
     </main>
+    <script>
+      (function () {
+        var webApp = window.Telegram && window.Telegram.WebApp;
+        if (!webApp) {
+          return;
+        }
+
+        webApp.ready();
+        webApp.expand();
+        if (webApp.requestFullscreen) {
+          webApp.requestFullscreen();
+        }
+
+        function applyInsets() {
+          var root = document.documentElement;
+          root.style.setProperty('--tg-safe-top', webApp.safeAreaInset.top + 'px');
+          root.style.setProperty('--tg-safe-bottom', webApp.safeAreaInset.bottom + 'px');
+          root.style.setProperty('--tg-content-safe-top', webApp.contentSafeAreaInset.top + 'px');
+          root.style.setProperty(
+            '--tg-content-safe-bottom',
+            webApp.contentSafeAreaInset.bottom + 'px'
+          );
+        }
+
+        applyInsets();
+        webApp.onEvent('safeAreaChanged', applyInsets);
+        webApp.onEvent('contentSafeAreaChanged', applyInsets);
+      })();
+    </script>
   </body>
 </html>
