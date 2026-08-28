@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 interface Props {
   card: Card;
   onNext: () => void;
+  paused?: boolean;
 }
 
 interface Round {
@@ -14,7 +15,7 @@ interface Round {
 const HINT_ROUNDS = 5;
 const ROUNDS = 5;
 
-export const PrescriptionPractice = ({ card, onNext }: Props) => {
+export const PrescriptionPractice = ({ card, onNext, paused = false }: Props) => {
   const [round, setRound] = useState(0);
   const [rounds, setRounds] = useState<Round[]>([]);
 
@@ -41,6 +42,7 @@ export const PrescriptionPractice = ({ card, onNext }: Props) => {
               showOutline={item.withOutline}
               isNextDisabled={index !== rounds.length - 1}
               updateStats={false}
+              paused={paused}
               onNext={onNext}
               onComplete={() => {
                 setRound((prev) => (prev === rounds.length - 1 ? prev : prev + 1));

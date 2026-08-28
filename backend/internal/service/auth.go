@@ -17,6 +17,7 @@ type AuthService struct {
 	users    *repository.UserRepository
 	cloner   *repository.CloneRepository
 	google   auth.GoogleTokenVerifier
+	telegram auth.TelegramInitDataVerifier
 	tokens   *auth.TokenService
 	template string // template user email for lookup fallback
 }
@@ -25,6 +26,7 @@ func NewAuthService(
 	users *repository.UserRepository,
 	cloner *repository.CloneRepository,
 	google auth.GoogleTokenVerifier,
+	telegram auth.TelegramInitDataVerifier,
 	tokens *auth.TokenService,
 	templateEmail string,
 ) *AuthService {
@@ -32,6 +34,7 @@ func NewAuthService(
 		users:    users,
 		cloner:   cloner,
 		google:   google,
+		telegram: telegram,
 		tokens:   tokens,
 		template: templateEmail,
 	}
@@ -79,6 +82,61 @@ func (s *AuthService) LoginWithGoogle(ctx context.Context, idToken string) (Auth
 		return AuthUserDTO{}, "", err
 	}
 	return toAuthUserDTO(uc), token, nil
+}
+
+func (s *AuthService) LoginWithTelegram(ctx context.Context, initData string) (AuthUserDTO, string, error) {
+	if s.telegram == nil {
+		return AuthUserDTO{}, "", apperrors.New(apperrors.UnauthorizedError)
+	}
+
+	identity, err := s.telegram.VerifyInitData(initData)
+	if err != nil {
+		return AuthUserDTO{}, "", err
+	}
+
+	user, err := s.users.GetByProviderSubject(ctx, auth.TelegramProvider(), identity.Subject)
+	if err != nil {
+		if ae, ok := apperrors.IsAppError(err); !ok || ae.Code != apperrors.EntityNotFoundError {
+			return AuthUserDTO{}, "", err
+		}
+		user, err = s.provisionTelegramUser(ctx, identity)
+		if err != nil {
+			return AuthUserDTO{}, "", err
+		}
+	} else if err := s.ensureStarterContent(ctx, user.ID); err != nil {
+		return AuthUserDTO{}, "", err
+	}
+
+	uc := auth.UserContext{
+		ID:        user.ID,
+		Username:  user.Username,
+		Email:     user.Email,
+		AvatarURL: user.AvatarURL,
+		Provider:  user.Provider,
+	}
+	token, _, err := s.tokens.Issue(uc)
+	if err != nil {
+		return AuthUserDTO{}, "", err
+	}
+	return toAuthUserDTO(uc), token, nil
+}
+
+func (s *AuthService) provisionTelegramUser(ctx context.Context, identity auth.TelegramIdentity) (repository.User, error) {
+	email := identity.Subject + "@telegram.invalid"
+	user, err := s.users.CreateSSOUser(ctx, identity.Name, email, auth.TelegramProvider(), identity.Subject, identity.PhotoURL)
+	if err != nil {
+		return repository.User{}, err
+	}
+
+	template, err := s.templateUser(ctx)
+	if err != nil {
+		return repository.User{}, fmt.Errorf("template user: %w", err)
+	}
+
+	if err := s.cloner.CloneUserContent(ctx, template.ID, user.ID); err != nil {
+		return repository.User{}, fmt.Errorf("clone template content: %w", err)
+	}
+	return user, nil
 }
 
 func (s *AuthService) provisionGoogleUser(ctx context.Context, identity auth.GoogleIdentity) (repository.User, error) {

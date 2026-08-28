@@ -97,7 +97,7 @@ func SetupStrictAuthApp(t *testing.T) *TestApp {
 	cardService := service.NewCardService(base.pool, cardRepo, groupRepo, wordRepo)
 	wordService := service.NewWordService(wordRepo)
 	googleVerifier := auth.NewGoogleVerifier("test-google-client-id")
-	authService := service.NewAuthService(userRepo, cloneRepo, googleVerifier, tokenService, config.DefaultTemplateEmail)
+	authService := service.NewAuthService(userRepo, cloneRepo, googleVerifier, nil, tokenService, config.DefaultTemplateEmail)
 
 	cookieConfig := auth.CookieConfig{Secure: false, TTL: config.DefaultSessionTTL}
 	handlers := handler.NewHandlers(
@@ -186,7 +186,7 @@ func newTestApp() (*TestApp, error) {
 
 	tokenService := auth.NewTokenService(cfg.JWTSecret, cfg.SessionTTL)
 	googleVerifier := auth.NewGoogleVerifier(cfg.GoogleClientID)
-	authService := service.NewAuthService(userRepo, cloneRepo, googleVerifier, tokenService, cfg.TemplateEmail)
+	authService := service.NewAuthService(userRepo, cloneRepo, googleVerifier, nil, tokenService, cfg.TemplateEmail)
 
 	authenticator := auth.NewDefaultUserAuthenticator(userRepo, DefaultTestEmail)
 	cookieConfig := auth.CookieConfig{Secure: false, TTL: cfg.SessionTTL}

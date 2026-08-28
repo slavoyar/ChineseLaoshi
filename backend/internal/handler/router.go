@@ -61,6 +61,7 @@ func (h *Handlers) Router(authenticator auth.Authenticator, enableLogger bool) h
 
 		r.Route("/auth", func(r chi.Router) {
 			r.Post("/google", h.Auth.GoogleLogin)
+			r.Post("/telegram", h.Auth.TelegramLogin)
 			r.Post("/logout", h.Auth.Logout)
 			r.With(middleware.RequireAuth).Get("/me", h.Auth.Me)
 		})

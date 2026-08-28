@@ -33,13 +33,34 @@ func (f fakeGoogleVerifier) VerifyIDToken(ctx context.Context, rawToken string) 
 	return f.identity, nil
 }
 
+type fakeTelegramVerifier struct {
+	identity auth.TelegramIdentity
+	err      error
+}
+
+func (f fakeTelegramVerifier) VerifyInitData(initData string) (auth.TelegramIdentity, error) {
+	if f.err != nil {
+		return auth.TelegramIdentity{}, f.err
+	}
+	return f.identity, nil
+}
+
 func newAuthService(t *testing.T, google auth.GoogleTokenVerifier) *service.AuthService {
+	t.Helper()
+	return newAuthServiceWithVerifiers(t, google, nil)
+}
+
+func newAuthServiceWithVerifiers(
+	t *testing.T,
+	google auth.GoogleTokenVerifier,
+	telegram auth.TelegramInitDataVerifier,
+) *service.AuthService {
 	t.Helper()
 	app := testutil.SetupTestApp(t)
 	userRepo := repository.NewUserRepository(app.Pool())
 	cloneRepo := repository.NewCloneRepository(app.Pool())
 	tokenService := auth.NewTokenService("test-jwt-secret", config.DefaultSessionTTL)
-	return service.NewAuthService(userRepo, cloneRepo, google, tokenService, config.DefaultTemplateEmail)
+	return service.NewAuthService(userRepo, cloneRepo, google, telegram, tokenService, config.DefaultTemplateEmail)
 }
 
 func TestAuthService_LoginWithGoogleInvalidToken(t *testing.T) {
@@ -101,6 +122,89 @@ func TestAuthService_LoginWithGoogleEmptyNameUsesEmailPrefix(t *testing.T) {
 	}
 }
 
+func TestAuthService_LoginWithTelegramNilVerifier(t *testing.T) {
+	svc := newAuthService(t, nil)
+	_, _, err := svc.LoginWithTelegram(context.Background(), "init-data")
+	ae, ok := apperrors.IsAppError(err)
+	if !ok || ae.Code != apperrors.UnauthorizedError {
+		t.Fatalf("expected unauthorized, got %v", err)
+	}
+}
+
+func TestAuthService_LoginWithTelegramInvalidInitData(t *testing.T) {
+	svc := newAuthServiceWithVerifiers(t, nil, fakeTelegramVerifier{err: apperrors.New(apperrors.UnauthorizedError)})
+	_, _, err := svc.LoginWithTelegram(context.Background(), "bad")
+	ae, ok := apperrors.IsAppError(err)
+	if !ok || ae.Code != apperrors.UnauthorizedError {
+		t.Fatalf("expected unauthorized, got %v", err)
+	}
+}
+
+func TestAuthService_LoginWithTelegramNewUser(t *testing.T) {
+	svc := newAuthServiceWithVerifiers(t, nil, fakeTelegramVerifier{identity: auth.TelegramIdentity{
+		Subject: "999001", Name: "Telegram User", PhotoURL: "https://example.com/avatar.jpg",
+	}})
+	user, token, err := svc.LoginWithTelegram(context.Background(), "init-data")
+	if err != nil {
+		t.Fatalf("login: %v", err)
+	}
+	if user.Name != "Telegram User" || user.Provider != auth.TelegramProvider() || token == "" {
+		t.Fatalf("unexpected login result: %+v token=%q", user, token)
+	}
+	if user.Email != "999001@telegram.invalid" {
+		t.Fatalf("expected telegram placeholder email, got %s", user.Email)
+	}
+}
+
+func TestAuthService_LoginWithTelegramExistingUser(t *testing.T) {
+	svc := newAuthServiceWithVerifiers(t, nil, fakeTelegramVerifier{identity: auth.TelegramIdentity{
+		Subject: "999002", Name: "Returning Telegram User",
+	}})
+	ctx := context.Background()
+	first, firstToken, err := svc.LoginWithTelegram(ctx, "init-data")
+	if err != nil {
+		t.Fatalf("first login: %v", err)
+	}
+
+	second, secondToken, err := svc.LoginWithTelegram(ctx, "init-data")
+	if err != nil {
+		t.Fatalf("second login: %v", err)
+	}
+	if second.ID != first.ID || secondToken == "" || firstToken == "" {
+		t.Fatalf("unexpected repeat login: first=%+v second=%+v", first, second)
+	}
+}
+
+func TestAuthService_LoginWithTelegramEnsuresStarterContent(t *testing.T) {
+	app := testutil.SetupTestApp(t)
+	users := repository.NewUserRepository(app.Pool())
+	cloneRepo := repository.NewCloneRepository(app.Pool())
+	tokenService := auth.NewTokenService("test-jwt-secret", config.DefaultSessionTTL)
+	telegram := fakeTelegramVerifier{identity: auth.TelegramIdentity{
+		Subject: "999003", Name: "No Starter Telegram",
+	}}
+	svc := service.NewAuthService(users, cloneRepo, nil, telegram, tokenService, config.DefaultTemplateEmail)
+
+	ctx := context.Background()
+	user, err := users.CreateSSOUser(ctx, "tg-nostarter", "999003@telegram.invalid", auth.TelegramProvider(), "999003", "")
+	if err != nil {
+		t.Fatalf("create user: %v", err)
+	}
+	count, err := cloneRepo.CountGroups(ctx, user.ID)
+	if err != nil || count != 0 {
+		t.Fatalf("expected 0 groups before login, got %d err=%v", count, err)
+	}
+
+	_, _, err = svc.LoginWithTelegram(ctx, "init-data")
+	if err != nil {
+		t.Fatalf("login: %v", err)
+	}
+	count, err = cloneRepo.CountGroups(ctx, user.ID)
+	if err != nil || count == 0 {
+		t.Fatalf("expected starter groups after login, got %d err=%v", count, err)
+	}
+}
+
 func TestAuthService_LoginEnsuresStarterContent(t *testing.T) {
 	app := testutil.SetupTestApp(t)
 	users := repository.NewUserRepository(app.Pool())
@@ -109,7 +213,7 @@ func TestAuthService_LoginEnsuresStarterContent(t *testing.T) {
 	google := fakeGoogleVerifier{identity: auth.GoogleIdentity{
 		Subject: "no-groups-subject", Email: "nostarter@example.com", EmailVerified: true, Name: "No Starter",
 	}}
-	svc := service.NewAuthService(users, cloneRepo, google, tokenService, config.DefaultTemplateEmail)
+	svc := service.NewAuthService(users, cloneRepo, google, nil, tokenService, config.DefaultTemplateEmail)
 
 	ctx := context.Background()
 	user, err := users.CreateSSOUser(ctx, "nostarter", "nostarter@example.com", "google", "no-groups-subject", "")

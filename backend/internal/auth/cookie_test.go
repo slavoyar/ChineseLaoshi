@@ -65,6 +65,18 @@ func TestSessionTokenFromRequest(t *testing.T) {
 	}
 }
 
+func TestSessionTokenFromRequestBearer(t *testing.T) {
+	req := httptest.NewRequest("GET", "/", nil)
+	req.Header.Set("Authorization", "Bearer jwt-token")
+	token, err := SessionTokenFromRequest(req)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if token != "jwt-token" {
+		t.Fatalf("expected jwt-token, got %s", token)
+	}
+}
+
 func TestSessionTokenFromRequestMissing(t *testing.T) {
 	req := httptest.NewRequest("GET", "/", nil)
 	if _, err := SessionTokenFromRequest(req); err == nil {

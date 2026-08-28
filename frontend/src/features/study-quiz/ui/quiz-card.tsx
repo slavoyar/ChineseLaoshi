@@ -10,6 +10,7 @@ export type QuizMode = 'pinyin' | 'translation';
 interface Props {
   card: Card;
   mode: QuizMode;
+  paused?: boolean;
   onNext: () => void;
   onAbort?: () => void;
 }
@@ -52,7 +53,7 @@ const buildOptions = (card: Card, distractors: Word[], mode: QuizMode): QuizOpti
   return shuffle(options);
 };
 
-export const QuizCard = ({ card, mode, onNext, onAbort }: Props) => {
+export const QuizCard = ({ card, mode, paused = false, onNext, onAbort }: Props) => {
   const isDemo = useAuthStore((state) => state.isDemo);
 
   const [options, setOptions] = useState<QuizOption[]>([]);
@@ -124,7 +125,7 @@ export const QuizCard = ({ card, mode, onNext, onAbort }: Props) => {
   };
 
   const onSelect = (optionId: string) => {
-    if (selectedId || loading) {
+    if (selectedId || loading || paused) {
       return;
     }
     setSelectedId(optionId);
@@ -159,7 +160,7 @@ export const QuizCard = ({ card, mode, onNext, onAbort }: Props) => {
                 key={option.id}
                 type='button'
                 variant='outline'
-                disabled={selectedId !== null}
+                disabled={selectedId !== null || paused}
                 className={cn(
                   'h-auto min-h-11 whitespace-normal px-3 py-2 text-left text-sm',
                   showResult && isCorrect && 'border-green-500 bg-green-500/10',

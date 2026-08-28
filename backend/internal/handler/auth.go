@@ -22,6 +22,35 @@ type googleLoginBody struct {
 	IDToken string `json:"idToken"`
 }
 
+type telegramLoginBody struct {
+	InitData string `json:"initData"`
+}
+
+type telegramLoginResponse struct {
+	User  service.AuthUserDTO `json:"user"`
+	Token string              `json:"token"`
+}
+
+func (h *AuthHandler) TelegramLogin(w http.ResponseWriter, r *http.Request) {
+	var body telegramLoginBody
+	if !decodeJSON(w, r, &body) {
+		return
+	}
+	if body.InitData == "" {
+		writeValidationError(w, "initData is required")
+		return
+	}
+
+	user, token, err := h.service.LoginWithTelegram(r.Context(), body.InitData)
+	if err != nil {
+		log.Printf("WARN telegram login failed: %v", err)
+		mapHandlerError(w, err)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, telegramLoginResponse{User: user, Token: token})
+}
+
 func (h *AuthHandler) GoogleLogin(w http.ResponseWriter, r *http.Request) {
 	var body googleLoginBody
 	if !decodeJSON(w, r, &body) {

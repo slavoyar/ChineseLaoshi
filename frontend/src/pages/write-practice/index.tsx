@@ -2,13 +2,14 @@ import { cardService, useCardStore, WriteCard } from '@entities/card';
 import { QuizCard } from '@features/study-quiz';
 import { isRequestCanceled } from '@shared/api';
 import { Card } from '@shared/api';
-import { MixedFace } from '@shared/config';
+import { MixedFace, StudyMode } from '@shared/config';
 import {
   assignMixedFaces,
-  clearMixedSession,
-  saveMixedSession,
-} from '@shared/lib/mixed-session';
-import { useStateStore } from '@shared/stores';
+  clearStudySession,
+  loadStudySession,
+  saveStudySession,
+} from '@shared/lib/study-session';
+import { useStateStore, useStudyPauseStore } from '@shared/stores';
 import { Route } from '@shared/types';
 import { PrescriptionPractice } from '@widgets/prescription-practice';
 import { ReactNode, useEffect, useRef, useState } from 'react';
@@ -23,35 +24,84 @@ export const WritePractice = () => {
   const sessionCardsRef = useRef<Card[]>([]);
   const cardFacesRef = useRef<Record<string, MixedFace>>({});
   const remainingRef = useRef<Card[]>([]);
+  const sessionModeRef = useRef<'main' | StudyMode>('main');
+  const paused = useStudyPauseStore((state) => state.paused);
 
   const reset = useCardStore((state) => state.reset);
   const [state, setState] = useStateStore((store) => [store.state, store.setState]);
 
   const resetAndExit = () => {
-    clearMixedSession();
+    clearStudySession();
     setState('main');
     reset();
     navigate(Route.Root);
   };
 
-  const persistMixedSession = (cards: Card[], index: number, faces: Record<string, MixedFace>) => {
-    if (state !== 'mixed' || !count) {
+  const persistSession = (
+    mode: 'main' | StudyMode,
+    cards: Card[],
+    index: number,
+    faces: Record<string, MixedFace>,
+  ) => {
+    if (mode === 'main' || !count) {
       return;
     }
-    saveMixedSession({
-      mode: 'mixed',
+    saveStudySession({
+      mode,
       groupId,
       count,
-      cardIds: cards.map((card) => card.id),
-      cardFaces: faces,
+      cards,
       currentIndex: index,
+      cardFaces: mode === 'mixed' ? faces : undefined,
     });
+  };
+
+  const restoreFromSnapshot = (): boolean => {
+    const snapshot = loadStudySession();
+    if (!snapshot || snapshot.count !== count) {
+      return false;
+    }
+    if ((snapshot.groupId ?? undefined) !== groupId) {
+      return false;
+    }
+    if (snapshot.cards.length === 0) {
+      return false;
+    }
+    if (state !== 'main' && snapshot.mode !== state) {
+      return false;
+    }
+
+    if (state === 'main') {
+      sessionModeRef.current = snapshot.mode;
+      setState(snapshot.mode);
+    }
+
+    sessionCardsRef.current = snapshot.cards;
+    cardFacesRef.current = snapshot.cardFaces ?? {};
+    const index = Math.min(snapshot.currentIndex, snapshot.cards.length - 1);
+    const currentCard = snapshot.cards[index];
+    const rest = snapshot.cards.slice(index + 1);
+    remainingRef.current = rest;
+    setCurrentIndex(index);
+    setCurrent(currentCard);
+    return true;
   };
 
   useEffect(() => {
     let active = true;
 
-    if (state === 'main' || !count) {
+    if (!count) {
+      navigate(Route.Root);
+      return;
+    }
+
+    if (restoreFromSnapshot()) {
+      return () => {
+        active = false;
+      };
+    }
+
+    if (state === 'main') {
       navigate(Route.Root);
       return;
     }
@@ -72,12 +122,13 @@ export const WritePractice = () => {
         if (state === 'mixed') {
           cardFacesRef.current = assignMixedFaces(data);
         }
+        sessionModeRef.current = state;
 
         const [first, ...rest] = data;
         remainingRef.current = rest;
         setCurrentIndex(0);
         setCurrent(first);
-        persistMixedSession(data, 0, cardFacesRef.current);
+        persistSession(state, data, 0, cardFacesRef.current);
       })
       .catch((err) => {
         if (!active || isRequestCanceled(err)) {
@@ -102,7 +153,7 @@ export const WritePractice = () => {
     const nextIndex = currentIndex + 1;
     setCurrentIndex(nextIndex);
     setCurrent(next);
-    persistMixedSession(sessionCardsRef.current, nextIndex, cardFacesRef.current);
+    persistSession(state, sessionCardsRef.current, nextIndex, cardFacesRef.current);
   };
 
   const renderFace = (card: Card, face: MixedFace): ReactNode => {
@@ -115,6 +166,7 @@ export const WritePractice = () => {
             transcription={card.word.transcription}
             translation={card.word.translation}
             symbols={card.word.symbols}
+            paused={paused}
             onNext={onNext}
             onAbort={resetAndExit}
           />
@@ -126,6 +178,7 @@ export const WritePractice = () => {
             key={card.id}
             card={card}
             mode={face}
+            paused={paused}
             onNext={onNext}
             onAbort={resetAndExit}
           />
@@ -136,18 +189,20 @@ export const WritePractice = () => {
   };
 
   const getWidget = (card: Card): ReactNode => {
-    switch (state) {
+    const mode = state === 'main' ? sessionModeRef.current : state;
+    switch (mode) {
       case 'write':
         return renderFace(card, 'write');
       case 'prescription':
-        return <PrescriptionPractice key={card.id} card={card} onNext={onNext} />;
+        return <PrescriptionPractice key={card.id} card={card} onNext={onNext} paused={paused} />;
       case 'pinyin':
       case 'translation':
         return (
           <QuizCard
             key={card.id}
             card={card}
-            mode={state}
+            mode={mode}
+            paused={paused}
             onNext={onNext}
             onAbort={resetAndExit}
           />
