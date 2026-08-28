@@ -5,11 +5,13 @@ import { Route } from '@shared/types';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { LogOut, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 const APP_NAME = '中国老师';
 
 export const Header = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [user, isDemo, isTelegramApp, signOut, openAuthDialog] = useAuthStore((state) => [
     state.user,
@@ -30,39 +32,42 @@ export const Header = () => {
         <div
           className={cn(
             'm-auto flex h-full items-center p-4 md:w-9/12 xl:w-7/12',
-            isTelegramApp ? 'justify-center' : 'justify-between',
+            isTelegramApp ? 'justify-center' : 'justify-between'
           )}
         >
           <button
             type='button'
-            className='cursor-pointer text-2xl font-bold text-foreground'
+            data-tour='brand'
+            className='shrink-0 cursor-pointer text-2xl font-bold text-foreground'
             onClick={() => navigate(Route.Root)}
           >
             {APP_NAME}
           </button>
 
           {!isTelegramApp && (
-            <div className='flex items-center gap-3'>
-              <div className='flex items-center gap-2 text-foreground'>
+            <div className='flex min-w-0 shrink items-center gap-2 sm:gap-3' data-tour='profile'>
+              <div className='flex min-w-0 items-center gap-2 text-foreground'>
                 {user?.avatarUrl ? (
-                  <img src={user.avatarUrl} alt='' className='h-8 w-8 rounded-full object-cover' />
+                  <img src={user.avatarUrl} alt='' className='h-8 w-8 shrink-0 rounded-full object-cover' />
                 ) : (
-                  <span className='rounded-full bg-primary p-2 text-primary-foreground'>
+                  <span className='shrink-0 rounded-full bg-primary p-2 text-primary-foreground'>
                     <User className='h-4 w-4' aria-hidden='true' />
                   </span>
                 )}
-                <div className='text-sm font-medium'>{user?.name ?? 'Demo'}</div>
+                <div className='min-w-0 max-w-[7rem] truncate text-sm font-medium sm:max-w-[10rem]'>
+                  {user?.name ?? t('common.demo')}
+                </div>
               </div>
 
               {isDemo ? (
-                <Button type='button' size='sm' onClick={openAuthDialog}>
-                  Sign up
+                <Button type='button' size='sm' className='shrink-0' onClick={openAuthDialog}>
+                  {t('common.signUp')}
                 </Button>
               ) : (
                 <button
                   type='button'
                   className='rounded p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground'
-                  aria-label='Sign out'
+                  aria-label={t('header.signOutAria')}
                   onClick={onSignOut}
                 >
                   <LogOut className='h-4 w-4' />

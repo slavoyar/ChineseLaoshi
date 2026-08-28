@@ -1,5 +1,6 @@
 import { useCardStore } from '@entities/card';
 import { Card } from '@shared/api';
+import { testIds } from '@shared/config';
 import { useDelete, useRequireAuth } from '@shared/hooks';
 import {
   AlertDialog,
@@ -14,6 +15,7 @@ import {
   tileItemClassName,
 } from '@shared/ui';
 import { cn } from '@shared/utils';
+import { useTranslation } from 'react-i18next';
 
 import { getProgressStyles } from '../lib/progress';
 interface Props {
@@ -22,6 +24,7 @@ interface Props {
 }
 
 export const WordCard = ({ card, onDelete }: Props) => {
+  const { t } = useTranslation();
   const deleteCard = useCardStore((state) => state.delete);
   const progressStyles = getProgressStyles(card.progress);
   const { isDemo } = useRequireAuth();
@@ -36,15 +39,23 @@ export const WordCard = ({ card, onDelete }: Props) => {
 
   return (
     <>
-      <div className={cn('group/card relative', tileItemClassName)}>
+      <div
+        className={cn('group/card relative pb-2', tileItemClassName)}
+        data-testid={testIds.word.card}
+        data-word-symbols={card.word.symbols}
+      >
         <div
           className={cn(
             'relative flex h-full flex-col overflow-visible rounded-lg border-2 bg-secondary',
             progressStyles.border
           )}
-          aria-label={`${card.word.symbols}, ${card.word.translation}, ${progressStyles.percentLabel}% progress`}
+          aria-label={t('words.progressAria', {
+            symbol: card.word.symbols,
+            translation: card.word.translation,
+            percent: progressStyles.percentLabel,
+          })}
         >
-          <div className='flex min-h-0 flex-1 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-[inherit] px-2 pb-3 pt-1.5'>
+          <div className='flex min-h-0 flex-1 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-[inherit] px-2 pb-3.5 pt-1.5'>
             <span className='text-2xl font-medium leading-none text-foreground'>{card.word.symbols}</span>
             <div className='w-full space-y-0.5 text-center'>
               <p className='truncate text-[10px] leading-tight text-muted-foreground'>
@@ -57,7 +68,7 @@ export const WordCard = ({ card, onDelete }: Props) => {
           </div>
           <span
             className={cn(
-              'absolute bottom-0 left-1/2 z-10 -translate-x-1/2 translate-y-1/2 bg-secondary px-1 text-[10px] font-semibold tabular-nums leading-none',
+              'pointer-events-none absolute bottom-0 left-1/2 z-10 -translate-x-1/2 translate-y-1/2 whitespace-nowrap rounded-sm bg-secondary px-1 text-[10px] font-semibold tabular-nums leading-none',
               progressStyles.label
             )}
           >
@@ -66,7 +77,8 @@ export const WordCard = ({ card, onDelete }: Props) => {
         </div>
         {!isDemo && (
           <TileDeleteButton
-            aria-label={`Delete word ${card.word.symbols}`}
+            aria-label={t('words.deleteWordAria', { symbol: card.word.symbols })}
+            data-testid={testIds.word.delete}
             onClick={(e) => {
               e.stopPropagation();
               openDeleteDialog(card);
@@ -77,15 +89,17 @@ export const WordCard = ({ card, onDelete }: Props) => {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={(open) => !open && closeDeleteDialog()}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete word</AlertDialogTitle>
+            <AlertDialogTitle>{t('words.deleteTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete word{' '}
+              {t('words.deleteDescription')}{' '}
               <span className='text-lg font-medium text-foreground'>{deleteItem.word?.symbols}</span>?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={onDeleteHandler}>Delete</AlertDialogAction>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={onDeleteHandler} data-testid={testIds.common.confirmDelete}>
+              {t('common.delete')}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

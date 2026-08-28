@@ -17,4 +17,6 @@ export const authApi = {
       { notify: false }
     ),
   logout: () => apiRequest(axios.post<void, void>(`${AUTH_URL}/logout`), { notify: true }),
+  completeOnboarding: () =>
+    apiRequest(axios.patch<void, AuthUser>(`${AUTH_URL}/onboarding`), { notify: false }),
 };

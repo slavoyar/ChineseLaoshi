@@ -237,11 +237,35 @@ func TestAuthService_LoginEnsuresStarterContent(t *testing.T) {
 
 func TestAuthService_Me(t *testing.T) {
 	svc := newAuthService(t, fakeGoogleVerifier{})
-	dto := svc.Me(context.Background(), auth.UserContext{
-		ID: "1", Username: "test", Email: "a@b.com", AvatarURL: "pic", Provider: "google",
-	})
-	if dto.ID != "1" || dto.Name != "test" || dto.Email != "a@b.com" {
+	userID := testutil.GetUUID(1)
+	dto, err := svc.Me(context.Background(), auth.UserContext{ID: userID})
+	if err != nil {
+		t.Fatalf("me: %v", err)
+	}
+	if dto.ID != userID {
 		t.Fatalf("unexpected dto: %+v", dto)
+	}
+}
+
+func TestAuthService_CompleteOnboarding(t *testing.T) {
+	svc := newAuthService(t, fakeGoogleVerifier{})
+	userID := testutil.GetUUID(1)
+
+	dto, err := svc.CompleteOnboarding(context.Background(), userID)
+	if err != nil {
+		t.Fatalf("complete onboarding: %v", err)
+	}
+	if !dto.OnboardingCompleted {
+		t.Fatalf("expected onboarding completed, got %+v", dto)
+	}
+}
+
+func TestAuthService_CompleteOnboardingNotFound(t *testing.T) {
+	svc := newAuthService(t, fakeGoogleVerifier{})
+	_, err := svc.CompleteOnboarding(context.Background(), testutil.GetUUID(404))
+	ae, ok := apperrors.IsAppError(err)
+	if !ok || ae.Code != apperrors.EntityNotFoundError {
+		t.Fatalf("expected not found, got %v", err)
 	}
 }
 

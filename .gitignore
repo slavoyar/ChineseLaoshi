@@ -33,3 +33,8 @@ dist-ssr
 backend/data/
 backend/server
 backend/server.exe
+
+# Playwright
+frontend/e2e/.auth/
+frontend/e2e/e2e/
+frontend/test-results/

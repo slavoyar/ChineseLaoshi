@@ -7,12 +7,19 @@ interface Props {
   onClick: (e: MouseEvent<HTMLButtonElement>) => void;
   'aria-label': string;
   className?: string;
+  'data-testid'?: string;
 }
 
-export const TileDeleteButton = ({ onClick, 'aria-label': ariaLabel, className }: Props) => (
+export const TileDeleteButton = ({
+  onClick,
+  'aria-label': ariaLabel,
+  className,
+  'data-testid': dataTestId,
+}: Props) => (
   <Button
     variant='ghost'
     size='icon'
+    data-testid={dataTestId}
     className={cn(
       'absolute right-0 top-0 z-10 h-9 w-9 items-start justify-end p-1.5 text-muted-foreground opacity-100 transition-[opacity,color] duration-150',
       'hover:bg-transparent hover:text-red-400 active:bg-transparent active:text-red-300',

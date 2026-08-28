@@ -48,7 +48,7 @@ const useGroupStore = create<State & Action>((set, get) => ({
         if (epoch !== fetchEpoch) {
           return;
         }
-        set(() => ({ isLoading: false }));
+        set(() => ({ isLoading: false, hasLoaded: true }));
       } finally {
         if (epoch === fetchEpoch) {
           inflightFetch = null;

@@ -12,8 +12,7 @@ export interface StudySessionSnapshot {
   cardFaces?: Record<string, MixedFace>;
 }
 
-export const randomMixedFace = (): MixedFace =>
-  MIXED_FACES[Math.floor(Math.random() * MIXED_FACES.length)];
+export const randomMixedFace = (): MixedFace => MIXED_FACES[Math.floor(Math.random() * MIXED_FACES.length)];
 
 export const assignMixedFaces = (cards: { id: string }[]): Record<string, MixedFace> =>
   Object.fromEntries(cards.map((card) => [card.id, randomMixedFace()]));

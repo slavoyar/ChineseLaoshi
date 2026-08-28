@@ -1,0 +1,134 @@
+{
+  "common": {
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "continue": "Продолжить",
+    "finish": "Завершить",
+    "about": "О приложении",
+    "demo": "Демо",
+    "signUp": "Регистрация",
+    "signOut": "Выйти",
+    "back": "Назад",
+    "backHome": "На главную",
+    "loading": "Загрузка…",
+    "tryAgain": "Попробовать снова",
+    "create": "Создать"
+  },
+  "header": {
+    "signOutAria": "Выйти"
+  },
+  "footer": {
+    "copyright": "© {{year}} Chinese Laoshi"
+  },
+  "studyModes": {
+    "title": "Режимы обучения",
+    "handwriting": "Письмо",
+    "strokeOrder": "Порядок черт",
+    "pinyin": "Пиньинь",
+    "translation": "Перевод",
+    "mixed": "Смешанный"
+  },
+  "quiz": {
+    "pickPinyin": "Выберите пиньинь",
+    "pickTranslation": "Выберите перевод",
+    "loadingChoices": "Загрузка вариантов…"
+  },
+  "session": {
+    "completeTitle": "Сессия завершена",
+    "completeDescription": "Вы прошли {{count}} карточек. Продолжить следующий набор или вернуться домой?",
+    "notEnoughCards": "Недостаточно карточек для этого урока"
+  },
+  "groups": {
+    "emptyTitle": "Групп пока нет",
+    "emptyDescription": "Всё загрузилось — осталось создать группу и начать собирать словарь.",
+    "createGroup": "Создать группу",
+    "createGroupAria": "Создать группу",
+    "deleteTitle": "Удалить группу",
+    "deleteDescription": "Удалить группу «{{name}}»?",
+    "openGroupAria": "Открыть группу {{name}}",
+    "deleteGroupAria": "Удалить группу {{name}}",
+    "loadingGroups": "Загрузка групп",
+    "notFoundTitle": "Группа не найдена",
+    "notFoundDescription": "Группа могла быть удалена или ссылка неверна.",
+    "editNameAria": "Редактировать название группы",
+    "saveNameAria": "Сохранить название группы",
+    "groupNameAria": "Название группы"
+  },
+  "words": {
+    "emptyTitle": "Слов пока нет",
+    "emptyDescription": "Группа пуста. Добавьте слово, чтобы начать практику.",
+    "addWord": "Добавить слово",
+    "addWordAria": "Добавить слово",
+    "deleteTitle": "Удалить слово",
+    "deleteDescription": "Удалить слово",
+    "deleteWordAria": "Удалить слово {{symbol}}",
+    "loadingWords": "Загрузка слов",
+    "progressAria": "{{symbol}}, {{translation}}, {{percent}}% прогресс"
+  },
+  "addWord": {
+    "title": "Добавить слово",
+    "draw": "Рисовать",
+    "hideDrawPad": "Скрыть поле рисования",
+    "hieroglyphsPlaceholder": "Введите иероглифы",
+    "translationPlaceholder": "Введите перевод",
+    "lookingUpPinyin": "Поиск пиньиня…",
+    "enterTranscriptionManual": "Введите транскрипцию вручную",
+    "enterTranscription": "Введите транскрипцию"
+  },
+  "addGroup": {
+    "title": "Создать группу",
+    "namePlaceholder": "Название группы",
+    "nameLabel": "Название группы",
+    "iconLabel": "Иконка",
+    "selectIconAria": "Выбрать иконку {{icon}}"
+  },
+  "auth": {
+    "signUpTitle": "Зарегистрируйтесь, чтобы продолжить",
+    "demoGateTitle": "Нужна регистрация",
+    "demoGateDescription": "Создайте бесплатный аккаунт, чтобы добавлять группы и слова. Режимы обучения доступны в демо.",
+    "googleCredentialError": "Google не вернул учётные данные. Попробуйте снова.",
+    "googleSignInError": "Вход через Google отменён или не удался.",
+    "telegramSignInError": "Не удалось войти через Telegram. Закройте и снова откройте мини-приложение."
+  },
+  "writeCard": {
+    "enterAllHieroglyphs": "Введите все иероглифы"
+  },
+  "notFound": {
+    "title": "Страница не найдена",
+    "description": "Такого пути в 中国老师 нет. Вернитесь на главную и продолжайте учиться.",
+    "errorTitle": "Что-то пошло не так",
+    "errorDescription": "Произошла непредвиденная ошибка. Попробуйте снова или вернитесь на главную.",
+    "errorStatusDescription": "Произошла ошибка ({{status}}). Попробуйте снова или вернитесь на главную."
+  },
+  "loading": {
+    "page": "Загрузка страницы",
+    "application": "Загрузка приложения"
+  },
+  "tour": {
+    "homeTitle": "Главная",
+    "homeDescription": "Нажмите на логотип, чтобы вернуться на главный экран словаря.",
+    "profileTitle": "Ваш профиль",
+    "profileDescription": "Здесь отображается имя аккаунта. Выйдите, когда закончите занятие.",
+    "createGroupTitle": "Создание группы",
+    "createGroupDescription": "Собирайте слова в группы. Откройте группу, чтобы добавлять слова и заниматься.",
+    "groupsTitle": "Ваши группы",
+    "groupsDescription": "Откройте группу, чтобы просматривать карточки, добавлять слова и учить только эту колоду.",
+    "studyModesTitle": "Режимы обучения",
+    "studyModesDescription": "Письмо, порядок черт, пиньинь, перевод или смешанный режим для всех групп."
+  },
+  "about": {
+    "backToApp": "В приложение",
+    "title": "Chinese Laoshi",
+    "intro": "Chinese Laoshi (中国老师) — приложение для изучения китайского: свои карточки, практика написания иероглифов и переводов в браузере на телефоне, планшете или компьютере.",
+    "featuresTitle": "Возможности",
+    "handwritingFeature": "Письмо — рисуйте иероглифы пальцем или мышью и получайте обратную связь по чертам.",
+    "translationFeature": "Перевод — повторяйте значения и тренируйте запоминание в режимах карточек.",
+    "customGroupsFeature": "Свои группы слов — собирайте колоды с иероглифами, пиньинем и переводами.",
+    "openSourceTitle": "Открытый код",
+    "openSourceBody": "Проект с открытым исходным кодом на GitHub.",
+    "contactTitle": "Контакты",
+    "emailLabel": "Email:",
+    "githubLabel": "GitHub:",
+    "appLabel": "Приложение:"
+  }
+}

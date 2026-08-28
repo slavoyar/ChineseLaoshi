@@ -1,28 +1,28 @@
-name: Apply database migrations
+# Manual ops workflow. Production normally migrates on server boot (db.Bootstrap → runMigrations).
+# Use this to apply migrations directly against secrets.DB_URL when needed.
+name: Migrate — Manual
 
-# TEMPORARY: auto-migration disabled — re-enable push trigger when ready to deploy again
 on:
   workflow_dispatch:
+  # Optional: re-enable auto-migrate on push when desired
   # push:
   #   paths:
-  #     - 'backend/migrations/**'
+  #     - "backend/migrations/**"
   #   branches:
   #     - production
 
 jobs:
-  migrate-database:
+  migrate:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
+      - uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
+          go-version: "1.24"
 
       - name: Install golang-migrate
-        run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+        run: go install -tags "postgres" github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
       - name: Migrate database
         env:

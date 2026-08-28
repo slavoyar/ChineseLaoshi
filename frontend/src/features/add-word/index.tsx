@@ -2,6 +2,7 @@ import { useCardStore } from '@entities/card';
 import { useGroupStore } from '@entities/group';
 import { fetchPinyin, type PinyinChar } from '@shared/api';
 import { isRequestCanceled } from '@shared/api/api-error';
+import { testIds } from '@shared/config';
 import {
   Button,
   Dialog,
@@ -155,7 +156,10 @@ export const AddWordDialog = ({ groupId, open, onOpenChange }: AddWordDialogProp
 
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => (nextOpen ? onOpenChange(true) : handleClose())}>
-      <DialogContent className='max-h-[90vh] overflow-y-auto sm:max-w-lg'>
+      <DialogContent
+        className='max-h-[90vh] overflow-y-auto sm:max-w-lg'
+        data-testid={testIds.word.createDialog}
+      >
         <DialogHeader>
           <DialogTitle>Create word</DialogTitle>
         </DialogHeader>
@@ -169,6 +173,7 @@ export const AddWordDialog = ({ groupId, open, onOpenChange }: AddWordDialogProp
             </div>
             <Input
               id='create-word-symbols'
+              data-testid={testIds.word.symbolsInput}
               autoFocus
               value={symbols}
               placeholder='Enter hieroglyphs'
@@ -223,6 +228,7 @@ export const AddWordDialog = ({ groupId, open, onOpenChange }: AddWordDialogProp
             <Label htmlFor='create-word-translation'>Translation</Label>
             <Input
               id='create-word-translation'
+              data-testid={testIds.word.translationInput}
               value={translation}
               placeholder='Enter translation'
               onChange={(e) => setTranslation(e.target.value)}
@@ -234,7 +240,7 @@ export const AddWordDialog = ({ groupId, open, onOpenChange }: AddWordDialogProp
           <Button variant='outline' onClick={handleClose}>
             Cancel
           </Button>
-          <Button disabled={!canSave} onClick={() => void saveHandler()}>
+          <Button disabled={!canSave} onClick={() => void saveHandler()} data-testid={testIds.word.submit}>
             Create
           </Button>
         </DialogFooter>

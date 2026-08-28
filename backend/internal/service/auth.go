@@ -41,11 +41,12 @@ func NewAuthService(
 }
 
 type AuthUserDTO struct {
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	Email     string `json:"email"`
-	AvatarURL string `json:"avatarUrl"`
-	Provider  string `json:"provider"`
+	ID                  string `json:"id"`
+	Name                string `json:"name"`
+	Email               string `json:"email"`
+	AvatarURL           string `json:"avatarUrl"`
+	Provider            string `json:"provider"`
+	OnboardingCompleted bool   `json:"onboardingCompleted"`
 }
 
 func (s *AuthService) LoginWithGoogle(ctx context.Context, idToken string) (AuthUserDTO, string, error) {
@@ -81,7 +82,7 @@ func (s *AuthService) LoginWithGoogle(ctx context.Context, idToken string) (Auth
 	if err != nil {
 		return AuthUserDTO{}, "", err
 	}
-	return toAuthUserDTO(uc), token, nil
+	return toAuthUserDTO(user), token, nil
 }
 
 func (s *AuthService) LoginWithTelegram(ctx context.Context, initData string) (AuthUserDTO, string, error) {
@@ -118,7 +119,7 @@ func (s *AuthService) LoginWithTelegram(ctx context.Context, initData string) (A
 	if err != nil {
 		return AuthUserDTO{}, "", err
 	}
-	return toAuthUserDTO(uc), token, nil
+	return toAuthUserDTO(user), token, nil
 }
 
 func (s *AuthService) provisionTelegramUser(ctx context.Context, identity auth.TelegramIdentity) (repository.User, error) {
@@ -185,16 +186,32 @@ func (s *AuthService) ensureStarterContent(ctx context.Context, userID string) e
 	return s.cloner.CloneUserContent(ctx, template.ID, userID)
 }
 
-func (s *AuthService) Me(ctx context.Context, user auth.UserContext) AuthUserDTO {
-	return toAuthUserDTO(user)
+func (s *AuthService) Me(ctx context.Context, user auth.UserContext) (AuthUserDTO, error) {
+	dbUser, err := s.users.GetByID(ctx, user.ID)
+	if err != nil {
+		return AuthUserDTO{}, err
+	}
+	return toAuthUserDTO(dbUser), nil
 }
 
-func toAuthUserDTO(user auth.UserContext) AuthUserDTO {
+func (s *AuthService) CompleteOnboarding(ctx context.Context, userID string) (AuthUserDTO, error) {
+	if err := s.users.SetOnboardingCompleted(ctx, userID, true); err != nil {
+		return AuthUserDTO{}, err
+	}
+	dbUser, err := s.users.GetByID(ctx, userID)
+	if err != nil {
+		return AuthUserDTO{}, err
+	}
+	return toAuthUserDTO(dbUser), nil
+}
+
+func toAuthUserDTO(user repository.User) AuthUserDTO {
 	return AuthUserDTO{
-		ID:        user.ID,
-		Name:      user.Username,
-		Email:     user.Email,
-		AvatarURL: user.AvatarURL,
-		Provider:  user.Provider,
+		ID:                  user.ID,
+		Name:                user.Username,
+		Email:               user.Email,
+		AvatarURL:           user.AvatarURL,
+		Provider:            user.Provider,
+		OnboardingCompleted: user.OnboardingCompleted,
 	}
 }

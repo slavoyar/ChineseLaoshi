@@ -6,9 +6,11 @@ import { Button, EmptyState } from '@shared/ui';
 import { StudyModes } from '@widgets/study-modes';
 import { ArrowLeft } from 'lucide-react';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 
 export const GroupDetail = () => {
+  const { t } = useTranslation();
   const { groupId = '' } = useParams();
   const [groups, isLoading, fetchGroups, decrementWordCount] = useGroupStore((state) => [
     state.groups,
@@ -35,11 +37,11 @@ export const GroupDetail = () => {
       <div className='m-auto flex h-full flex-col items-center justify-center md:w-9/12 xl:w-7/12'>
         <EmptyState
           motif='迷'
-          title='Group not found'
-          description='This group may have been deleted or the link is incorrect.'
+          title={t('groups.notFoundTitle')}
+          description={t('groups.notFoundDescription')}
           action={
             <Button asChild>
-              <Link to={Route.Root}>Back home</Link>
+              <Link to={Route.Root}>{t('common.backHome')}</Link>
             </Button>
           }
         />
@@ -58,12 +60,12 @@ export const GroupDetail = () => {
             className='inline-flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
           >
             <ArrowLeft className='h-4 w-4' aria-hidden='true' />
-            Back
+            {t('common.back')}
           </Link>
           {group ? (
             <GroupEditableTitle groupId={group.id} name={group.name} className='justify-center text-center' />
           ) : (
-            <h1 className='text-center text-2xl text-foreground'>Loading…</h1>
+            <h1 className='text-center text-2xl text-foreground'>{t('common.loading')}</h1>
           )}
         </div>
         <StudyModes groupId={groupId} disabled={studyDisabled} showLabel={false} />

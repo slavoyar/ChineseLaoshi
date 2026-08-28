@@ -202,7 +202,10 @@ export const WriteCard = ({
   };
 
   return (
-    <div ref={ref} className='flex w-full max-w-md flex-col gap-3 rounded-2xl border bg-card p-3 sm:gap-4 sm:p-4 md:w-[500px]'>
+    <div
+      ref={ref}
+      className='flex w-full max-w-md flex-col gap-3 rounded-2xl border bg-card p-3 sm:gap-4 sm:p-4 md:w-[500px]'
+    >
       {skipProgress && (
         <div
           role='status'

@@ -10,6 +10,7 @@
     />
     <link rel="canonical" href="https://chineselaoshi.slavoyar.tech/about.html" />
     <link rel="icon" href="/assets/icon.svg" />
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
       :root {
         color-scheme: light dark;
@@ -40,6 +41,8 @@
       body {
         margin: 0;
         min-height: 100dvh;
+        padding-top: var(--tg-content-safe-top, var(--tg-safe-top, 0px));
+        padding-bottom: var(--tg-content-safe-bottom, var(--tg-safe-bottom, 0px));
         font-family:
           ui-sans-serif,
           system-ui,
@@ -150,58 +153,147 @@
     <header>
       <div class="bar">
         <a class="brand" href="/">中国老师</a>
-        <a class="back" href="/">Back to app</a>
+        <a class="back" href="/" data-i18n="backToApp" data-testid="about-back-link">Back to app</a>
       </div>
     </header>
     <main>
-      <h1>Chinese Laoshi</h1>
-      <p>
+      <h1 data-i18n="title" data-testid="about-heading">Chinese Laoshi</h1>
+      <p data-i18n="intro">
         Chinese Laoshi (中国老师) is a Mandarin learning app for custom flashcards, hanzi
         handwriting practice, and translation drills — in the browser on phone, tablet, or
         desktop.
       </p>
 
-      <h2>Features</h2>
+      <h2 data-i18n="featuresTitle">Features</h2>
       <ul>
-        <li>
+        <li data-i18n="handwritingFeature">
           <strong style="color: var(--fg)">Handwriting practice</strong> — write Chinese
           characters with touch or mouse and get stroke feedback.
         </li>
-        <li>
+        <li data-i18n="translationFeature">
           <strong style="color: var(--fg)">Translation drills</strong> — review meanings and
           strengthen recall with flashcard study modes.
         </li>
-        <li>
+        <li data-i18n="customGroupsFeature">
           <strong style="color: var(--fg)">Custom word groups</strong> — build your own card
           decks with characters, pinyin, and translations.
         </li>
       </ul>
 
-      <h2>Open source</h2>
+      <h2 data-i18n="openSourceTitle">Open source</h2>
       <p>
-        The project is open source on
+        <span data-i18n="openSourceBody">The project is open source on</span>
         <a href="https://github.com/slavoyar/ChineseLaoshi">GitHub</a>.
       </p>
 
       <div class="panel">
-        <p><strong>Contact</strong></p>
+        <p><strong data-i18n="contactTitle">Contact</strong></p>
         <p>
-          Email:
+          <span data-i18n="emailLabel">Email:</span>
           <a href="mailto:slavoyarmc@gmail.com">slavoyarmc@gmail.com</a>
         </p>
         <p>
-          GitHub:
+          <span data-i18n="githubLabel">GitHub:</span>
           <a href="https://github.com/slavoyar/ChineseLaoshi"
             >github.com/slavoyar/ChineseLaoshi</a
           >
         </p>
         <p>
-          App:
+          <span data-i18n="appLabel">App:</span>
           <a href="https://chineselaoshi.slavoyar.tech/"
             >chineselaoshi.slavoyar.tech</a
           >
         </p>
       </div>
     </main>
+    <script>
+      (function () {
+        var copy = {
+          en: {
+            backToApp: 'Back to app',
+            title: 'Chinese Laoshi',
+            intro:
+              'Chinese Laoshi (中国老师) is a Mandarin learning app for custom flashcards, hanzi handwriting practice, and translation drills — in the browser on phone, tablet, or desktop.',
+            featuresTitle: 'Features',
+            handwritingFeature:
+              'Handwriting practice — write Chinese characters with touch or mouse and get stroke feedback.',
+            translationFeature:
+              'Translation drills — review meanings and strengthen recall with flashcard study modes.',
+            customGroupsFeature:
+              'Custom word groups — build your own card decks with characters, pinyin, and translations.',
+            openSourceTitle: 'Open source',
+            openSourceBody: 'The project is open source on',
+            contactTitle: 'Contact',
+            emailLabel: 'Email:',
+            githubLabel: 'GitHub:',
+            appLabel: 'App:',
+          },
+          ru: {
+            backToApp: 'В приложение',
+            title: 'Chinese Laoshi',
+            intro:
+              'Chinese Laoshi (中国老师) — приложение для изучения китайского: свои карточки, практика написания иероглифов и переводов в браузере на телефоне, планшете или компьютере.',
+            featuresTitle: 'Возможности',
+            handwritingFeature:
+              'Письмо — рисуйте иероглифы пальцем или мышью и получайте обратную связь по чертам.',
+            translationFeature:
+              'Перевод — повторяйте значения и тренируйте запоминание в режимах карточек.',
+            customGroupsFeature:
+              'Свои группы слов — собирайте колоды с иероглифами, пиньинем и переводами.',
+            openSourceTitle: 'Открытый код',
+            openSourceBody: 'Проект с открытым исходным кодом на',
+            contactTitle: 'Контакты',
+            emailLabel: 'Email:',
+            githubLabel: 'GitHub:',
+            appLabel: 'Приложение:',
+          },
+        };
+
+        var tgLang =
+          window.Telegram &&
+          window.Telegram.WebApp &&
+          window.Telegram.WebApp.initDataUnsafe &&
+          window.Telegram.WebApp.initDataUnsafe.user &&
+          window.Telegram.WebApp.initDataUnsafe.user.language_code;
+        var lang = tgLang && tgLang.toLowerCase().indexOf('ru') === 0 ? 'ru' : 'en';
+        if (!tgLang && navigator.language && navigator.language.toLowerCase().indexOf('ru') === 0) {
+          lang = 'ru';
+        }
+
+        document.documentElement.lang = lang;
+        document.querySelectorAll('[data-i18n]').forEach(function (el) {
+          var key = el.getAttribute('data-i18n');
+          if (key && copy[lang][key]) {
+            el.textContent = copy[lang][key];
+          }
+        });
+
+        var webApp = window.Telegram && window.Telegram.WebApp;
+        if (!webApp) {
+          return;
+        }
+
+        webApp.ready();
+        webApp.expand();
+        if (webApp.requestFullscreen) {
+          webApp.requestFullscreen();
+        }
+
+        function applyInsets() {
+          var root = document.documentElement;
+          root.style.setProperty('--tg-safe-top', webApp.safeAreaInset.top + 'px');
+          root.style.setProperty('--tg-safe-bottom', webApp.safeAreaInset.bottom + 'px');
+          root.style.setProperty('--tg-content-safe-top', webApp.contentSafeAreaInset.top + 'px');
+          root.style.setProperty(
+            '--tg-content-safe-bottom',
+            webApp.contentSafeAreaInset.bottom + 'px'
+          );
+        }
+
+        applyInsets();
+        webApp.onEvent('safeAreaChanged', applyInsets);
+        webApp.onEvent('contentSafeAreaChanged', applyInsets);
+      })();
+    </script>
   </body>
 </html>

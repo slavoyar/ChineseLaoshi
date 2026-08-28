@@ -1,6 +1,7 @@
+import axios, { type CancelTokenSource } from 'axios';
+
 import { apiRequest } from './api-error';
 import type { PinyinRequest, PinyinResponse } from './generated';
-import axios, { type CancelTokenSource } from 'axios';
 
 const URL = '/api/pinyin';
 

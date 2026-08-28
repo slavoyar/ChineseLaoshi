@@ -1,5 +1,5 @@
-import { useAuthStore, useStudyPauseStore } from '@shared/stores';
 import { isTelegramMiniApp, onTelegramActivated, onTelegramDeactivated } from '@shared/lib/telegram';
+import { useAuthStore, useStudyPauseStore } from '@shared/stores';
 import { useEffect } from 'react';
 
 export const TelegramLifecycle = () => {

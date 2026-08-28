@@ -1,13 +1,16 @@
 import { useCardStore } from '@entities/card';
 import { GroupGrid, GroupListSkeleton, useGroupStore } from '@entities/group';
 import { AddGroupDialog } from '@features/add-group';
+import { testIds } from '@shared/config';
 import { useRequireAuth } from '@shared/hooks';
 import { Button, EmptyState } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { Plus } from 'lucide-react';
 import { HTMLAttributes, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const Groups = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) => {
+  const { t } = useTranslation();
   const [groups, isLoading] = useGroupStore((state) => [state.groups, state.isLoading]);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const { gateAction } = useRequireAuth();
@@ -16,19 +19,23 @@ export const Groups = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) 
 
   return (
     <div className={cn('flex min-h-0 flex-col gap-5 md:gap-10', className)} {...props}>
-      <div className='min-h-0 flex-1 overflow-auto'>
+      <div className='min-h-0 flex-1 overflow-auto' data-tour='groups'>
         {isLoading ? (
           <GroupListSkeleton />
         ) : isEmpty ? (
           <>
             <EmptyState
               size='compact'
-              title='No groups yet'
-              description='Everything loaded fine — you just have not created a group. Add one to start building vocabulary.'
+              title={t('groups.emptyTitle')}
+              description={t('groups.emptyDescription')}
               action={
-                <Button onClick={() => gateAction(() => setIsAddOpen(true))}>
+                <Button
+                  data-tour='create-group'
+                  data-testid={testIds.group.createTrigger}
+                  onClick={() => gateAction(() => setIsAddOpen(true))}
+                >
                   <Plus aria-hidden='true' />
-                  Create group
+                  {t('groups.createGroup')}
                 </Button>
               }
             />

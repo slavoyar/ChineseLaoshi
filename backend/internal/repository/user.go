@@ -13,13 +13,14 @@ import (
 )
 
 type User struct {
-	ID              string
-	Username        string
-	Email           string
-	Password        *string
-	Provider        string
-	ProviderSubject string
-	AvatarURL       string
+	ID                  string
+	Username            string
+	Email               string
+	Password            *string
+	Provider            string
+	ProviderSubject     string
+	AvatarURL           string
+	OnboardingCompleted bool
 }
 
 type UserRepository struct {
@@ -32,14 +33,27 @@ func NewUserRepository(pool *pgxpool.Pool) *UserRepository {
 
 func (r *UserRepository) GetByID(ctx context.Context, id string) (User, error) {
 	return r.scanUser(r.pool.QueryRow(ctx, `
-		SELECT id, username, email, password, COALESCE(provider, ''), COALESCE(provider_subject, ''), COALESCE(avatar_url, '')
+		SELECT id, username, email, password, COALESCE(provider, ''), COALESCE(provider_subject, ''), COALESCE(avatar_url, ''), "onboardingCompleted"
 		FROM "User" WHERE id = $1
 	`, id))
 }
 
+func (r *UserRepository) SetOnboardingCompleted(ctx context.Context, id string, completed bool) error {
+	tag, err := r.pool.Exec(ctx, `
+		UPDATE "User" SET "onboardingCompleted" = $2 WHERE id = $1
+	`, id, completed)
+	if err != nil {
+		return err
+	}
+	if tag.RowsAffected() == 0 {
+		return apperrors.New(apperrors.EntityNotFoundError)
+	}
+	return nil
+}
+
 func (r *UserRepository) GetByEmail(ctx context.Context, email string) (User, error) {
 	return r.scanUser(r.pool.QueryRow(ctx, `
-		SELECT id, username, email, password, COALESCE(provider, ''), COALESCE(provider_subject, ''), COALESCE(avatar_url, '')
+		SELECT id, username, email, password, COALESCE(provider, ''), COALESCE(provider_subject, ''), COALESCE(avatar_url, ''), "onboardingCompleted"
 		FROM "User"
 		WHERE email = $1 OR username = $1
 	`, email))
@@ -47,7 +61,7 @@ func (r *UserRepository) GetByEmail(ctx context.Context, email string) (User, er
 
 func (r *UserRepository) GetByProviderSubject(ctx context.Context, provider, subject string) (User, error) {
 	return r.scanUser(r.pool.QueryRow(ctx, `
-		SELECT id, username, email, password, COALESCE(provider, ''), COALESCE(provider_subject, ''), COALESCE(avatar_url, '')
+		SELECT id, username, email, password, COALESCE(provider, ''), COALESCE(provider_subject, ''), COALESCE(avatar_url, ''), "onboardingCompleted"
 		FROM "User"
 		WHERE provider = $1 AND provider_subject = $2
 	`, provider, subject))
@@ -102,6 +116,7 @@ func (r *UserRepository) scanUser(row pgx.Row) (User, error) {
 		&user.Provider,
 		&user.ProviderSubject,
 		&user.AvatarURL,
+		&user.OnboardingCompleted,
 	)
 	if err != nil {
 		if err == pgx.ErrNoRows {

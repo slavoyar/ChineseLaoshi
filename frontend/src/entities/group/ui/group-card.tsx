@@ -1,4 +1,5 @@
 import { Group } from '@shared/api';
+import { testIds } from '@shared/config';
 import { useRequireAuth } from '@shared/hooks';
 import { TileDeleteButton, tileItemClassName } from '@shared/ui';
 import { cn } from '@shared/utils';
@@ -28,6 +29,8 @@ export const GroupCard = ({ group, onNavigate, onDelete, onPrefetch }: Props) =>
       <div
         role='button'
         tabIndex={0}
+        data-testid={testIds.group.card}
+        data-group-name={group.name}
         aria-label={`Open group ${group.name}`}
         className='flex h-full cursor-pointer flex-col items-center justify-between rounded-lg border bg-secondary p-2 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
         onClick={onNavigate}

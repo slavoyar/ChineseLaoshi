@@ -1,13 +1,20 @@
 import './styles/index.css';
 import './axios';
 import 'react-toastify/dist/ReactToastify.css';
+import '@shared/lib/i18n';
 
 import { AuthBootstrap } from '@app/auth-bootstrap';
-import { TelegramLifecycle } from '@app/telegram-lifecycle';
 import router from '@app/router';
-import { initSystemTheme, isDarkTheme, subscribeThemeChange } from '@shared/lib/theme';
-import { applyTelegramTheme, getTelegramWebApp, initTelegramWebApp, initTelegramTheme, isTelegramMiniApp } from '@shared/lib/telegram';
+import { TelegramLifecycle } from '@app/telegram-lifecycle';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import {
+  applyTelegramTheme,
+  getTelegramWebApp,
+  initTelegramTheme,
+  initTelegramWebApp,
+  isTelegramMiniApp,
+} from '@shared/lib/telegram';
+import { initSystemTheme, isDarkTheme, subscribeThemeChange } from '@shared/lib/theme';
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
@@ -54,9 +61,7 @@ const useToastPosition = (): ToastPosition => {
 
 const AppShell = () => {
   const toastPosition = useToastPosition();
-  const [toastTheme, setToastTheme] = useState<'light' | 'dark'>(() =>
-    isDarkTheme() ? 'dark' : 'light'
-  );
+  const [toastTheme, setToastTheme] = useState<'light' | 'dark'>(() => (isDarkTheme() ? 'dark' : 'light'));
 
   useEffect(() => {
     const sync = () => setToastTheme(isDarkTheme() ? 'dark' : 'light');

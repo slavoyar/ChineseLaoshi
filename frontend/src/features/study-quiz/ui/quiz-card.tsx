@@ -1,9 +1,11 @@
 import { cardService } from '@entities/card';
-import { Card, Word, isRequestCanceled, parseApiError } from '@shared/api';
+import { Card, isRequestCanceled, parseApiError, Word } from '@shared/api';
+import { testIds } from '@shared/config';
 import { useAuthStore } from '@shared/stores';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export type QuizMode = 'pinyin' | 'translation';
 
@@ -11,6 +13,7 @@ interface Props {
   card: Card;
   mode: QuizMode;
   paused?: boolean;
+  initialDistractors?: Word[];
   onNext: () => void;
   onAbort?: () => void;
 }
@@ -53,7 +56,8 @@ const buildOptions = (card: Card, distractors: Word[], mode: QuizMode): QuizOpti
   return shuffle(options);
 };
 
-export const QuizCard = ({ card, mode, paused = false, onNext, onAbort }: Props) => {
+export const QuizCard = ({ card, mode, paused = false, initialDistractors, onNext, onAbort }: Props) => {
+  const { t } = useTranslation();
   const isDemo = useAuthStore((state) => state.isDemo);
 
   const [options, setOptions] = useState<QuizOption[]>([]);
@@ -66,37 +70,39 @@ export const QuizCard = ({ card, mode, paused = false, onNext, onAbort }: Props)
 
   useEffect(() => {
     let active = true;
-    setLoading(true);
     setSelectedId(null);
 
+    const applyDistractors = (distractors: Word[]) => {
+      if (!active) {
+        return;
+      }
+      const built = buildOptions(card, distractors, mode);
+      hasMultipleChoicesRef.current = built.length >= 2;
+      setOptions(built);
+      setLoading(false);
+    };
+
+    if (initialDistractors !== undefined) {
+      applyDistractors(initialDistractors);
+      return () => {
+        active = false;
+      };
+    }
+
+    setLoading(true);
     cardService
       .getQuizDistractors(card.id)
       .then((distractors) => {
-        if (!active) {
-          return;
-        }
-        const built = buildOptions(card, distractors, mode);
-        hasMultipleChoicesRef.current = built.length >= 2;
-        setOptions(built);
+        applyDistractors(distractors);
       })
       .catch(() => {
-        if (!active) {
-          return;
-        }
-        const built = buildOptions(card, [], mode);
-        hasMultipleChoicesRef.current = built.length >= 2;
-        setOptions(built);
-      })
-      .finally(() => {
-        if (active) {
-          setLoading(false);
-        }
+        applyDistractors([]);
       });
 
     return () => {
       active = false;
     };
-  }, [card, mode]);
+  }, [card, mode, initialDistractors]);
 
   const advance = async (guessed: boolean) => {
     if (isSubmittingRef.current) {
@@ -135,20 +141,25 @@ export const QuizCard = ({ card, mode, paused = false, onNext, onAbort }: Props)
     }, 700);
   };
 
-  const promptLabel = mode === 'pinyin' ? 'Pick the pinyin' : 'Pick the translation';
+  const promptLabel = mode === 'pinyin' ? t('quiz.pickPinyin') : t('quiz.pickTranslation');
 
   return (
     <div className='flex w-full max-w-md flex-col gap-3 rounded-2xl border bg-card p-3 sm:gap-4 sm:p-4 md:w-[500px]'>
-      <p className='text-center text-xs text-muted-foreground sm:text-sm'>{promptLabel}</p>
-      <div className='rounded-md bg-muted py-5 text-center text-3xl font-medium tracking-wide sm:py-8 sm:text-4xl'>
+      <p className='text-center text-xs text-muted-foreground sm:text-sm' data-testid={testIds.quiz.prompt}>
+        {promptLabel}
+      </p>
+      <div className='rounded-md bg-muted py-8 text-center text-6xl font-medium tracking-wide sm:py-12 sm:text-7xl'>
         {card.word.symbols}
       </div>
       <div
         className={cn('grid gap-2', options.length <= 2 ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2')}
         aria-busy={loading}
+        data-testid={testIds.quiz.choices}
       >
         {loading ? (
-          <p className='col-span-full text-center text-sm text-muted-foreground'>Loading choices…</p>
+          <p className='col-span-full text-center text-sm text-muted-foreground'>
+            {t('quiz.loadingChoices')}
+          </p>
         ) : (
           options.map((option) => {
             const isSelected = selectedId === option.id;
@@ -160,6 +171,7 @@ export const QuizCard = ({ card, mode, paused = false, onNext, onAbort }: Props)
                 key={option.id}
                 type='button'
                 variant='outline'
+                data-testid={testIds.quiz.choice}
                 disabled={selectedId !== null || paused}
                 className={cn(
                   'h-auto min-h-11 whitespace-normal px-3 py-2 text-left text-sm',

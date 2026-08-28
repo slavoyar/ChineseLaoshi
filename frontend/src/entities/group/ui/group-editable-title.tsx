@@ -1,4 +1,5 @@
 import { useGroupStore } from '@entities/group';
+import { testIds } from '@shared/config';
 import { useRequireAuth } from '@shared/hooks';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
@@ -80,6 +81,7 @@ export const GroupEditableTitle = ({ groupId, name, className }: Props) => {
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={handleKeyDown}
           aria-label='Group name'
+          data-testid={testIds.group.renameInput}
           disabled={isSaving}
           className='min-w-0 max-w-full flex-1 border-b border-primary/40 bg-transparent text-center text-2xl text-foreground outline-none focus-visible:border-primary disabled:opacity-60'
         />
@@ -91,6 +93,7 @@ export const GroupEditableTitle = ({ groupId, name, className }: Props) => {
           onClick={() => void saveEdit()}
           disabled={isSaving}
           aria-label='Save group name'
+          data-testid={testIds.group.renameSave}
         >
           <Check className='h-4 w-4' strokeWidth={2.25} />
         </Button>
@@ -100,7 +103,9 @@ export const GroupEditableTitle = ({ groupId, name, className }: Props) => {
 
   return (
     <div className={cn('group/title flex min-w-0 items-center justify-center gap-2', className)}>
-      <h1 className='min-w-0 truncate text-2xl text-foreground'>{name}</h1>
+      <h1 className='min-w-0 truncate text-2xl text-foreground' data-testid={testIds.group.title}>
+        {name}
+      </h1>
       {!isDemo && (
         <Button
           type='button'
@@ -115,6 +120,7 @@ export const GroupEditableTitle = ({ groupId, name, className }: Props) => {
           )}
           onClick={() => setIsEditing(true)}
           aria-label='Edit group name'
+          data-testid={testIds.group.editName}
         >
           <Pencil className='h-4 w-4' />
         </Button>

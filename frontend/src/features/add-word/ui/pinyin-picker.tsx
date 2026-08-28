@@ -48,13 +48,7 @@ type PinyinCellProps = {
   onSelect: (reading: string) => void;
 };
 
-const ReadingChip = ({
-  selected,
-  hasAlternates,
-}: {
-  selected: string;
-  hasAlternates: boolean;
-}) => (
+const ReadingChip = ({ selected, hasAlternates }: { selected: string; hasAlternates: boolean }) => (
   <span
     className={cn(
       'grid h-9 w-full grid-cols-[1rem_minmax(0,1fr)_1rem] items-center rounded-md px-1 text-xs leading-tight',

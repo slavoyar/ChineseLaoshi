@@ -1,6 +1,5 @@
-import axios from 'axios';
-
 import { getSessionToken } from '@shared/lib/session-token';
+import axios from 'axios';
 
 axios.defaults.withCredentials = true;
 

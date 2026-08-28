@@ -1,11 +1,12 @@
-import { CARDS_PER_SESSION, StudyMode } from '@shared/config';
+import { CARDS_PER_SESSION, StudyMode, testIds } from '@shared/config';
 import { PenWrite } from '@shared/icons';
 import { useStateStore } from '@shared/stores';
 import { Route } from '@shared/types';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
-import { BookOpen, Languages, Shuffle, TextQuote, type LucideIcon } from 'lucide-react';
+import { BookOpen, Languages, type LucideIcon, Shuffle, TextQuote } from 'lucide-react';
 import type { ComponentType, SVGProps } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 interface StudyModeButtonProps {
@@ -18,29 +19,29 @@ type ModeIcon = LucideIcon | ComponentType<SVGProps<SVGSVGElement>>;
 
 const STUDY_MODE_ORDER: StudyMode[] = ['write', 'prescription', 'mixed', 'pinyin', 'translation'];
 
-const modeConfig: Record<StudyMode, { label: string; icon: ModeIcon; iconWrapClass: string }> = {
+const modeConfig: Record<StudyMode, { labelKey: string; icon: ModeIcon; iconWrapClass: string }> = {
   write: {
-    label: 'Handwriting',
+    labelKey: 'studyModes.handwriting',
     icon: PenWrite,
     iconWrapClass: 'bg-[hsl(var(--chart-2)/0.12)] text-[hsl(var(--chart-2))]',
   },
   prescription: {
-    label: 'Stroke order',
+    labelKey: 'studyModes.strokeOrder',
     icon: BookOpen,
     iconWrapClass: 'bg-[hsl(var(--chart-1)/0.12)] text-[hsl(var(--chart-1))]',
   },
   pinyin: {
-    label: 'Pinyin',
+    labelKey: 'studyModes.pinyin',
     icon: Languages,
     iconWrapClass: 'bg-[hsl(var(--chart-3)/0.12)] text-[hsl(var(--chart-3))]',
   },
   translation: {
-    label: 'Translation',
+    labelKey: 'studyModes.translation',
     icon: TextQuote,
     iconWrapClass: 'bg-[hsl(var(--chart-4)/0.12)] text-[hsl(var(--chart-4))]',
   },
   mixed: {
-    label: 'Mixed',
+    labelKey: 'studyModes.mixed',
     icon: Shuffle,
     iconWrapClass: 'bg-[hsl(var(--chart-5)/0.12)] text-[hsl(var(--chart-5))]',
   },
@@ -55,9 +56,10 @@ const mobileGridPlacement: Record<StudyMode, string> = {
 };
 
 export const StudyModeButton = ({ mode, groupId, disabled = false }: StudyModeButtonProps) => {
+  const { t } = useTranslation();
   const setState = useStateStore((state) => state.setState);
   const navigate = useNavigate();
-  const { label, icon: Icon, iconWrapClass } = modeConfig[mode];
+  const { labelKey, icon: Icon, iconWrapClass } = modeConfig[mode];
   const isMixed = mode === 'mixed';
 
   const handleStart = () => {
@@ -70,12 +72,15 @@ export const StudyModeButton = ({ mode, groupId, disabled = false }: StudyModeBu
     <Button
       variant='outline'
       disabled={disabled}
+      data-testid={testIds.studyModes.mode(mode)}
       className={cn(
         'flex h-auto w-full min-w-0 flex-col items-center gap-1.5 rounded-lg p-2 sm:gap-2 sm:rounded-xl sm:p-3 md:gap-3 md:p-4',
         mobileGridPlacement[mode],
         isMixed &&
           'max-md:h-full max-md:justify-center max-md:gap-2 max-md:border-[hsl(var(--chart-5)/0.4)] max-md:bg-[hsl(var(--chart-5)/0.05)] md:col-start-3 md:row-span-1 md:row-start-1 md:h-auto md:bg-transparent',
-        isMixed ? '[&_svg]:size-5 sm:[&_svg]:size-5 md:[&_svg]:size-6' : '[&_svg]:size-[1.125rem] sm:[&_svg]:size-5 md:[&_svg]:size-6'
+        isMixed
+          ? '[&_svg]:size-5 sm:[&_svg]:size-5 md:[&_svg]:size-6'
+          : '[&_svg]:size-[1.125rem] sm:[&_svg]:size-5 md:[&_svg]:size-6'
       )}
       onClick={handleStart}
     >
@@ -89,7 +94,7 @@ export const StudyModeButton = ({ mode, groupId, disabled = false }: StudyModeBu
         <Icon />
       </span>
       <span className='max-w-full truncate text-center text-[11px] font-medium leading-tight sm:text-xs md:text-sm'>
-        {label}
+        {t(labelKey)}
       </span>
     </Button>
   );

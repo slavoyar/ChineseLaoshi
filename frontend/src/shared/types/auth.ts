@@ -6,6 +6,7 @@ export interface AuthUser {
   email: string;
   avatarUrl: string;
   provider: AuthProvider;
+  onboardingCompleted: boolean;
 }
 
 export interface TelegramLoginResponse {

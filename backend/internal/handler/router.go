@@ -64,6 +64,7 @@ func (h *Handlers) Router(authenticator auth.Authenticator, enableLogger bool) h
 			r.Post("/telegram", h.Auth.TelegramLogin)
 			r.Post("/logout", h.Auth.Logout)
 			r.With(middleware.RequireAuth).Get("/me", h.Auth.Me)
+			r.With(middleware.RequireAuth).Patch("/onboarding", h.Auth.CompleteOnboarding)
 		})
 
 		r.Route("/groups", func(r chi.Router) {

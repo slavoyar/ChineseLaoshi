@@ -152,7 +152,7 @@ export const DrawPad = ({ onPick, onUndoChar, canUndo }: DrawPadProps) => {
         )}
       </div>
 
-      <div className='relative h-44 touch-none overflow-hidden rounded-md border border-input bg-white sm:h-52 dark:border-border'>
+      <div className='relative h-44 touch-none overflow-hidden rounded-md border border-input bg-white dark:border-border sm:h-52'>
         {!ready && !loadError ? (
           <div className='absolute inset-0 flex flex-col items-center justify-center gap-2 text-sm text-muted-foreground'>
             <span>Loading handwriting…</span>
