@@ -1,17 +1,20 @@
 import { Route } from '@shared/types';
 import { Button, EmptyState } from '@shared/ui';
+import { useTranslation } from 'react-i18next';
 import { isRouteErrorResponse, Link, useNavigate, useRouteError } from 'react-router-dom';
 
 export const NotFound = () => {
+  const { t } = useTranslation();
+
   return (
     <div className='m-auto flex h-full flex-col items-center justify-center md:w-9/12 xl:w-7/12'>
       <EmptyState
         motif='迷'
-        title='Page not found'
-        description='This path does not lead anywhere in 中国老师. Head home and keep studying.'
+        title={t('notFound.title')}
+        description={t('notFound.description')}
         action={
           <Button asChild>
-            <Link to={Route.Root}>Back home</Link>
+            <Link to={Route.Root}>{t('common.backHome')}</Link>
           </Button>
         }
       />
@@ -20,18 +23,19 @@ export const NotFound = () => {
 };
 
 export const RouteError = () => {
+  const { t } = useTranslation();
   const error = useRouteError();
   const navigate = useNavigate();
 
   const isNotFound = isRouteErrorResponse(error) && error.status === 404;
   const status = isRouteErrorResponse(error) ? error.status : undefined;
 
-  const title = isNotFound ? 'Page not found' : 'Something went wrong';
+  const title = isNotFound ? t('notFound.title') : t('notFound.errorTitle');
   const description = isNotFound
-    ? 'This path does not lead anywhere in 中国老师. Head home and keep studying.'
+    ? t('notFound.description')
     : status
-      ? `An unexpected error occurred (${status}). You can try again or return home.`
-      : 'An unexpected error occurred. You can try again or return home.';
+      ? t('notFound.errorStatusDescription', { status })
+      : t('notFound.errorDescription');
 
   return (
     <div className='m-auto flex h-full flex-col items-center justify-center md:w-9/12 xl:w-7/12'>
@@ -43,11 +47,11 @@ export const RouteError = () => {
           <>
             {!isNotFound ? (
               <Button variant='outline' onClick={() => navigate(0)}>
-                Try again
+                {t('common.tryAgain')}
               </Button>
             ) : null}
             <Button asChild>
-              <Link to={Route.Root}>Back home</Link>
+              <Link to={Route.Root}>{t('common.backHome')}</Link>
             </Button>
           </>
         }

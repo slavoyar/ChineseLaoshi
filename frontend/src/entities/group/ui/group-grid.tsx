@@ -14,6 +14,7 @@ import {
   tileGridClassName,
 } from '@shared/ui';
 import { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { CreateGroupCard } from './create-group-card';
@@ -25,6 +26,7 @@ interface Props {
 }
 
 export const GroupGrid = ({ renderCreateDialog, onPrefetchGroup }: Props) => {
+  const { t } = useTranslation();
   const groups = useGroupStore((state) => state.groups);
   const deleteGroup = useGroupStore((state) => state.delete);
   const { isDeleteDialogOpen, closeDeleteDialog, deleteItem, openDeleteDialog } = useDelete<Group>();
@@ -52,14 +54,14 @@ export const GroupGrid = ({ renderCreateDialog, onPrefetchGroup }: Props) => {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={(open) => !open && closeDeleteDialog()}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete group</AlertDialogTitle>
+            <AlertDialogTitle>{t('groups.deleteTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete group &apos;{deleteItem.name}&apos;?
+              {t('groups.deleteDescription', { name: deleteItem.name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={deleteHandler}>Delete</AlertDialogAction>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={deleteHandler}>{t('common.delete')}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

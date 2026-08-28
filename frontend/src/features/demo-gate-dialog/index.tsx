@@ -8,8 +8,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@shared/ui';
+import { useTranslation } from 'react-i18next';
 
 export const DemoGateDialog = () => {
+  const { t } = useTranslation();
   const [isOpen, closeDemoGate, openAuthFromDemoGate] = useAuthStore((state) => [
     state.isDemoGateOpen,
     state.closeDemoGate,
@@ -20,18 +22,15 @@ export const DemoGateDialog = () => {
     <Dialog open={isOpen} onOpenChange={(open) => !open && closeDemoGate()}>
       <DialogContent className='sm:max-w-md'>
         <DialogHeader>
-          <DialogTitle>Registration required</DialogTitle>
-          <DialogDescription>
-            Create a free account to add groups, words, and manage your vocabulary. Study modes are available
-            in demo.
-          </DialogDescription>
+          <DialogTitle>{t('auth.demoGateTitle')}</DialogTitle>
+          <DialogDescription>{t('auth.demoGateDescription')}</DialogDescription>
         </DialogHeader>
         <DialogFooter className='gap-2 sm:gap-0'>
           <Button type='button' variant='outline' onClick={closeDemoGate}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button type='button' onClick={openAuthFromDemoGate}>
-            Sign up
+            {t('common.signUp')}
           </Button>
         </DialogFooter>
       </DialogContent>

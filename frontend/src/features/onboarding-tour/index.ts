@@ -1,7 +1,9 @@
+import 'driver.js/dist/driver.css';
+
+import i18n from '@shared/lib/i18n';
 import { isTelegramMiniApp } from '@shared/lib/telegram';
 import { useAuthStore } from '@shared/stores';
-import { driver, type DriveStep, type Config } from 'driver.js';
-import 'driver.js/dist/driver.css';
+import { type Config, driver, type DriveStep } from 'driver.js';
 import { useEffect, useRef } from 'react';
 
 const buildSteps = (): DriveStep[] => {
@@ -9,8 +11,8 @@ const buildSteps = (): DriveStep[] => {
     {
       element: '[data-tour="brand"]',
       popover: {
-        title: 'Home',
-        description: 'Tap the logo anytime to return to your vocabulary home screen.',
+        title: i18n.t('tour.homeTitle'),
+        description: i18n.t('tour.homeDescription'),
       },
     },
   ];
@@ -19,8 +21,8 @@ const buildSteps = (): DriveStep[] => {
     steps.push({
       element: '[data-tour="profile"]',
       popover: {
-        title: 'Your profile',
-        description: 'See your account name here. Sign out when you are done studying.',
+        title: i18n.t('tour.profileTitle'),
+        description: i18n.t('tour.profileDescription'),
       },
     });
   }
@@ -29,25 +31,24 @@ const buildSteps = (): DriveStep[] => {
     {
       element: '[data-tour="create-group"]',
       popover: {
-        title: 'Create a group',
-        description: 'Organize vocabulary into groups. Open a group to add words and start drills.',
+        title: i18n.t('tour.createGroupTitle'),
+        description: i18n.t('tour.createGroupDescription'),
       },
     },
     {
       element: '[data-tour="groups"]',
       popover: {
-        title: 'Your groups',
-        description: 'Open a group to review cards, add words, and study that deck only.',
+        title: i18n.t('tour.groupsTitle'),
+        description: i18n.t('tour.groupsDescription'),
       },
     },
     {
       element: '[data-tour="study-modes"]',
       popover: {
-        title: 'Study modes',
-        description:
-          'Pick handwriting, stroke order, pinyin, translation, or mixed practice for all groups.',
+        title: i18n.t('tour.studyModesTitle'),
+        description: i18n.t('tour.studyModesDescription'),
       },
-    },
+    }
   );
 
   return steps;
@@ -73,6 +74,7 @@ export const useOnboardingTour = () => {
     }
 
     startedRef.current = true;
+    const finishedRef = { current: false };
 
     const finishTour = () => {
       if (finishedRef.current) {
@@ -84,8 +86,6 @@ export const useOnboardingTour = () => {
         startedRef.current = false;
       });
     };
-
-    const finishedRef = { current: false };
 
     const config: Config = {
       showProgress: true,

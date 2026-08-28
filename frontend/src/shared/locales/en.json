@@ -1,0 +1,134 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "continue": "Continue",
+    "finish": "Finish",
+    "about": "About",
+    "demo": "Demo",
+    "signUp": "Sign up",
+    "signOut": "Sign out",
+    "back": "Back",
+    "backHome": "Back home",
+    "loading": "Loading…",
+    "tryAgain": "Try again",
+    "create": "Create"
+  },
+  "header": {
+    "signOutAria": "Sign out"
+  },
+  "footer": {
+    "copyright": "© {{year}} Chinese Laoshi"
+  },
+  "studyModes": {
+    "title": "Study modes",
+    "handwriting": "Handwriting",
+    "strokeOrder": "Stroke order",
+    "pinyin": "Pinyin",
+    "translation": "Translation",
+    "mixed": "Mixed"
+  },
+  "quiz": {
+    "pickPinyin": "Pick the pinyin",
+    "pickTranslation": "Pick the translation",
+    "loadingChoices": "Loading choices…"
+  },
+  "session": {
+    "completeTitle": "Session complete",
+    "completeDescription": "You finished {{count}} cards. Continue with another set or return home.",
+    "notEnoughCards": "There is no enough cards for this lesson"
+  },
+  "groups": {
+    "emptyTitle": "No groups yet",
+    "emptyDescription": "Everything loaded fine — you just have not created a group. Add one to start building vocabulary.",
+    "createGroup": "Create group",
+    "createGroupAria": "Create group",
+    "deleteTitle": "Delete group",
+    "deleteDescription": "Are you sure you want to delete group '{{name}}'?",
+    "openGroupAria": "Open group {{name}}",
+    "deleteGroupAria": "Delete group {{name}}",
+    "loadingGroups": "Loading groups",
+    "notFoundTitle": "Group not found",
+    "notFoundDescription": "This group may have been deleted or the link is incorrect.",
+    "editNameAria": "Edit group name",
+    "saveNameAria": "Save group name",
+    "groupNameAria": "Group name"
+  },
+  "words": {
+    "emptyTitle": "No words yet",
+    "emptyDescription": "This group loaded fine — it is just empty. Add a word to start practicing.",
+    "addWord": "Add word",
+    "addWordAria": "Add word",
+    "deleteTitle": "Delete word",
+    "deleteDescription": "Are you sure you want to delete word",
+    "deleteWordAria": "Delete word {{symbol}}",
+    "loadingWords": "Loading words",
+    "progressAria": "{{symbol}}, {{translation}}, {{percent}}% progress"
+  },
+  "addWord": {
+    "title": "Add word",
+    "draw": "Draw",
+    "hideDrawPad": "Hide draw pad",
+    "hieroglyphsPlaceholder": "Enter hieroglyphs",
+    "translationPlaceholder": "Enter translation",
+    "lookingUpPinyin": "Looking up pinyin…",
+    "enterTranscriptionManual": "Enter transcription manually",
+    "enterTranscription": "Enter transcription"
+  },
+  "addGroup": {
+    "title": "Create group",
+    "namePlaceholder": "Enter group name",
+    "nameLabel": "Group name",
+    "iconLabel": "Icon",
+    "selectIconAria": "Select {{icon}} icon"
+  },
+  "auth": {
+    "signUpTitle": "Sign up to continue",
+    "demoGateTitle": "Registration required",
+    "demoGateDescription": "Create a free account to add groups, words, and manage your vocabulary. Study modes are available in demo.",
+    "googleCredentialError": "Google did not return a credential. Try again.",
+    "googleSignInError": "Google sign-in was cancelled or failed.",
+    "telegramSignInError": "Could not sign in with Telegram. Close and reopen the mini app to retry."
+  },
+  "writeCard": {
+    "enterAllHieroglyphs": "Enter all hieroglyphs"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "This path does not lead anywhere in 中国老师. Head home and keep studying.",
+    "errorTitle": "Something went wrong",
+    "errorDescription": "An unexpected error occurred. You can try again or return home.",
+    "errorStatusDescription": "An unexpected error occurred ({{status}}). You can try again or return home."
+  },
+  "loading": {
+    "page": "Loading page",
+    "application": "Loading application"
+  },
+  "tour": {
+    "homeTitle": "Home",
+    "homeDescription": "Tap the logo anytime to return to your vocabulary home screen.",
+    "profileTitle": "Your profile",
+    "profileDescription": "See your account name here. Sign out when you are done studying.",
+    "createGroupTitle": "Create a group",
+    "createGroupDescription": "Organize vocabulary into groups. Open a group to add words and start drills.",
+    "groupsTitle": "Your groups",
+    "groupsDescription": "Open a group to review cards, add words, and study that deck only.",
+    "studyModesTitle": "Study modes",
+    "studyModesDescription": "Pick handwriting, stroke order, pinyin, translation, or mixed practice for all groups."
+  },
+  "about": {
+    "backToApp": "Back to app",
+    "title": "Chinese Laoshi",
+    "intro": "Chinese Laoshi (中国老师) is a Mandarin learning app for custom flashcards, hanzi handwriting practice, and translation drills — in the browser on phone, tablet, or desktop.",
+    "featuresTitle": "Features",
+    "handwritingFeature": "Handwriting practice — write Chinese characters with touch or mouse and get stroke feedback.",
+    "translationFeature": "Translation drills — review meanings and strengthen recall with flashcard study modes.",
+    "customGroupsFeature": "Custom word groups — build your own card decks with characters, pinyin, and translations.",
+    "openSourceTitle": "Open source",
+    "openSourceBody": "The project is open source on GitHub.",
+    "contactTitle": "Contact",
+    "emailLabel": "Email:",
+    "githubLabel": "GitHub:",
+    "appLabel": "App:"
+  }
+}

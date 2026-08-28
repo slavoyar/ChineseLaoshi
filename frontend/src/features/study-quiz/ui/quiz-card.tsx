@@ -1,9 +1,10 @@
 import { cardService } from '@entities/card';
-import { Card, Word, isRequestCanceled, parseApiError } from '@shared/api';
+import { Card, isRequestCanceled, parseApiError, Word } from '@shared/api';
 import { useAuthStore } from '@shared/stores';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export type QuizMode = 'pinyin' | 'translation';
 
@@ -55,6 +56,7 @@ const buildOptions = (card: Card, distractors: Word[], mode: QuizMode): QuizOpti
 };
 
 export const QuizCard = ({ card, mode, paused = false, initialDistractors, onNext, onAbort }: Props) => {
+  const { t } = useTranslation();
   const isDemo = useAuthStore((state) => state.isDemo);
 
   const [options, setOptions] = useState<QuizOption[]>([]);
@@ -138,7 +140,7 @@ export const QuizCard = ({ card, mode, paused = false, initialDistractors, onNex
     }, 700);
   };
 
-  const promptLabel = mode === 'pinyin' ? 'Pick the pinyin' : 'Pick the translation';
+  const promptLabel = mode === 'pinyin' ? t('quiz.pickPinyin') : t('quiz.pickTranslation');
 
   return (
     <div className='flex w-full max-w-md flex-col gap-3 rounded-2xl border bg-card p-3 sm:gap-4 sm:p-4 md:w-[500px]'>
@@ -151,7 +153,9 @@ export const QuizCard = ({ card, mode, paused = false, initialDistractors, onNex
         aria-busy={loading}
       >
         {loading ? (
-          <p className='col-span-full text-center text-sm text-muted-foreground'>Loading choices…</p>
+          <p className='col-span-full text-center text-sm text-muted-foreground'>
+            {t('quiz.loadingChoices')}
+          </p>
         ) : (
           options.map((option) => {
             const isSelected = selectedId === option.id;

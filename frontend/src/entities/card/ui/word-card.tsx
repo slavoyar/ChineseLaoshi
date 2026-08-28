@@ -14,6 +14,7 @@ import {
   tileItemClassName,
 } from '@shared/ui';
 import { cn } from '@shared/utils';
+import { useTranslation } from 'react-i18next';
 
 import { getProgressStyles } from '../lib/progress';
 interface Props {
@@ -22,6 +23,7 @@ interface Props {
 }
 
 export const WordCard = ({ card, onDelete }: Props) => {
+  const { t } = useTranslation();
   const deleteCard = useCardStore((state) => state.delete);
   const progressStyles = getProgressStyles(card.progress);
   const { isDemo } = useRequireAuth();
@@ -42,7 +44,11 @@ export const WordCard = ({ card, onDelete }: Props) => {
             'relative flex h-full flex-col overflow-hidden rounded-lg border-2 bg-secondary',
             progressStyles.border
           )}
-          aria-label={`${card.word.symbols}, ${card.word.translation}, ${progressStyles.percentLabel}% progress`}
+          aria-label={t('words.progressAria', {
+            symbol: card.word.symbols,
+            translation: card.word.translation,
+            percent: progressStyles.percentLabel,
+          })}
         >
           <div className='flex min-h-0 flex-1 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-[inherit] px-2 pb-3 pt-1.5'>
             <span className='text-2xl font-medium leading-none text-foreground'>{card.word.symbols}</span>
@@ -66,7 +72,7 @@ export const WordCard = ({ card, onDelete }: Props) => {
         </div>
         {!isDemo && (
           <TileDeleteButton
-            aria-label={`Delete word ${card.word.symbols}`}
+            aria-label={t('words.deleteWordAria', { symbol: card.word.symbols })}
             onClick={(e) => {
               e.stopPropagation();
               openDeleteDialog(card);
@@ -77,15 +83,15 @@ export const WordCard = ({ card, onDelete }: Props) => {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={(open) => !open && closeDeleteDialog()}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete word</AlertDialogTitle>
+            <AlertDialogTitle>{t('words.deleteTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete word{' '}
+              {t('words.deleteDescription')}{' '}
               <span className='text-lg font-medium text-foreground'>{deleteItem.word?.symbols}</span>?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={onDeleteHandler}>Delete</AlertDialogAction>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={onDeleteHandler}>{t('common.delete')}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

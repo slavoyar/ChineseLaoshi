@@ -6,8 +6,10 @@ import { Button, EmptyState } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { Plus } from 'lucide-react';
 import { HTMLAttributes, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const Groups = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) => {
+  const { t } = useTranslation();
   const [groups, isLoading] = useGroupStore((state) => [state.groups, state.isLoading]);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const { gateAction } = useRequireAuth();
@@ -23,12 +25,12 @@ export const Groups = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) 
           <>
             <EmptyState
               size='compact'
-              title='No groups yet'
-              description='Everything loaded fine — you just have not created a group. Add one to start building vocabulary.'
+              title={t('groups.emptyTitle')}
+              description={t('groups.emptyDescription')}
               action={
                 <Button data-tour='create-group' onClick={() => gateAction(() => setIsAddOpen(true))}>
                   <Plus aria-hidden='true' />
-                  Create group
+                  {t('groups.createGroup')}
                 </Button>
               }
             />

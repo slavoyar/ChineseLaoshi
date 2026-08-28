@@ -1,6 +1,6 @@
 import { cardService, useCardStore, WriteCard } from '@entities/card';
 import { QuizCard, QuizMode } from '@features/study-quiz';
-import { Card, Word, isRequestCanceled } from '@shared/api';
+import { Card, isRequestCanceled, Word } from '@shared/api';
 import { MixedFace, StudyMode } from '@shared/config';
 import {
   assignMixedFaces,
@@ -13,16 +13,13 @@ import { Route } from '@shared/types';
 import { Button } from '@shared/ui';
 import { PrescriptionPractice } from '@widgets/prescription-practice';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 type SessionPhase = 'active' | 'complete';
 
-const resolveQuizMode = (
-  mode: StudyMode,
-  card: Card,
-  faces: Record<string, MixedFace>,
-): QuizMode | null => {
+const resolveQuizMode = (mode: StudyMode, card: Card, faces: Record<string, MixedFace>): QuizMode | null => {
   if (mode === 'pinyin' || mode === 'translation') {
     return mode;
   }
@@ -36,6 +33,7 @@ const resolveQuizMode = (
 };
 
 export const WritePractice = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { groupId, count } = useParams();
   const [current, setCurrent] = useState<Card | null>(null);
@@ -67,7 +65,7 @@ export const WritePractice = () => {
     mode: 'main' | StudyMode,
     cards: Card[],
     index: number,
-    faces: Record<string, MixedFace>,
+    faces: Record<string, MixedFace>
   ) => {
     if (mode === 'main' || !count) {
       return;
@@ -82,23 +80,26 @@ export const WritePractice = () => {
     });
   };
 
-  const prefetchQuizDistractors = useCallback((card: Card) => {
-    if (distractorCache[card.id] !== undefined || distractorPendingRef.current.has(card.id)) {
-      return;
-    }
-    distractorPendingRef.current.add(card.id);
-    cardService
-      .getQuizDistractors(card.id)
-      .then((words) => {
-        setDistractorCache((prev) => ({ ...prev, [card.id]: words }));
-      })
-      .catch(() => {
-        setDistractorCache((prev) => ({ ...prev, [card.id]: [] }));
-      })
-      .finally(() => {
-        distractorPendingRef.current.delete(card.id);
-      });
-  }, [distractorCache]);
+  const prefetchQuizDistractors = useCallback(
+    (card: Card) => {
+      if (distractorCache[card.id] !== undefined || distractorPendingRef.current.has(card.id)) {
+        return;
+      }
+      distractorPendingRef.current.add(card.id);
+      cardService
+        .getQuizDistractors(card.id)
+        .then((words) => {
+          setDistractorCache((prev) => ({ ...prev, [card.id]: words }));
+        })
+        .catch(() => {
+          setDistractorCache((prev) => ({ ...prev, [card.id]: [] }));
+        })
+        .finally(() => {
+          distractorPendingRef.current.delete(card.id);
+        });
+    },
+    [distractorCache]
+  );
 
   const prefetchForCard = useCallback(
     (card: Card | undefined) => {
@@ -110,7 +111,7 @@ export const WritePractice = () => {
         prefetchQuizDistractors(card);
       }
     },
-    [activeMode, prefetchQuizDistractors],
+    [activeMode, prefetchQuizDistractors]
   );
 
   const startBatch = (data: Card[], mode: StudyMode) => {
@@ -191,7 +192,7 @@ export const WritePractice = () => {
         }
         if (data.length === 0) {
           resetAndExit();
-          toast.warn('There is no enough cards for this lesson');
+          toast.warn(t('session.notEnoughCards'));
           return;
         }
         startBatch(data, state);
@@ -257,7 +258,7 @@ export const WritePractice = () => {
   const onContinue = () => {
     const data = nextBatchRef.current;
     if (!data || data.length === 0) {
-      toast.warn('There is no enough cards for this lesson');
+      toast.warn(t('session.notEnoughCards'));
       resetAndExit();
       return;
     }
@@ -334,16 +335,14 @@ export const WritePractice = () => {
     return (
       <div className='flex h-full w-full items-center justify-center px-3 py-3 sm:px-4 sm:py-4'>
         <div className='flex w-full max-w-md flex-col items-center gap-4 rounded-2xl border bg-card p-6 text-center'>
-          <h2 className='text-xl font-semibold text-foreground'>Session complete</h2>
-          <p className='text-sm text-muted-foreground'>
-            You finished {count} cards. Continue with another set or return home.
-          </p>
+          <h2 className='text-xl font-semibold text-foreground'>{t('session.completeTitle')}</h2>
+          <p className='text-sm text-muted-foreground'>{t('session.completeDescription', { count })}</p>
           <div className='flex w-full flex-col gap-2 sm:flex-row sm:justify-center'>
             <Button type='button' disabled={nextBatchLoading} onClick={onContinue}>
-              Continue
+              {t('common.continue')}
             </Button>
             <Button type='button' variant='outline' onClick={resetAndExit}>
-              Finish
+              {t('common.finish')}
             </Button>
           </div>
         </div>

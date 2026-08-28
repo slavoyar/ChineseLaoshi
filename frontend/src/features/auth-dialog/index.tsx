@@ -5,8 +5,10 @@ import { useAuthStore } from '@shared/stores';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@shared/ui';
 import { cn } from '@shared/utils';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const AuthDialog = () => {
+  const { t } = useTranslation();
   const [isOpen, closeAuthDialog, signInWithGoogle] = useAuthStore((state) => [
     state.isAuthDialogOpen,
     state.closeAuthDialog,
@@ -26,7 +28,7 @@ export const AuthDialog = () => {
 
   const onGoogleSuccess = async (response: CredentialResponse) => {
     if (!response.credential) {
-      setError('Google did not return a credential. Try again.');
+      setError(t('auth.googleCredentialError'));
       return;
     }
     setError(null);
@@ -44,13 +46,13 @@ export const AuthDialog = () => {
     <Dialog open={isOpen} onOpenChange={(open) => !open && closeAuthDialog()}>
       <DialogContent className='sm:max-w-md'>
         <DialogHeader>
-          <DialogTitle>Sign up to continue</DialogTitle>
+          <DialogTitle>{t('auth.signUpTitle')}</DialogTitle>
         </DialogHeader>
         <div className='flex flex-col gap-3 pt-2'>
           <div className={cn('flex w-full justify-center', isSubmitting && 'pointer-events-none opacity-60')}>
             <GoogleLogin
               onSuccess={onGoogleSuccess}
-              onError={() => setError('Google sign-in was cancelled or failed.')}
+              onError={() => setError(t('auth.googleSignInError'))}
               useOneTap={false}
               theme={googleTheme}
               size='large'

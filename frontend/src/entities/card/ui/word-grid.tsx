@@ -4,6 +4,7 @@ import { Button, EmptyState } from '@shared/ui';
 import { tileGridClassName } from '@shared/ui';
 import { Plus } from 'lucide-react';
 import { ReactNode, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { CardListSkeleton } from './card-list-skeleton';
 import { CreateWordCard } from './create-word-card';
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export const WordGrid = ({ groupId, wordCount = 0, onDelete, renderAddDialog }: Props) => {
+  const { t } = useTranslation();
   const [cardsPerGroup, loadingGroupIds] = useCardStore((state) => [
     state.cardsPerGroup,
     state.loadingGroupIds,
@@ -37,12 +39,12 @@ export const WordGrid = ({ groupId, wordCount = 0, onDelete, renderAddDialog }: 
       <>
         <EmptyState
           size='compact'
-          title='No words yet'
-          description='This group loaded fine — it is just empty. Add a word to start practicing.'
+          title={t('words.emptyTitle')}
+          description={t('words.emptyDescription')}
           action={
             <Button onClick={() => gateAction(() => setIsAddOpen(true))}>
               <Plus aria-hidden='true' />
-              Add word
+              {t('words.addWord')}
             </Button>
           }
         />
