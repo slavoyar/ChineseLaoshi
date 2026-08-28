@@ -4,7 +4,7 @@ import { useStateStore } from '@shared/stores';
 import { Route } from '@shared/types';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
-import { BookOpen, Languages, TextQuote, type LucideIcon } from 'lucide-react';
+import { BookOpen, Languages, Shuffle, TextQuote, type LucideIcon } from 'lucide-react';
 import type { ComponentType, SVGProps } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -36,6 +36,11 @@ const modeConfig: Record<StudyMode, { label: string; icon: ModeIcon; iconWrapCla
     label: 'Translation',
     icon: TextQuote,
     iconWrapClass: 'bg-[hsl(var(--chart-4)/0.12)] text-[hsl(var(--chart-4))]',
+  },
+  mixed: {
+    label: 'Mixed',
+    icon: Shuffle,
+    iconWrapClass: 'bg-[hsl(var(--chart-5)/0.12)] text-[hsl(var(--chart-5))]',
   },
 };
 
@@ -77,5 +82,6 @@ export const StudyModeControls = ({ groupId, disabled, className }: StudyModeCon
     <StudyModeButton mode='prescription' groupId={groupId} disabled={disabled} />
     <StudyModeButton mode='pinyin' groupId={groupId} disabled={disabled} />
     <StudyModeButton mode='translation' groupId={groupId} disabled={disabled} />
+    <StudyModeButton mode='mixed' groupId={groupId} disabled={disabled} />
   </div>
 );
