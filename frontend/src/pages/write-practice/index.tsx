@@ -1,7 +1,7 @@
 import { cardService, useCardStore, WriteCard } from '@entities/card';
 import { QuizCard, QuizMode } from '@features/study-quiz';
 import { Card, isRequestCanceled, Word } from '@shared/api';
-import { MixedFace, StudyMode } from '@shared/config';
+import { MixedFace, StudyMode, testIds } from '@shared/config';
 import {
   assignMixedFaces,
   clearStudySession,
@@ -245,6 +245,7 @@ export const WritePractice = () => {
     const [next, ...rest] = remainingRef.current;
     remainingRef.current = rest;
     if (!next) {
+      clearStudySession();
       setSessionPhase('complete');
       return;
     }
@@ -335,13 +336,25 @@ export const WritePractice = () => {
     return (
       <div className='flex h-full w-full items-center justify-center px-3 py-3 sm:px-4 sm:py-4'>
         <div className='flex w-full max-w-md flex-col items-center gap-4 rounded-2xl border bg-card p-6 text-center'>
-          <h2 className='text-xl font-semibold text-foreground'>{t('session.completeTitle')}</h2>
+          <h2 className='text-xl font-semibold text-foreground' data-testid={testIds.session.complete}>
+            {t('session.completeTitle')}
+          </h2>
           <p className='text-sm text-muted-foreground'>{t('session.completeDescription', { count })}</p>
           <div className='flex w-full flex-col gap-2 sm:flex-row sm:justify-center'>
-            <Button type='button' disabled={nextBatchLoading} onClick={onContinue}>
+            <Button
+              type='button'
+              disabled={nextBatchLoading}
+              onClick={onContinue}
+              data-testid={testIds.session.continue}
+            >
               {t('common.continue')}
             </Button>
-            <Button type='button' variant='outline' onClick={resetAndExit}>
+            <Button
+              type='button'
+              variant='outline'
+              onClick={resetAndExit}
+              data-testid={testIds.session.finish}
+            >
               {t('common.finish')}
             </Button>
           </div>

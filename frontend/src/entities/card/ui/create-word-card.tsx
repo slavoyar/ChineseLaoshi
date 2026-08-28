@@ -1,3 +1,4 @@
+import { testIds } from '@shared/config';
 import { useRequireAuth } from '@shared/hooks';
 import { tileItemClassName } from '@shared/ui';
 import { cn } from '@shared/utils';
@@ -24,6 +25,7 @@ export const CreateWordCard = ({ renderDialog }: Props) => {
         <button
           type='button'
           aria-label={t('words.addWordAria')}
+          data-testid={testIds.word.addTrigger}
           className='flex h-full w-full flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-muted-foreground/40 bg-secondary/50 text-muted-foreground transition-colors hover:border-primary/50 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
           onClick={handleClick}
         >

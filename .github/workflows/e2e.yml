@@ -1,12 +1,13 @@
-name: MVP e2e
+name: e2e
 
 on:
   pull_request:
     branches:
-      - mvp
+      - production
   push:
     branches:
-      - mvp
+      - production
+  workflow_dispatch:
 
 jobs:
   e2e:

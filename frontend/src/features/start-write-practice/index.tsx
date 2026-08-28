@@ -1,4 +1,4 @@
-import { CARDS_PER_SESSION, StudyMode } from '@shared/config';
+import { CARDS_PER_SESSION, StudyMode, testIds } from '@shared/config';
 import { PenWrite } from '@shared/icons';
 import { useStateStore } from '@shared/stores';
 import { Route } from '@shared/types';
@@ -72,6 +72,7 @@ export const StudyModeButton = ({ mode, groupId, disabled = false }: StudyModeBu
     <Button
       variant='outline'
       disabled={disabled}
+      data-testid={testIds.studyModes.mode(mode)}
       className={cn(
         'flex h-auto w-full min-w-0 flex-col items-center gap-1.5 rounded-lg p-2 sm:gap-2 sm:rounded-xl sm:p-3 md:gap-3 md:p-4',
         mobileGridPlacement[mode],

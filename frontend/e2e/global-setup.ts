@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { chromium, type FullConfig } from '@playwright/test';
+import { chromium } from '@playwright/test';
 import jwt from 'jsonwebtoken';
 import pg from 'pg';
 
@@ -25,8 +25,8 @@ async function readJwtSecret(): Promise<string> {
   throw new Error('JWT_SECRET is required for authenticated e2e tests');
 }
 
-async function globalSetup(config: FullConfig) {
-  const authDir = path.join(config.rootDir, 'e2e', '.auth');
+async function globalSetup() {
+  const authDir = path.join(process.cwd(), 'e2e', '.auth');
   fs.mkdirSync(authDir, { recursive: true });
 
   let jwtSecret: string;

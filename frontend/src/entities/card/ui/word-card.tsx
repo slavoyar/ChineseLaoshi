@@ -1,5 +1,6 @@
 import { useCardStore } from '@entities/card';
 import { Card } from '@shared/api';
+import { testIds } from '@shared/config';
 import { useDelete, useRequireAuth } from '@shared/hooks';
 import {
   AlertDialog,
@@ -38,7 +39,11 @@ export const WordCard = ({ card, onDelete }: Props) => {
 
   return (
     <>
-      <div className={cn('group/card relative pb-2', tileItemClassName)}>
+      <div
+        className={cn('group/card relative pb-2', tileItemClassName)}
+        data-testid={testIds.word.card}
+        data-word-symbols={card.word.symbols}
+      >
         <div
           className={cn(
             'relative flex h-full flex-col overflow-visible rounded-lg border-2 bg-secondary',
@@ -73,6 +78,7 @@ export const WordCard = ({ card, onDelete }: Props) => {
         {!isDemo && (
           <TileDeleteButton
             aria-label={t('words.deleteWordAria', { symbol: card.word.symbols })}
+            data-testid={testIds.word.delete}
             onClick={(e) => {
               e.stopPropagation();
               openDeleteDialog(card);
@@ -91,7 +97,9 @@ export const WordCard = ({ card, onDelete }: Props) => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-            <AlertDialogAction onClick={onDeleteHandler}>{t('common.delete')}</AlertDialogAction>
+            <AlertDialogAction onClick={onDeleteHandler} data-testid={testIds.common.confirmDelete}>
+              {t('common.delete')}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

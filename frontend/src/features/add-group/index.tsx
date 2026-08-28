@@ -1,4 +1,5 @@
 import { GROUP_ICON_CATALOG, GroupIconKey, useGroupStore } from '@entities/group';
+import { testIds } from '@shared/config';
 import {
   Button,
   Dialog,
@@ -46,7 +47,7 @@ export const AddGroupDialog = ({ open, onOpenChange }: AddGroupDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => (nextOpen ? onOpenChange(true) : handleClose())}>
-      <DialogContent>
+      <DialogContent data-testid={testIds.group.createDialog}>
         <DialogHeader>
           <DialogTitle>{t('addGroup.title')}</DialogTitle>
         </DialogHeader>
@@ -55,6 +56,7 @@ export const AddGroupDialog = ({ open, onOpenChange }: AddGroupDialogProps) => {
             <Label htmlFor='create-group-name'>{t('addGroup.nameLabel')}</Label>
             <Input
               id='create-group-name'
+              data-testid={testIds.group.nameInput}
               autoFocus
               onKeyUp={handleEnter}
               placeholder={t('addGroup.namePlaceholder')}
@@ -87,7 +89,7 @@ export const AddGroupDialog = ({ open, onOpenChange }: AddGroupDialogProps) => {
           <Button variant='outline' onClick={handleClose}>
             {t('common.cancel')}
           </Button>
-          <Button disabled={!name} onClick={saveHandler}>
+          <Button disabled={!name} onClick={saveHandler} data-testid={testIds.group.submit}>
             {t('common.create')}
           </Button>
         </DialogFooter>

@@ -75,6 +75,7 @@ export const useOnboardingTour = () => {
 
     startedRef.current = true;
     const finishedRef = { current: false };
+    const unmountingRef = { current: false };
 
     const finishTour = () => {
       if (finishedRef.current) {
@@ -92,7 +93,9 @@ export const useOnboardingTour = () => {
       showButtons: ['next', 'previous', 'close'],
       steps: buildSteps(),
       onDestroyStarted: (_element, _step, { driver: tourDriver }) => {
-        finishTour();
+        if (!unmountingRef.current) {
+          finishTour();
+        }
         tourDriver.destroy();
       },
     };
@@ -103,6 +106,7 @@ export const useOnboardingTour = () => {
     }, 400);
 
     return () => {
+      unmountingRef.current = true;
       window.clearTimeout(timer);
       tourDriver.destroy();
     };

@@ -1,4 +1,5 @@
 import { useCardStore } from '@entities/card';
+import { testIds } from '@shared/config';
 import { useRequireAuth } from '@shared/hooks';
 import { Button, EmptyState } from '@shared/ui';
 import { tileGridClassName } from '@shared/ui';
@@ -39,10 +40,14 @@ export const WordGrid = ({ groupId, wordCount = 0, onDelete, renderAddDialog }: 
       <>
         <EmptyState
           size='compact'
+          data-testid={testIds.word.emptyState}
           title={t('words.emptyTitle')}
           description={t('words.emptyDescription')}
           action={
-            <Button onClick={() => gateAction(() => setIsAddOpen(true))}>
+            <Button
+              data-testid={testIds.word.addTrigger}
+              onClick={() => gateAction(() => setIsAddOpen(true))}
+            >
               <Plus aria-hidden='true' />
               {t('words.addWord')}
             </Button>

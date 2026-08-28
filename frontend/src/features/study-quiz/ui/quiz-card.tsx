@@ -1,5 +1,6 @@
 import { cardService } from '@entities/card';
 import { Card, isRequestCanceled, parseApiError, Word } from '@shared/api';
+import { testIds } from '@shared/config';
 import { useAuthStore } from '@shared/stores';
 import { Button } from '@shared/ui';
 import { cn } from '@shared/utils';
@@ -144,13 +145,16 @@ export const QuizCard = ({ card, mode, paused = false, initialDistractors, onNex
 
   return (
     <div className='flex w-full max-w-md flex-col gap-3 rounded-2xl border bg-card p-3 sm:gap-4 sm:p-4 md:w-[500px]'>
-      <p className='text-center text-xs text-muted-foreground sm:text-sm'>{promptLabel}</p>
+      <p className='text-center text-xs text-muted-foreground sm:text-sm' data-testid={testIds.quiz.prompt}>
+        {promptLabel}
+      </p>
       <div className='rounded-md bg-muted py-8 text-center text-6xl font-medium tracking-wide sm:py-12 sm:text-7xl'>
         {card.word.symbols}
       </div>
       <div
         className={cn('grid gap-2', options.length <= 2 ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2')}
         aria-busy={loading}
+        data-testid={testIds.quiz.choices}
       >
         {loading ? (
           <p className='col-span-full text-center text-sm text-muted-foreground'>
@@ -167,6 +171,7 @@ export const QuizCard = ({ card, mode, paused = false, initialDistractors, onNex
                 key={option.id}
                 type='button'
                 variant='outline'
+                data-testid={testIds.quiz.choice}
                 disabled={selectedId !== null || paused}
                 className={cn(
                   'h-auto min-h-11 whitespace-normal px-3 py-2 text-left text-sm',

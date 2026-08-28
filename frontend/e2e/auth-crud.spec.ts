@@ -1,7 +1,10 @@
 import { expect, test } from '@playwright/test';
 
+import { e2e } from './locators';
+
 test.describe('Authenticated CRUD', () => {
   test('creates group, adds word, renames group, deletes word', async ({ page }) => {
+    test.setTimeout(60_000);
     test.skip(
       !(await page.context().cookies()).some((cookie) => cookie.name === 'cl_session' && cookie.value),
       'Authenticated storage state was not seeded'
@@ -11,30 +14,27 @@ test.describe('Authenticated CRUD', () => {
     const renamedGroup = `${groupName} updated`;
 
     await page.goto('/');
-    await page.getByRole('button', { name: 'Create group' }).click();
-    await page.getByLabel('Group name').fill(groupName);
-    await page.getByRole('dialog').getByRole('button', { name: 'Create' }).click();
-    await expect(page.getByRole('button', { name: `Open group ${groupName}` })).toBeVisible({
-      timeout: 10_000,
-    });
+    await e2e.createGroupTrigger(page).click();
+    await e2e.createGroupNameInput(page).fill(groupName);
+    await e2e.createGroupSubmit(page).click();
+    await expect(e2e.groupCard(page, groupName)).toBeVisible({ timeout: 10_000 });
 
-    await page.getByRole('button', { name: `Open group ${groupName}` }).click();
-    await page.getByRole('button', { name: 'Add word' }).click();
-    await page.locator('#create-word-symbols').fill('你好');
-    await page.locator('#create-word-translation').fill('hello');
-    await page.locator('#create-word-transcription').fill('ni hao');
-    await page.getByRole('dialog', { name: 'Create word' }).getByRole('button', { name: 'Create' }).click();
+    await e2e.groupCard(page, groupName).click();
+    await e2e.addWordTrigger(page).click();
+    await e2e.createWordSymbols(page).fill('你好');
+    await e2e.createWordTranslation(page).fill('hello');
+    await expect(e2e.createWordSubmit(page)).toBeEnabled({ timeout: 15_000 });
+    await e2e.createWordSubmit(page).click();
 
-    await expect(page.getByText('你好')).toBeVisible({ timeout: 10_000 });
+    await expect(e2e.wordCard(page, '你好')).toBeVisible({ timeout: 10_000 });
 
-    await page.getByRole('button', { name: 'Edit group name' }).click();
-    const nameInput = page.getByRole('textbox', { name: 'Group name' });
-    await nameInput.fill(renamedGroup);
-    await page.getByRole('button', { name: 'Save group name' }).click();
-    await expect(page.getByRole('heading', { name: renamedGroup })).toBeVisible();
+    await e2e.groupEditName(page).click();
+    await e2e.groupRenameInput(page).fill(renamedGroup);
+    await e2e.groupRenameSave(page).click();
+    await expect(e2e.groupTitle(page)).toHaveText(renamedGroup);
 
-    await page.getByRole('button', { name: 'Delete word 你好' }).click();
-    await page.getByRole('button', { name: 'Delete' }).click();
-    await expect(page.getByText('No words yet')).toBeVisible({ timeout: 10_000 });
+    await e2e.wordDelete(page, '你好').click();
+    await e2e.confirmDelete(page).click();
+    await expect(e2e.wordsEmptyState(page)).toBeVisible({ timeout: 10_000 });
   });
 });

@@ -5,11 +5,9 @@ on:
   push:
     branches:
       - production
-      - mvp
   pull_request:
     branches:
       - production
-      - mvp
   workflow_dispatch:
 
 env:
