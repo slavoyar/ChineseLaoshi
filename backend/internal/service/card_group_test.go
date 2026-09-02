@@ -242,6 +242,44 @@ func TestCardService_GetQuizDistractors(t *testing.T) {
 	}
 }
 
+func TestCardService_GetQuizDistractorsDifferentLength(t *testing.T) {
+	_, svc, userID := setupFullServices(t)
+	symbols, transcription, translation := "你好", "ni hao", "hello"
+	card, err := svc.CreateCard(context.Background(), dto.CreateCard{
+		GroupID: testutil.GetUUID(1),
+		Word: dto.CreateCardWord{
+			Symbols:       &symbols,
+			Transcription: &transcription,
+			Translation:   &translation,
+		},
+	}, userID)
+	if err != nil {
+		t.Fatalf("create card: %v", err)
+	}
+
+	words, err := svc.GetQuizDistractors(context.Background(), card.ID, userID)
+	if err != nil {
+		t.Fatalf("get distractors: %v", err)
+	}
+	if len(words) == 0 {
+		t.Fatal("expected distractors from different-length words")
+	}
+
+	cardLen := len([]rune(symbols))
+	hasDifferentLength := false
+	for _, w := range words {
+		if w.ID == card.Word.ID {
+			t.Fatal("distractors must not include the card's own word")
+		}
+		if len([]rune(w.Symbols)) != cardLen {
+			hasDifferentLength = true
+		}
+	}
+	if !hasDifferentLength {
+		t.Fatal("expected at least one distractor with different symbol length")
+	}
+}
+
 func TestCardService_GetQuizDistractorsNotFound(t *testing.T) {
 	_, svc, userID := setupFullServices(t)
 	_, err := svc.GetQuizDistractors(context.Background(), testutil.GetUUID(404), userID)

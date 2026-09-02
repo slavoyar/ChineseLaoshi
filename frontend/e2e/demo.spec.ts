@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { e2e } from './locators';
+import { e2e, testIds } from './locators';
 
 test.describe('Demo study flow', () => {
   test('home loads study modes', async ({ page }) => {
@@ -14,6 +14,7 @@ test.describe('Demo study flow', () => {
     await e2e.studyMode(page, 'translation').click();
     await expect(page).toHaveURL(/\/write-practice\/5/);
     await expect(e2e.quizPrompt(page)).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId(testIds.quiz.choice)).toHaveCount(4);
   });
 
   test('shows continue screen after five cards', async ({ page }) => {
