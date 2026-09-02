@@ -10,7 +10,7 @@ import (
 )
 
 func TestGroups_List(t *testing.T) {
-	app := testutil.SetupTestApp(t)
+	app := testutil.SetupStrictAuthApp(t)
 	res, err := http.Get(app.Server.URL + "/api/groups")
 	if err != nil {
 		t.Fatalf("request failed: %v", err)
@@ -34,7 +34,7 @@ func TestGroups_List(t *testing.T) {
 }
 
 func TestGroups_ListRussianLocale(t *testing.T) {
-	app := testutil.SetupTestApp(t)
+	app := testutil.SetupStrictAuthApp(t)
 	res, err := http.Get(app.Server.URL + "/api/groups?locale=ru")
 	if err != nil {
 		t.Fatalf("request failed: %v", err)
