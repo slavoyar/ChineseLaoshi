@@ -43,21 +43,33 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function localPortFromAddress(address) {
+  const match = address.match(/:(\d+)$/);
+  return match ? Number.parseInt(match[1], 10) : null;
+}
+
 function getPidsOnPort(port) {
   const isWin = platform() === 'win32';
   const pids = new Set();
 
   if (isWin) {
-    const out = execSync(`netstat -ano | findstr :${port}`, {
-      encoding: 'utf8',
-      shell: true,
-      stdio: ['pipe', 'pipe', 'ignore'],
-    });
-    for (const line of out.split(/\r?\n/)) {
-      if (!line.includes('LISTENING')) continue;
-      const parts = line.trim().split(/\s+/);
-      const pid = Number.parseInt(parts[parts.length - 1], 10);
-      if (Number.isFinite(pid) && pid > 0) pids.add(pid);
+    try {
+      const out = execSync('netstat -ano', {
+        encoding: 'utf8',
+        shell: true,
+        stdio: ['pipe', 'pipe', 'ignore'],
+      });
+      for (const line of out.split(/\r?\n/)) {
+        if (!line.includes('LISTENING')) continue;
+        const parts = line.trim().split(/\s+/);
+        if (parts.length < 5) continue;
+        const localPort = localPortFromAddress(parts[1]);
+        if (localPort !== port) continue;
+        const pid = Number.parseInt(parts[parts.length - 1], 10);
+        if (Number.isFinite(pid) && pid > 0) pids.add(pid);
+      }
+    } catch {
+      // no listeners or netstat failed
     }
   } else {
     try {
