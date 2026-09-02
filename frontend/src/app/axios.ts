@@ -1,5 +1,7 @@
-import { getSessionToken } from '@shared/lib/session-token';
 import axios from 'axios';
+
+import { detectLanguage } from '@shared/lib/detect-language';
+import { getSessionToken } from '@shared/lib/session-token';
 
 axios.defaults.withCredentials = true;
 
@@ -8,6 +10,7 @@ axios.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  config.params = { ...config.params, locale: detectLanguage() };
   return config;
 });
 

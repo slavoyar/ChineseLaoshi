@@ -219,12 +219,22 @@ func seedTestData(ctx context.Context, pool *pgxpool.Pool) error {
 		return err
 	}
 
-	// Template user for anonymous reads / clone source.
+	// Template user for anonymous reads / clone source (English).
 	templateID := GetUUID(99)
 	_, err = pool.Exec(ctx, `
 		INSERT INTO "User" (id, username, email, password, provider, provider_subject)
 		VALUES ($1, $2, $3, NULL, $4, $5)
 	`, templateID, "DemoUser", config.DefaultTemplateEmail, config.TemplateProvider, config.TemplateProviderSubject)
+	if err != nil {
+		return err
+	}
+
+	// Russian template user for locale-aware clone / anonymous reads.
+	templateRUID := GetUUID(97)
+	_, err = pool.Exec(ctx, `
+		INSERT INTO "User" (id, username, email, password, provider, provider_subject)
+		VALUES ($1, $2, $3, NULL, $4, $5)
+	`, templateRUID, "DemoUserRU", config.DefaultTemplateEmailRU, config.TemplateProvider, config.TemplateProviderSubjectRU)
 	if err != nil {
 		return err
 	}
@@ -257,6 +267,29 @@ func seedTestData(ctx context.Context, pool *pgxpool.Pool) error {
 		INSERT INTO "Card" (id, "groupId", "wordId", "updatedAt")
 		VALUES ($1, $2, $3, NOW())
 	`, GetUUID(98), GetUUID(98), GetUUID(98))
+	if err != nil {
+		return err
+	}
+
+	// Russian template demo group for locale-aware clone tests.
+	_, err = pool.Exec(ctx, `
+		INSERT INTO "Group" (id, name, "wordCount", "userId")
+		VALUES ($1, $2, 1, $3)
+	`, GetUUID(96), "Демо", templateRUID)
+	if err != nil {
+		return err
+	}
+	_, err = pool.Exec(ctx, `
+		INSERT INTO "Word" (id, symbols, transcription, translation)
+		VALUES ($1, $2, $3, $4)
+	`, GetUUID(96), "你", "ni", "ты")
+	if err != nil {
+		return err
+	}
+	_, err = pool.Exec(ctx, `
+		INSERT INTO "Card" (id, "groupId", "wordId", "updatedAt")
+		VALUES ($1, $2, $3, NOW())
+	`, GetUUID(96), GetUUID(96), GetUUID(96))
 	if err != nil {
 		return err
 	}

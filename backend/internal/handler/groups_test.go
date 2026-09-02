@@ -25,8 +25,35 @@ func TestGroups_List(t *testing.T) {
 	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
 		t.Fatalf("decode failed: %v", err)
 	}
-	if len(body) != 3 {
-		t.Fatalf("expected 3 groups, got %d", len(body))
+	if len(body) != 1 {
+		t.Fatalf("expected 1 English template group, got %d", len(body))
+	}
+	if body[0]["name"] != "Demo" {
+		t.Fatalf("expected Demo group, got %v", body[0]["name"])
+	}
+}
+
+func TestGroups_ListRussianLocale(t *testing.T) {
+	app := testutil.SetupTestApp(t)
+	res, err := http.Get(app.Server.URL + "/api/groups?locale=ru")
+	if err != nil {
+		t.Fatalf("request failed: %v", err)
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		t.Fatalf("expected 200, got %d", res.StatusCode)
+	}
+
+	var body []map[string]any
+	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
+		t.Fatalf("decode failed: %v", err)
+	}
+	if len(body) != 1 {
+		t.Fatalf("expected 1 Russian template group, got %d", len(body))
+	}
+	if body[0]["name"] != "Демо" {
+		t.Fatalf("expected Демо group, got %v", body[0]["name"])
 	}
 }
 

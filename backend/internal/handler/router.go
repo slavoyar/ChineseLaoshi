@@ -6,10 +6,10 @@ import (
 	"github.com/go-chi/chi/v5"
 	chimw "github.com/go-chi/chi/v5/middleware"
 	"github.com/slavo/ChineseLaoshi/backend/internal/auth"
-	"github.com/slavo/ChineseLaoshi/backend/internal/config"
 	"github.com/slavo/ChineseLaoshi/backend/internal/middleware"
 	"github.com/slavo/ChineseLaoshi/backend/internal/repository"
 	"github.com/slavo/ChineseLaoshi/backend/internal/service"
+	"github.com/slavo/ChineseLaoshi/backend/internal/template"
 )
 
 type Handlers struct {
@@ -95,13 +95,9 @@ func (h *Handlers) resolveUserID(r *http.Request) (string, error) {
 	if user, ok := auth.UserFromContext(r.Context()); ok {
 		return user.ID, nil
 	}
-	template, err := h.users.GetByProviderSubject(r.Context(), config.TemplateProvider, config.TemplateProviderSubject)
-	if err == nil {
-		return template.ID, nil
-	}
-	template, err = h.users.GetByEmail(r.Context(), h.templateEmail)
+	tmpl, err := template.ResolveUser(r.Context(), h.users, h.templateEmail, r.URL.Query().Get("locale"))
 	if err != nil {
 		return "", err
 	}
-	return template.ID, nil
+	return tmpl.ID, nil
 }

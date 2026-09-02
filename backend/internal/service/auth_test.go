@@ -65,7 +65,7 @@ func newAuthServiceWithVerifiers(
 
 func TestAuthService_LoginWithGoogleInvalidToken(t *testing.T) {
 	svc := newAuthService(t, fakeGoogleVerifier{err: context.Canceled})
-	_, _, err := svc.LoginWithGoogle(context.Background(), "bad")
+	_, _, err := svc.LoginWithGoogle(context.Background(), "bad", "")
 	ae, ok := apperrors.IsAppError(err)
 	if !ok || ae.Code != apperrors.UnauthorizedError {
 		t.Fatalf("expected unauthorized, got %v", err)
@@ -76,7 +76,7 @@ func TestAuthService_LoginWithGoogleUnverifiedEmail(t *testing.T) {
 	svc := newAuthService(t, fakeGoogleVerifier{identity: auth.GoogleIdentity{
 		Subject: "sub-1", Email: "new@example.com", EmailVerified: false,
 	}})
-	_, _, err := svc.LoginWithGoogle(context.Background(), "token")
+	_, _, err := svc.LoginWithGoogle(context.Background(), "token", "")
 	ae, ok := apperrors.IsAppError(err)
 	if !ok || ae.Code != apperrors.ForbiddenError {
 		t.Fatalf("expected forbidden, got %v", err)
@@ -87,7 +87,7 @@ func TestAuthService_LoginWithGoogleNewUser(t *testing.T) {
 	svc := newAuthService(t, fakeGoogleVerifier{identity: auth.GoogleIdentity{
 		Subject: "new-google-subject", Email: "brandnew@example.com", EmailVerified: true, Name: "Brand New",
 	}})
-	user, token, err := svc.LoginWithGoogle(context.Background(), "token")
+	user, token, err := svc.LoginWithGoogle(context.Background(), "token", "")
 	if err != nil {
 		t.Fatalf("login: %v", err)
 	}
@@ -100,7 +100,7 @@ func TestAuthService_LoginWithGoogleExistingUser(t *testing.T) {
 	svc := newAuthService(t, fakeGoogleVerifier{identity: auth.GoogleIdentity{
 		Subject: "test-subject-1", Email: testutil.DefaultTestEmail, EmailVerified: true, Name: "slavoyar",
 	}})
-	user, token, err := svc.LoginWithGoogle(context.Background(), "token")
+	user, token, err := svc.LoginWithGoogle(context.Background(), "token", "")
 	if err != nil {
 		t.Fatalf("login: %v", err)
 	}
@@ -113,7 +113,7 @@ func TestAuthService_LoginWithGoogleEmptyNameUsesEmailPrefix(t *testing.T) {
 	svc := newAuthService(t, fakeGoogleVerifier{identity: auth.GoogleIdentity{
 		Subject: "empty-name-subject", Email: "prefix@example.com", EmailVerified: true, Name: "  ",
 	}})
-	user, _, err := svc.LoginWithGoogle(context.Background(), "token")
+	user, _, err := svc.LoginWithGoogle(context.Background(), "token", "")
 	if err != nil {
 		t.Fatalf("login: %v", err)
 	}
@@ -124,7 +124,7 @@ func TestAuthService_LoginWithGoogleEmptyNameUsesEmailPrefix(t *testing.T) {
 
 func TestAuthService_LoginWithTelegramNilVerifier(t *testing.T) {
 	svc := newAuthService(t, nil)
-	_, _, err := svc.LoginWithTelegram(context.Background(), "init-data")
+	_, _, err := svc.LoginWithTelegram(context.Background(), "init-data", "")
 	ae, ok := apperrors.IsAppError(err)
 	if !ok || ae.Code != apperrors.UnauthorizedError {
 		t.Fatalf("expected unauthorized, got %v", err)
@@ -133,7 +133,7 @@ func TestAuthService_LoginWithTelegramNilVerifier(t *testing.T) {
 
 func TestAuthService_LoginWithTelegramInvalidInitData(t *testing.T) {
 	svc := newAuthServiceWithVerifiers(t, nil, fakeTelegramVerifier{err: apperrors.New(apperrors.UnauthorizedError)})
-	_, _, err := svc.LoginWithTelegram(context.Background(), "bad")
+	_, _, err := svc.LoginWithTelegram(context.Background(), "bad", "")
 	ae, ok := apperrors.IsAppError(err)
 	if !ok || ae.Code != apperrors.UnauthorizedError {
 		t.Fatalf("expected unauthorized, got %v", err)
@@ -144,7 +144,7 @@ func TestAuthService_LoginWithTelegramNewUser(t *testing.T) {
 	svc := newAuthServiceWithVerifiers(t, nil, fakeTelegramVerifier{identity: auth.TelegramIdentity{
 		Subject: "999001", Name: "Telegram User", PhotoURL: "https://example.com/avatar.jpg",
 	}})
-	user, token, err := svc.LoginWithTelegram(context.Background(), "init-data")
+	user, token, err := svc.LoginWithTelegram(context.Background(), "init-data", "")
 	if err != nil {
 		t.Fatalf("login: %v", err)
 	}
@@ -161,12 +161,12 @@ func TestAuthService_LoginWithTelegramExistingUser(t *testing.T) {
 		Subject: "999002", Name: "Returning Telegram User",
 	}})
 	ctx := context.Background()
-	first, firstToken, err := svc.LoginWithTelegram(ctx, "init-data")
+	first, firstToken, err := svc.LoginWithTelegram(ctx, "init-data", "")
 	if err != nil {
 		t.Fatalf("first login: %v", err)
 	}
 
-	second, secondToken, err := svc.LoginWithTelegram(ctx, "init-data")
+	second, secondToken, err := svc.LoginWithTelegram(ctx, "init-data", "")
 	if err != nil {
 		t.Fatalf("second login: %v", err)
 	}
@@ -195,7 +195,7 @@ func TestAuthService_LoginWithTelegramEnsuresStarterContent(t *testing.T) {
 		t.Fatalf("expected 0 groups before login, got %d err=%v", count, err)
 	}
 
-	_, _, err = svc.LoginWithTelegram(ctx, "init-data")
+	_, _, err = svc.LoginWithTelegram(ctx, "init-data", "")
 	if err != nil {
 		t.Fatalf("login: %v", err)
 	}
@@ -225,13 +225,75 @@ func TestAuthService_LoginEnsuresStarterContent(t *testing.T) {
 		t.Fatalf("expected 0 groups before login, got %d err=%v", count, err)
 	}
 
-	_, _, err = svc.LoginWithGoogle(ctx, "token")
+	_, _, err = svc.LoginWithGoogle(ctx, "token", "")
 	if err != nil {
 		t.Fatalf("login: %v", err)
 	}
 	count, err = cloneRepo.CountGroups(ctx, user.ID)
 	if err != nil || count == 0 {
 		t.Fatalf("expected starter groups after login, got %d err=%v", count, err)
+	}
+}
+
+func TestAuthService_LoginWithGoogleNewUserRussianLocale(t *testing.T) {
+	app := testutil.SetupTestApp(t)
+	users := repository.NewUserRepository(app.Pool())
+	cloneRepo := repository.NewCloneRepository(app.Pool())
+	tokenService := auth.NewTokenService("test-jwt-secret", config.DefaultSessionTTL)
+	google := fakeGoogleVerifier{identity: auth.GoogleIdentity{
+		Subject: "ru-locale-subject", Email: "ruuser@example.com", EmailVerified: true, Name: "RU User",
+	}}
+	svc := service.NewAuthService(users, cloneRepo, google, nil, tokenService, config.DefaultTemplateEmail)
+
+	_, _, err := svc.LoginWithGoogle(context.Background(), "token", "ru")
+	if err != nil {
+		t.Fatalf("login: %v", err)
+	}
+
+	user, err := users.GetByProviderSubject(context.Background(), "google", "ru-locale-subject")
+	if err != nil {
+		t.Fatalf("get user: %v", err)
+	}
+	groups, err := repository.NewGroupRepository(app.Pool()).GetGroupsByUserID(context.Background(), user.ID)
+	if err != nil {
+		t.Fatalf("list groups: %v", err)
+	}
+	if len(groups) != 1 || groups[0].Name != "Демо" {
+		t.Fatalf("expected Russian demo group, got %+v", groups)
+	}
+}
+
+func TestAuthService_LoginDoesNotRecloneExistingGroups(t *testing.T) {
+	app := testutil.SetupTestApp(t)
+	users := repository.NewUserRepository(app.Pool())
+	cloneRepo := repository.NewCloneRepository(app.Pool())
+	tokenService := auth.NewTokenService("test-jwt-secret", config.DefaultSessionTTL)
+	google := fakeGoogleVerifier{identity: auth.GoogleIdentity{
+		Subject: "has-groups-subject", Email: "hasgroups@example.com", EmailVerified: true, Name: "Has Groups",
+	}}
+	svc := service.NewAuthService(users, cloneRepo, google, nil, tokenService, config.DefaultTemplateEmail)
+
+	ctx := context.Background()
+	user, err := users.CreateSSOUser(ctx, "hasgroups", "hasgroups@example.com", "google", "has-groups-subject", "")
+	if err != nil {
+		t.Fatalf("create user: %v", err)
+	}
+	groupRepo := repository.NewGroupRepository(app.Pool())
+	_, err = groupRepo.CreateGroup(ctx, dto.CreateGroup{Name: "Custom"}, user.ID)
+	if err != nil {
+		t.Fatalf("create group: %v", err)
+	}
+
+	_, _, err = svc.LoginWithGoogle(ctx, "token", "ru")
+	if err != nil {
+		t.Fatalf("login: %v", err)
+	}
+	groups, err := groupRepo.GetGroupsByUserID(ctx, user.ID)
+	if err != nil {
+		t.Fatalf("list groups: %v", err)
+	}
+	if len(groups) != 1 || groups[0].Name != "Custom" {
+		t.Fatalf("expected existing group untouched, got %+v", groups)
 	}
 }
 

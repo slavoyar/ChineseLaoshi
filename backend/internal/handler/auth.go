@@ -20,10 +20,12 @@ func NewAuthHandler(s *service.AuthService, cookieConfig auth.CookieConfig) *Aut
 
 type googleLoginBody struct {
 	IDToken string `json:"idToken"`
+	Locale  string `json:"locale"`
 }
 
 type telegramLoginBody struct {
 	InitData string `json:"initData"`
+	Locale   string `json:"locale"`
 }
 
 type telegramLoginResponse struct {
@@ -41,7 +43,7 @@ func (h *AuthHandler) TelegramLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, token, err := h.service.LoginWithTelegram(r.Context(), body.InitData)
+	user, token, err := h.service.LoginWithTelegram(r.Context(), body.InitData, body.Locale)
 	if err != nil {
 		log.Printf("WARN telegram login failed: %v", err)
 		mapHandlerError(w, err)
@@ -61,7 +63,7 @@ func (h *AuthHandler) GoogleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, token, err := h.service.LoginWithGoogle(r.Context(), body.IDToken)
+	user, token, err := h.service.LoginWithGoogle(r.Context(), body.IDToken, body.Locale)
 	if err != nil {
 		log.Printf("WARN google login failed: %v", err)
 		mapHandlerError(w, err)

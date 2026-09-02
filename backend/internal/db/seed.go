@@ -154,8 +154,8 @@ var commonVerbs = []seedWord{
 	{"néng", "can / be able", "能"},
 }
 
-// starterGroups is the free newbie pack shown on the main screen (template user).
-var starterGroups = []seedGroupDef{
+// starterGroupsEN is the free newbie pack shown on the main screen (English template user).
+var starterGroupsEN = []seedGroupDef{
 	{"Numbers", numbers},
 	{"Pronouns", pronouns},
 	{"Greetings", greetings},
@@ -167,21 +167,193 @@ var starterGroups = []seedGroupDef{
 	{"Common Verbs", commonVerbs},
 }
 
-// EnsureTemplateData creates or upgrades the demo template user and starter groups.
+var numbersRU = []seedWord{
+	{"yī", "один", "一"},
+	{"èr", "два", "二"},
+	{"sān", "три", "三"},
+	{"sì", "четыре", "四"},
+	{"wǔ", "пять", "五"},
+	{"liù", "шесть", "六"},
+	{"qī", "семь", "七"},
+	{"bā", "восемь", "八"},
+	{"jiǔ", "девять", "九"},
+	{"shí", "десять", "十"},
+}
+
+var pronounsRU = []seedWord{
+	{"wǒ", "я", "我"},
+	{"nǐ", "ты", "你"},
+	{"tā", "он", "他"},
+	{"tā", "она", "她"},
+	{"wǒmen", "мы", "我们"},
+	{"nǐmen", "вы", "你们"},
+	{"tāmen", "они", "他们"},
+}
+
+var greetingsRU = []seedWord{
+	{"nǐ hǎo", "привет", "你好"},
+	{"zǎo shang hǎo", "доброе утро", "早上好"},
+	{"wǎn shang hǎo", "добрый вечер", "晚上好"},
+	{"zài jiàn", "до свидания", "再见"},
+	{"xiè xie", "спасибо", "谢谢"},
+	{"bú kè qi", "пожалуйста / не за что", "不客气"},
+	{"duì bu qǐ", "извините", "对不起"},
+	{"méi guān xi", "ничего страшного", "没关系"},
+	{"qǐng", "пожалуйста", "请"},
+	{"hěn gāo xìng rèn shi nǐ", "приятно познакомиться", "很高兴认识你"},
+}
+
+var familyRU = []seedWord{
+	{"jiā", "дом / семья", "家"},
+	{"bà ba", "папа", "爸爸"},
+	{"mā ma", "мама", "妈妈"},
+	{"ér zi", "сын", "儿子"},
+	{"nǚ ér", "дочь", "女儿"},
+	{"gē ge", "старший брат", "哥哥"},
+	{"dì di", "младший брат", "弟弟"},
+	{"jiě jie", "старшая сестра", "姐姐"},
+	{"mèi mei", "младшая сестра", "妹妹"},
+	{"yé ye", "дедушка", "爷爷"},
+	{"nǎi nai", "бабушка", "奶奶"},
+	{"péng you", "друг", "朋友"},
+}
+
+var daysAndTimeRU = []seedWord{
+	{"jīn tiān", "сегодня", "今天"},
+	{"míng tiān", "завтра", "明天"},
+	{"zuó tiān", "вчера", "昨天"},
+	{"xīng qī", "неделя", "星期"},
+	{"xīng qī yī", "понедельник", "星期一"},
+	{"xīng qī èr", "вторник", "星期二"},
+	{"xīng qī sān", "среда", "星期三"},
+	{"xīng qī sì", "четверг", "星期四"},
+	{"xīng qī wǔ", "пятница", "星期五"},
+	{"xīng qī liù", "суббота", "星期六"},
+	{"xīng qī tiān", "воскресенье", "星期天"},
+	{"xiǎo shí", "час", "小时"},
+	{"fēn zhōng", "минута", "分钟"},
+	{"xiàn zài", "сейчас", "现在"},
+	{"shí jiān", "время", "时间"},
+}
+
+var colorsRU = []seedWord{
+	{"hóng sè", "красный", "红色"},
+	{"lán sè", "синий", "蓝色"},
+	{"lǜ sè", "зелёный", "绿色"},
+	{"huáng sè", "жёлтый", "黄色"},
+	{"hēi sè", "чёрный", "黑色"},
+	{"bái sè", "белый", "白色"},
+	{"huī sè", "серый", "灰色"},
+	{"fěn sè", "розовый", "粉色"},
+	{"zǐ sè", "фиолетовый", "紫色"},
+	{"zōng sè", "коричневый", "棕色"},
+}
+
+var foodAndDrinkRU = []seedWord{
+	{"shuǐ", "вода", "水"},
+	{"chá", "чай", "茶"},
+	{"kā fēi", "кофе", "咖啡"},
+	{"mǐ fàn", "рис", "米饭"},
+	{"miàn", "лапша", "面"},
+	{"bāo zi", "паровая булочка", "包子"},
+	{"jī dàn", "яйцо", "鸡蛋"},
+	{"ròu", "мясо", "肉"},
+	{"yú", "рыба", "鱼"},
+	{"shū cài", "овощи", "蔬菜"},
+	{"shuǐ guǒ", "фрукты", "水果"},
+	{"píng guǒ", "яблоко", "苹果"},
+	{"miàn bāo", "хлеб", "面包"},
+	{"niú nǎi", "молоко", "牛奶"},
+	{"chī", "есть", "吃"},
+	{"hē", "пить", "喝"},
+}
+
+var placesRU = []seedWord{
+	{"zhè lǐ", "здесь", "这里"},
+	{"nà lǐ", "там", "那里"},
+	{"nǎ lǐ", "где", "哪里"},
+	{"xué xiào", "школа", "学校"},
+	{"shāng diàn", "магазин", "商店"},
+	{"cān guǎn", "ресторан", "餐馆"},
+	{"yī yuàn", "больница", "医院"},
+	{"huǒ chē zhàn", "вокзал", "火车站"},
+	{"jī chǎng", "аэропорт", "机场"},
+	{"gōng yuán", "парк", "公园"},
+	{"tú shū guǎn", "библиотека", "图书馆"},
+	{"cè suǒ", "туалет", "厕所"},
+}
+
+var commonVerbsRU = []seedWord{
+	{"shì", "быть", "是"},
+	{"yǒu", "иметь", "有"},
+	{"qù", "идти", "去"},
+	{"lái", "приходить", "来"},
+	{"kàn", "смотреть", "看"},
+	{"tīng", "слушать", "听"},
+	{"shuō", "говорить", "说"},
+	{"dú", "читать", "读"},
+	{"xiě", "писать", "写"},
+	{"zuò", "делать", "做"},
+	{"xiǎng", "хотеть / скучать", "想"},
+	{"xǐ huān", "нравиться", "喜欢"},
+	{"zhī dào", "знать", "知道"},
+	{"huì", "уметь", "会"},
+	{"néng", "мочь", "能"},
+}
+
+// starterGroupsRU is the Russian newbie pack (Russian template user).
+var starterGroupsRU = []seedGroupDef{
+	{"Числа", numbersRU},
+	{"Местоимения", pronounsRU},
+	{"Приветствия", greetingsRU},
+	{"Семья", familyRU},
+	{"Дни и время", daysAndTimeRU},
+	{"Цвета", colorsRU},
+	{"Еда и напитки", foodAndDrinkRU},
+	{"Места", placesRU},
+	{"Частые глаголы", commonVerbsRU},
+}
+
+// EnsureTemplateData creates or upgrades both locale template users and starter groups.
 func EnsureTemplateData(ctx context.Context, pool *pgxpool.Pool, templateEmail string) error {
-	templateID, err := resolveTemplateUserID(ctx, pool, templateEmail)
+	enID, err := resolveTemplateUserID(ctx, pool, templateSpec{
+		email:           templateEmail,
+		providerSubject: config.TemplateProviderSubject,
+		username:        "DemoUser",
+		legacyUpgrade:   true,
+	})
 	if err != nil {
 		return err
 	}
-	return ensureTemplateGroups(ctx, pool, templateID)
+	if err := ensureTemplateGroups(ctx, pool, enID, starterGroupsEN); err != nil {
+		return err
+	}
+
+	ruID, err := resolveTemplateUserID(ctx, pool, templateSpec{
+		email:           config.DefaultTemplateEmailRU,
+		providerSubject: config.TemplateProviderSubjectRU,
+		username:        "DemoUserRU",
+		legacyUpgrade:   false,
+	})
+	if err != nil {
+		return err
+	}
+	return ensureTemplateGroups(ctx, pool, ruID, starterGroupsRU)
 }
 
-func resolveTemplateUserID(ctx context.Context, pool *pgxpool.Pool, templateEmail string) (string, error) {
+type templateSpec struct {
+	email           string
+	providerSubject string
+	username        string
+	legacyUpgrade   bool
+}
+
+func resolveTemplateUserID(ctx context.Context, pool *pgxpool.Pool, spec templateSpec) (string, error) {
 	var templateID string
 	err := pool.QueryRow(ctx, `
 		SELECT id FROM "User"
 		WHERE provider = $1 AND provider_subject = $2
-	`, config.TemplateProvider, config.TemplateProviderSubject).Scan(&templateID)
+	`, config.TemplateProvider, spec.providerSubject).Scan(&templateID)
 	if err == nil {
 		return templateID, nil
 	}
@@ -189,36 +361,38 @@ func resolveTemplateUserID(ctx context.Context, pool *pgxpool.Pool, templateEmai
 		return "", err
 	}
 
-	// Upgrade an existing local seed user if present (pre-SSO databases).
-	err = pool.QueryRow(ctx, `
-		SELECT id FROM "User"
-		WHERE email = $1 OR username = 'DemoUser'
-		ORDER BY CASE WHEN email = $1 THEN 0 ELSE 1 END
-		LIMIT 1
-	`, templateEmail).Scan(&templateID)
-	if err == nil {
-		_, err = pool.Exec(ctx, `
-			UPDATE "User"
-			SET email = $2,
-			    provider = $3,
-			    provider_subject = $4,
-			    password = NULL
-			WHERE id = $1
-		`, templateID, templateEmail, config.TemplateProvider, config.TemplateProviderSubject)
-		if err != nil {
+	if spec.legacyUpgrade {
+		// Upgrade an existing local seed user if present (pre-SSO databases).
+		err = pool.QueryRow(ctx, `
+			SELECT id FROM "User"
+			WHERE email = $1 OR username = 'DemoUser'
+			ORDER BY CASE WHEN email = $1 THEN 0 ELSE 1 END
+			LIMIT 1
+		`, spec.email).Scan(&templateID)
+		if err == nil {
+			_, err = pool.Exec(ctx, `
+				UPDATE "User"
+				SET email = $2,
+				    provider = $3,
+				    provider_subject = $4,
+				    password = NULL
+				WHERE id = $1
+			`, templateID, spec.email, config.TemplateProvider, spec.providerSubject)
+			if err != nil {
+				return "", err
+			}
+			return templateID, nil
+		}
+		if err != pgx.ErrNoRows {
 			return "", err
 		}
-		return templateID, nil
-	}
-	if err != pgx.ErrNoRows {
-		return "", err
 	}
 
 	templateID = uuid.NewString()
 	_, err = pool.Exec(ctx, `
 		INSERT INTO "User" (id, username, email, password, provider, provider_subject, avatar_url)
 		VALUES ($1, $2, $3, NULL, $4, $5, NULL)
-	`, templateID, "DemoUser", templateEmail, config.TemplateProvider, config.TemplateProviderSubject)
+	`, templateID, spec.username, spec.email, config.TemplateProvider, spec.providerSubject)
 	if err != nil {
 		return "", err
 	}
@@ -227,14 +401,14 @@ func resolveTemplateUserID(ctx context.Context, pool *pgxpool.Pool, templateEmai
 
 // ensureTemplateGroups adds any missing starter groups to the template user.
 // Existing groups are left unchanged (idempotent by group name).
-func ensureTemplateGroups(ctx context.Context, pool *pgxpool.Pool, templateID string) error {
+func ensureTemplateGroups(ctx context.Context, pool *pgxpool.Pool, templateID string, groups []seedGroupDef) error {
 	existing, err := templateGroupNames(ctx, pool, templateID)
 	if err != nil {
 		return err
 	}
 
 	var missing []seedGroupDef
-	for _, g := range starterGroups {
+	for _, g := range groups {
 		if _, ok := existing[g.name]; !ok {
 			missing = append(missing, g)
 		}
