@@ -2,16 +2,17 @@
 name: pre-pr
 description: >-
   Run pre-push / pre-PR local gates for ChineseLaoshi: FSD import checks,
-  frontend build, Bugbot review, fix findings in a loop, then stop for human
-  review before push. Use when the user says pre-pr, /pre-pr, pre-push checks,
-  ready to push, gate before PR, or asks to loop until review is clean before
-  pushing.
+  frontend build, Bugbot review, fix findings in a loop, then continue to
+  local preview (delivery step 4). Use when the user says pre-pr, /pre-pr,
+  pre-push checks, or as step 3 of the delivery pipeline.
 disable-model-invocation: true
 ---
 
 # Pre-PR gate
 
-Local quality loop **before** push/PR. Do not push until the user explicitly approves after the summary.
+Local quality loop **before** push/PR. Do not push inside this skill.
+
+When part of the **delivery pipeline**, a clean gate hands off to delivery step 4 (local dev servers). When run standalone (`/pre-pr`), also continue to local preview after a clean gate — do not wait for **push**.
 
 **Base branch:** `production` (this repo).  
 **Scope:** current branch changes only. Do not expand into unrelated refactors.
@@ -27,8 +28,7 @@ Pre-PR:
 - [ ] 3. Frontend build
 - [ ] 4. Bugbot review
 - [ ] 5. Fix valid findings + re-run failed steps
-- [ ] 6. Summary for human — STOP (no push)
-- [ ] 7. User: push | fix … | re-run
+- [ ] 6. Summary — continue to local preview (no push)
 ```
 
 ## Workflow
@@ -86,9 +86,9 @@ Cap: after **3** full fix+recheck cycles still failing, stop and ask the user ho
 
 Do **not** commit unless the user asks. Prefer leaving fixes uncommitted or committing only if the user already requested commits in this session.
 
-### 6. Summary — STOP
+### 6. Summary — continue to local preview
 
-Present a short report, then **wait**:
+Present a short report, then **continue to delivery step 4** (start local dev servers):
 
 ```markdown
 ## Pre-PR summary
@@ -100,26 +100,28 @@ Present a short report, then **wait**:
 - Deferred: …
 - Uncommitted changes: yes/no
 
-Ready for your review. Reply:
-- **push** — push branch to origin (and create PR only if you also ask)
-- **fix &lt;issue&gt;** — I fix, then restart from step 2
-- **re-run** — run the full gate again without new fixes
+Gate passed. Starting local preview…
 ```
 
 **Never push in this step.**
 
-### 7. After human review
+If gates did not pass, stop here and ask the user — do not start servers.
+
+## After summary (during delivery or standalone pre-pr)
 
 | User says | Action |
 |-----------|--------|
-| push / push it / ship | `git push -u origin HEAD` if no upstream; otherwise `git push`. Do not create a PR unless asked. |
+| *(gate passed — automatic)* | Continue to delivery step 4: start dev servers, wait for browser review. |
 | fix … | Apply requested fixes, then **restart from step 2**. |
 | re-run / run again | Restart from step 2 with no new intentional edits. |
 | also security | Run `review-security` once, fold findings into the same fix loop, then re-summarize. |
+| done | Handled by delivery step 5 (commit/push/PR) — not by pre-pr. |
+
+When run **outside** the delivery pipeline and the user only wanted checks (no full delivery), still offer local preview after a clean gate. Push and PR creation happen only when the user says **done** in the delivery workflow.
 
 ## Hard rules
 
-- No push without explicit user approval after a summary.
+- No push inside the pre-PR gate.
 - No force-push; no `--no-verify`.
 - No CI workflow edits just to go green.
 - No new `widgets/` slices; no UI redesign unless the user asked.
