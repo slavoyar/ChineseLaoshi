@@ -10,10 +10,12 @@ import (
 )
 
 const (
-	TemplateProvider         = "system"
-	TemplateProviderSubject  = "template"
-	DefaultTemplateEmail    = "demo-template@chineselaoshi.local"
-	DefaultSessionTTL       = 7 * 24 * time.Hour
+	TemplateProvider           = "system"
+	TemplateProviderSubject    = "template"
+	TemplateProviderSubjectRU  = "template-ru"
+	DefaultTemplateEmail       = "demo-template@chineselaoshi.local"
+	DefaultTemplateEmailRU     = "demo-template-ru@chineselaoshi.local"
+	DefaultSessionTTL          = 7 * 24 * time.Hour
 )
 
 type Config struct {

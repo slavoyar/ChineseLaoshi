@@ -7,8 +7,8 @@ import (
 
 	"github.com/slavo/ChineseLaoshi/backend/internal/apperrors"
 	"github.com/slavo/ChineseLaoshi/backend/internal/auth"
-	"github.com/slavo/ChineseLaoshi/backend/internal/config"
 	"github.com/slavo/ChineseLaoshi/backend/internal/repository"
+	"github.com/slavo/ChineseLaoshi/backend/internal/template"
 )
 
 const googleProvider = "google"
@@ -49,7 +49,7 @@ type AuthUserDTO struct {
 	OnboardingCompleted bool   `json:"onboardingCompleted"`
 }
 
-func (s *AuthService) LoginWithGoogle(ctx context.Context, idToken string) (AuthUserDTO, string, error) {
+func (s *AuthService) LoginWithGoogle(ctx context.Context, idToken, locale string) (AuthUserDTO, string, error) {
 	identity, err := s.google.VerifyIDToken(ctx, idToken)
 	if err != nil {
 		return AuthUserDTO{}, "", apperrors.New(apperrors.UnauthorizedError)
@@ -63,11 +63,11 @@ func (s *AuthService) LoginWithGoogle(ctx context.Context, idToken string) (Auth
 		if ae, ok := apperrors.IsAppError(err); !ok || ae.Code != apperrors.EntityNotFoundError {
 			return AuthUserDTO{}, "", err
 		}
-		user, err = s.provisionGoogleUser(ctx, identity)
+		user, err = s.provisionGoogleUser(ctx, identity, locale)
 		if err != nil {
 			return AuthUserDTO{}, "", err
 		}
-	} else if err := s.ensureStarterContent(ctx, user.ID); err != nil {
+	} else if err := s.ensureStarterContent(ctx, user.ID, locale); err != nil {
 		return AuthUserDTO{}, "", err
 	}
 
@@ -85,7 +85,7 @@ func (s *AuthService) LoginWithGoogle(ctx context.Context, idToken string) (Auth
 	return toAuthUserDTO(user), token, nil
 }
 
-func (s *AuthService) LoginWithTelegram(ctx context.Context, initData string) (AuthUserDTO, string, error) {
+func (s *AuthService) LoginWithTelegram(ctx context.Context, initData, locale string) (AuthUserDTO, string, error) {
 	if s.telegram == nil {
 		return AuthUserDTO{}, "", apperrors.New(apperrors.UnauthorizedError)
 	}
@@ -100,11 +100,11 @@ func (s *AuthService) LoginWithTelegram(ctx context.Context, initData string) (A
 		if ae, ok := apperrors.IsAppError(err); !ok || ae.Code != apperrors.EntityNotFoundError {
 			return AuthUserDTO{}, "", err
 		}
-		user, err = s.provisionTelegramUser(ctx, identity)
+		user, err = s.provisionTelegramUser(ctx, identity, locale)
 		if err != nil {
 			return AuthUserDTO{}, "", err
 		}
-	} else if err := s.ensureStarterContent(ctx, user.ID); err != nil {
+	} else if err := s.ensureStarterContent(ctx, user.ID, locale); err != nil {
 		return AuthUserDTO{}, "", err
 	}
 
@@ -122,25 +122,25 @@ func (s *AuthService) LoginWithTelegram(ctx context.Context, initData string) (A
 	return toAuthUserDTO(user), token, nil
 }
 
-func (s *AuthService) provisionTelegramUser(ctx context.Context, identity auth.TelegramIdentity) (repository.User, error) {
+func (s *AuthService) provisionTelegramUser(ctx context.Context, identity auth.TelegramIdentity, locale string) (repository.User, error) {
 	email := identity.Subject + "@telegram.invalid"
 	user, err := s.users.CreateSSOUser(ctx, identity.Name, email, auth.TelegramProvider(), identity.Subject, identity.PhotoURL)
 	if err != nil {
 		return repository.User{}, err
 	}
 
-	template, err := s.templateUser(ctx)
+	tmpl, err := template.ResolveUser(ctx, s.users, s.template, locale)
 	if err != nil {
 		return repository.User{}, fmt.Errorf("template user: %w", err)
 	}
 
-	if err := s.cloner.CloneUserContent(ctx, template.ID, user.ID); err != nil {
+	if err := s.cloner.CloneUserContent(ctx, tmpl.ID, user.ID); err != nil {
 		return repository.User{}, fmt.Errorf("clone template content: %w", err)
 	}
 	return user, nil
 }
 
-func (s *AuthService) provisionGoogleUser(ctx context.Context, identity auth.GoogleIdentity) (repository.User, error) {
+func (s *AuthService) provisionGoogleUser(ctx context.Context, identity auth.GoogleIdentity, locale string) (repository.User, error) {
 	name := strings.TrimSpace(identity.Name)
 	if name == "" {
 		name = strings.Split(identity.Email, "@")[0]
@@ -151,27 +151,19 @@ func (s *AuthService) provisionGoogleUser(ctx context.Context, identity auth.Goo
 		return repository.User{}, err
 	}
 
-	template, err := s.templateUser(ctx)
+	tmpl, err := template.ResolveUser(ctx, s.users, s.template, locale)
 	if err != nil {
 		return repository.User{}, fmt.Errorf("template user: %w", err)
 	}
 
-	if err := s.cloner.CloneUserContent(ctx, template.ID, user.ID); err != nil {
+	if err := s.cloner.CloneUserContent(ctx, tmpl.ID, user.ID); err != nil {
 		return repository.User{}, fmt.Errorf("clone template content: %w", err)
 	}
 	return user, nil
 }
 
-func (s *AuthService) templateUser(ctx context.Context) (repository.User, error) {
-	user, err := s.users.GetByProviderSubject(ctx, config.TemplateProvider, config.TemplateProviderSubject)
-	if err == nil {
-		return user, nil
-	}
-	return s.users.GetByEmail(ctx, s.template)
-}
-
 // ensureStarterContent clones demo groups for users created before clone succeeded.
-func (s *AuthService) ensureStarterContent(ctx context.Context, userID string) error {
+func (s *AuthService) ensureStarterContent(ctx context.Context, userID, locale string) error {
 	groups, err := s.cloner.CountGroups(ctx, userID)
 	if err != nil {
 		return err
@@ -179,11 +171,11 @@ func (s *AuthService) ensureStarterContent(ctx context.Context, userID string) e
 	if groups > 0 {
 		return nil
 	}
-	template, err := s.templateUser(ctx)
+	tmpl, err := template.ResolveUser(ctx, s.users, s.template, locale)
 	if err != nil {
 		return fmt.Errorf("template user: %w", err)
 	}
-	return s.cloner.CloneUserContent(ctx, template.ID, userID)
+	return s.cloner.CloneUserContent(ctx, tmpl.ID, userID)
 }
 
 func (s *AuthService) Me(ctx context.Context, user auth.UserContext) (AuthUserDTO, error) {
