@@ -91,7 +91,10 @@ export const WritePractice = () => {
         .then((words) => {
           setDistractorCache((prev) => ({ ...prev, [card.id]: words }));
         })
-        .catch(() => {
+        .catch((err) => {
+          if (isRequestCanceled(err)) {
+            return;
+          }
           setDistractorCache((prev) => ({ ...prev, [card.id]: [] }));
         })
         .finally(() => {
@@ -128,7 +131,6 @@ export const WritePractice = () => {
     setDistractorCache({});
     distractorPendingRef.current.clear();
     persistSession(mode, data, 0, cardFacesRef.current);
-    prefetchForCard(first);
     prefetchForCard(rest[0]);
   };
 
@@ -160,7 +162,6 @@ export const WritePractice = () => {
     remainingRef.current = rest;
     setCurrentIndex(index);
     setCurrent(currentCard);
-    prefetchForCard(currentCard);
     prefetchForCard(rest[0]);
     return true;
   };

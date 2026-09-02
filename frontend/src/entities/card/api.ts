@@ -29,7 +29,7 @@ class CardService extends BaseService<Card, CreateCard, UpdateCardWord> {
     return this.request(
       axios.get<Word[]>(`${this.url}/distractors`, {
         params: { cardId },
-        cancelToken: this.getCancelToken('getQuizDistractors'),
+        cancelToken: this.getCancelToken(`getQuizDistractors:${cardId}`),
       }),
       { notify: false }
     );

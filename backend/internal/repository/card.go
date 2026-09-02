@@ -358,10 +358,12 @@ func (r *CardRepository) GetQuizDistractors(ctx context.Context, cardID, userID 
 		JOIN "Group" g ON g.id = c."groupId"
 		WHERE g."userId" = $1
 		  AND c.id != $2
-		  AND char_length(w.symbols) = char_length($3::text)
 		GROUP BY w.id, w.symbols, w.transcription, w.translation
-		ORDER BY MIN(CASE WHEN c."groupId" = $4 THEN 0 ELSE 1 END), random()
-		LIMIT 10
+		ORDER BY
+		  MIN(CASE WHEN char_length(w.symbols) = char_length($3::text) THEN 0 ELSE 1 END),
+		  MIN(CASE WHEN c."groupId" = $4 THEN 0 ELSE 1 END),
+		  random()
+		LIMIT 20
 	`, userID, cardID, symbols, groupID)
 	if err != nil {
 		return nil, err
