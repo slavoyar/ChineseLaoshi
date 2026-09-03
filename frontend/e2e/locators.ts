@@ -34,4 +34,5 @@ export const e2e = {
   confirmDelete: (page: Page) => page.getByTestId(testIds.common.confirmDelete),
   aboutHeading: (page: Page) => page.getByTestId(testIds.about.heading),
   aboutBackLink: (page: Page) => page.getByTestId(testIds.about.backLink),
+  aboutFaq: (page: Page) => page.getByTestId(testIds.about.faq),
 };

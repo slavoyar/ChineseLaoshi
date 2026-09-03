@@ -18,7 +18,8 @@
     "signOutAria": "Выйти"
   },
   "footer": {
-    "copyright": "© {{year}} Chinese Laoshi"
+    "copyright": "© {{year}} Chinese Laoshi",
+    "tagline": "Бесплатные карточки и практика написания иероглифов в браузере."
   },
   "studyModes": {
     "title": "Режимы обучения",
