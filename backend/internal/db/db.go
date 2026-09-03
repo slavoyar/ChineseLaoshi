@@ -96,6 +96,10 @@ func runMigrations(dbURL, migrationsPath string) error {
 	return nil
 }
 
+func (d *DB) IsEmbedded() bool {
+	return d.embedded != nil
+}
+
 func (d *DB) Close() {
 	if d.Pool != nil {
 		d.Pool.Close()

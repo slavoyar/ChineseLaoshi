@@ -94,13 +94,40 @@ func main() {
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
-	<-stop
+
+	dbRestart := false
+	if database.IsEmbedded() {
+		watchCtx, watchCancel := context.WithCancel(context.Background())
+		defer watchCancel()
+		dbDead := make(chan error, 1)
+		go func() {
+			dbDead <- db.Watch(watchCtx, database.Pool.Ping, db.WatchInterval, db.WatchFailLimit)
+		}()
+
+		select {
+		case <-stop:
+		case err := <-dbDead:
+			if err != nil {
+				log.Printf("ERROR database unreachable, restarting: %v", err)
+				dbRestart = true
+			}
+		}
+	} else {
+		<-stop
+	}
 
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := server.Shutdown(shutdownCtx); err != nil {
 		log.Printf("ERROR shutdown error: %v", err)
 	}
+
+	if dbRestart {
+		database.Close()
+		applog.Flush()
+		os.Exit(1)
+	}
+
 	applog.Flush()
 }
 
