@@ -1,6 +1,6 @@
 # Chinese Laoshi
 
-> Mandarin learning web app for custom flashcards, hanzi handwriting practice, and translation drills.
+> Free hanzi handwriting practice and Mandarin flashcards in your browser — no app install.
 
 - Live app: https://chineselaoshi.slavoyar.tech/
 - About: https://chineselaoshi.slavoyar.tech/about.html
@@ -9,12 +9,12 @@
 
 ## Product
 
-Chinese Laoshi (中国老师) helps learners practice Mandarin Chinese in the browser on phone, tablet, or desktop.
+Chinese Laoshi (中国老师) helps learners write Chinese characters online and drill Mandarin translations with custom flashcard decks — free, on phone, tablet, or desktop.
 
 Features:
 
-- Handwriting practice for Chinese characters (touch or mouse)
-- Translation / flashcard study modes
+- Hanzi handwriting practice with stroke feedback (touch or mouse)
+- Translation and flashcard study modes
 - Custom word groups and cards (character, pinyin, translation)
 
 ## For AI agents

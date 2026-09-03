@@ -41,5 +41,6 @@ export const testIds = {
   about: {
     heading: 'about-heading',
     backLink: 'about-back-link',
+    faq: 'about-faq',
   },
 } as const;

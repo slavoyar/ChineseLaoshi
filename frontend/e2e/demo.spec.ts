@@ -37,5 +37,6 @@ test.describe('Demo study flow', () => {
     await page.goto('/about.html');
     await expect(e2e.aboutHeading(page)).toBeVisible();
     await expect(e2e.aboutBackLink(page)).toBeVisible();
+    await expect(e2e.aboutFaq(page)).toBeVisible();
   });
 });
