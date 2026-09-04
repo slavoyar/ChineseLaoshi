@@ -18,7 +18,7 @@ test.describe('Authenticated CRUD', () => {
     const groupName = `E2E ${Date.now()}`;
     const renamedGroup = `${groupName} updated`;
 
-    await page.goto('/');
+    await page.goto('/app/');
     await e2e.createGroupTrigger(page).click();
     await e2e.createGroupNameInput(page).fill(groupName);
     await e2e.createGroupSubmit(page).click();

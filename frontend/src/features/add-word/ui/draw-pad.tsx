@@ -3,8 +3,8 @@ import { CanvasDrawer } from '@zh-keyboard/core';
 import { ZhkRecognizer } from '@zh-keyboard/recognizer';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
-const MODEL_PATH = '/models/handwrite/model.json';
-const DICT_PATH = '/models/dict.txt';
+const MODEL_PATH = `${import.meta.env.BASE_URL}models/handwrite/model.json`;
+const DICT_PATH = `${import.meta.env.BASE_URL}models/dict.txt`;
 
 type DrawPadProps = {
   onPick: (char: string) => void;

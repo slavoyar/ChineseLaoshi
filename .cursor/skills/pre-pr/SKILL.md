@@ -25,7 +25,7 @@ Copy and update as you go:
 Pre-PR:
 - [ ] 1. Context (branch, base, dirty tree)
 - [ ] 2. FSD import check (scripts/fsd-import-check.mjs)
-- [ ] 3. Frontend build
+- [ ] 3. Frontend build (Vite + Next `web`)
 - [ ] 4. Bugbot review
 - [ ] 5. Fix valid findings + re-run failed steps
 - [ ] 6. Summary — continue to local preview (no push)
@@ -57,9 +57,10 @@ Optional (not required): `npx steiger frontend/src` if already installed; do not
 
 ```bash
 cd frontend && npm run build
+cd ../web && npm run build
 ```
 
-Fix compile errors; re-run until success.
+Fix compile errors; re-run until both succeed.
 
 ### 4. Bugbot
 
@@ -95,7 +96,8 @@ Present a short report, then **continue to delivery step 4** (start local dev se
 - Branch: …
 - Base: production
 - FSD import check: pass | fail (counts)
-- Frontend build: pass | fail
+- Frontend build (Vite): pass | fail
+- Marketing build (Next `web`): pass | fail
 - Bugbot: N findings fixed, M deferred/disputed
 - Deferred: …
 - Uncommitted changes: yes/no

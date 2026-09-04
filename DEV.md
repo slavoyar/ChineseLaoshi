@@ -1,6 +1,6 @@
 # Local Development
 
-This guide covers running the Go backend and React frontend together for local testing.
+This guide covers running the Go backend, Vite study app, and Next marketing site together for local testing.
 
 ## Prerequisites
 
@@ -13,7 +13,7 @@ This guide covers running the Go backend and React frontend together for local t
 
 ## Quick start
 
-Use two terminals from the repository root.
+Use three terminals from the repository root.
 
 ### Terminal 1 — Backend
 
@@ -26,16 +26,25 @@ npm run dev:backend
 - Database files are stored in `./data/pg` (relative to where you run the command)
 - Migrations run automatically on startup
 
-### Terminal 2 — Frontend
+### Terminal 2 — Study app
 
 ```bash
 npm run dev:frontend
 ```
 
-- Vite dev server runs at **http://localhost:5173** (default)
+- Vite dev server runs at **http://localhost:5173/app** (`base`/`basename` `/app`)
 - All `/api/*` requests are proxied to `http://localhost:3000`
 
-Open **http://localhost:5173** in your browser.
+### Terminal 3 — Marketing
+
+```bash
+npm run dev:web
+```
+
+- Next.js marketing site runs at **http://localhost:3001**
+- Production serves this at `/` from a static export (`web/out`)
+
+Open **http://localhost:5173/app** for the study app and **http://localhost:3001** for marketing.
 
 ## Environment variables
 
@@ -85,7 +94,7 @@ This runs `tygo generate` and writes TypeScript interfaces to `frontend/src/shar
 
 ## Smoke test checklist
 
-1. Open the frontend — groups list loads from the backend (empty on first run)
+1. Open the study app at `/app` — groups list loads from the backend (empty on first run)
 2. Create a group
 3. Rename a group
 4. Open a group — cards load
@@ -102,8 +111,8 @@ Change `PORT` or stop the process using port 3000.
 **Embedded Postgres issues**  
 Delete `./data/pg` and restart the backend to reset the local database.
 
-**Frontend shows network errors**  
-Ensure the backend is running on port 3000 before starting the frontend.
+**Study app shows network errors**  
+Ensure the backend is running on port 3000 before starting the Vite app.
 
 **Empty groups after restart**  
 Expected with a fresh embedded database. Create groups and cards through the UI.
@@ -114,8 +123,9 @@ Expected with a fresh embedded database. Create groups and cards through the UI.
 # Lint frontend
 npm run lint
 
-# Build frontend for production
+# Build study app and marketing for production
 cd frontend && npm run build
+cd ../web && npm run build
 
 # Run backend tests
 cd backend && go test ./...

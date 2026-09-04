@@ -2,8 +2,8 @@
 
 > Free hanzi handwriting practice and Mandarin flashcards in your browser — no app install.
 
-- Live app: https://chineselaoshi.slavoyar.tech/
-- About: https://chineselaoshi.slavoyar.tech/about.html
+- Live app: https://chineselaoshi.slavoyar.tech/app
+- About: https://chineselaoshi.slavoyar.tech/about
 - Source: https://github.com/slavoyar/ChineseLaoshi
 - Contact: slavoyarmc@gmail.com
 

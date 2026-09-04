@@ -5,13 +5,14 @@
  * Usage (from repo root):
  *   node .cursor/skills/delivery/scripts/watch-pr-and-stop-dev.mjs <PR_NUMBER_OR_URL>
  *
- * Kills process trees listening on ports 5173 (Vite) and 3000 (Go API + embedded PG).
+ * Kills process trees listening on ports 5173 (Vite), 3001 (Next marketing),
+ * and 3000 (Go API + embedded PG).
  */
 import { execSync, spawnSync } from 'node:child_process';
 import { platform } from 'node:os';
 
 const POLL_INTERVAL_MS = 60_000;
-const PORTS = [5173, 3000];
+const PORTS = [5173, 3001, 3000];
 const TERMINAL_STATES = new Set(['MERGED', 'CLOSED']);
 
 function parsePrNumber(arg) {
@@ -118,7 +119,7 @@ function killDevServers() {
     }
   }
   if (killed.length === 0) {
-    console.log('No dev server processes found on ports 5173 or 3000.');
+    console.log('No dev server processes found on ports 5173, 3001, or 3000.');
   }
   return killed;
 }

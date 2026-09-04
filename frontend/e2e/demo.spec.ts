@@ -4,13 +4,13 @@ import { e2e, testIds } from './locators';
 
 test.describe('Demo study flow', () => {
   test('home loads study modes', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/app/');
     await expect(e2e.studyModesHeading(page)).toBeVisible();
     await expect(e2e.studyMode(page, 'translation')).toBeVisible();
   });
 
   test('starts translation quiz session', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/app/');
     await e2e.studyMode(page, 'translation').click();
     await expect(page).toHaveURL(/\/write-practice\/5/);
     await expect(e2e.quizPrompt(page)).toBeVisible({ timeout: 15_000 });
@@ -19,7 +19,7 @@ test.describe('Demo study flow', () => {
 
   test('shows continue screen after five cards', async ({ page }) => {
     test.setTimeout(120_000);
-    await page.goto('/');
+    await page.goto('/app/');
     await e2e.studyMode(page, 'translation').click();
     await expect(e2e.quizPrompt(page)).toBeVisible({ timeout: 15_000 });
 
@@ -34,7 +34,7 @@ test.describe('Demo study flow', () => {
   });
 
   test('about page serves static content', async ({ page }) => {
-    await page.goto('/about.html');
+    await page.goto('http://localhost:3001/about');
     await expect(e2e.aboutHeading(page)).toBeVisible();
     await expect(e2e.aboutBackLink(page)).toBeVisible();
     await expect(e2e.aboutFaq(page)).toBeVisible();
