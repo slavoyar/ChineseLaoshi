@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react';
 
+import { initTelegramWebApp, loadTelegramSdk } from '../load-telegram-sdk';
+
 const copy = {
   en: {
     backToApp: 'Back to app',
@@ -75,25 +77,42 @@ const copy = {
   },
 } as const;
 
+function applyCopy(tgLang?: string) {
+  let lang: keyof typeof copy = tgLang?.toLowerCase().startsWith('ru') ? 'ru' : 'en';
+  if (!tgLang && navigator.language.toLowerCase().startsWith('ru')) {
+    lang = 'ru';
+  }
+
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach((el) => {
+    const key = el.getAttribute('data-i18n') as keyof (typeof copy)['en'] | null;
+    if (key && copy[lang][key]) {
+      el.textContent = copy[lang][key];
+    }
+  });
+}
+
 export function AboutI18n() {
   useEffect(() => {
-    const tgLang = (
-      window as Window & {
-        Telegram?: { WebApp?: { initDataUnsafe?: { user?: { language_code?: string } } } };
-      }
-    ).Telegram?.WebApp?.initDataUnsafe?.user?.language_code;
-    let lang: keyof typeof copy = tgLang?.toLowerCase().startsWith('ru') ? 'ru' : 'en';
-    if (!tgLang && navigator.language.toLowerCase().startsWith('ru')) {
-      lang = 'ru';
-    }
+    let cancelled = false;
+    let cleanupInsets: (() => void) | undefined;
+    applyCopy();
 
-    document.documentElement.lang = lang;
-    document.querySelectorAll('[data-i18n]').forEach((el) => {
-      const key = el.getAttribute('data-i18n') as keyof (typeof copy)['en'] | null;
-      if (key && copy[lang][key]) {
-        el.textContent = copy[lang][key];
+    loadTelegramSdk().then((tg) => {
+      if (cancelled || !tg) {
+        return;
+      }
+      applyCopy(tg.initDataUnsafe?.user?.language_code);
+      cleanupInsets = initTelegramWebApp(tg);
+      if (cancelled) {
+        cleanupInsets();
       }
     });
+
+    return () => {
+      cancelled = true;
+      cleanupInsets?.();
+    };
   }, []);
 
   return null;
