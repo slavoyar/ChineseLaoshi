@@ -1,0 +1,11 @@
+.main {
+  min-height: 100dvh;
+  padding: 1rem;
+  background: #020817;
+  color: #f8fafc;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.main a {
+  color: #f8fafc;
+}

@@ -10,7 +10,7 @@ export default defineConfig({
   globalSetup: './e2e/global-setup.ts',
   use: {
     ...devices['Desktop Chrome'],
-    baseURL: 'http://localhost:5173',
+    baseURL: 'http://localhost:5173/app',
     trace: 'on-first-retry',
   },
   projects: [
@@ -36,7 +36,14 @@ export default defineConfig({
     },
     {
       command: 'npm run dev --workspace=@chinese-laoshi/frontend',
-      url: 'http://localhost:5173',
+      url: 'http://localhost:5173/app/',
+      cwd: '..',
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+    },
+    {
+      command: 'npm run dev:web',
+      url: 'http://localhost:3001',
       cwd: '..',
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,

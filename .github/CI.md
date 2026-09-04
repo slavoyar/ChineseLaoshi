@@ -6,7 +6,7 @@ Pipelines for the `production` branch. Pull requests target `production`; merge 
 
 ```text
 PR → production
-  CI — Frontend / check     (lint + vite build)
+  CI — Frontend / check     (lint + Vite build + Next web build)
   CI — Frontend / e2e       (Playwright; needs check)
   CI — Backend / test       (only if backend/** or generated types changed)
   CI — Backend / build      (needs test; same path filter)
@@ -32,8 +32,8 @@ Production database migrations normally run **on server startup** (`backend/inte
 
 ### CI — Frontend
 
-- **`check`** — `npm run lint`, `npm run build` in `frontend/`
-- **`e2e`** — Playwright tests (starts embedded backend + Vite dev server)
+- **`check`** — `npm run lint`, `npm run build` in `frontend/` and `web/`
+- **`e2e`** — Playwright tests (starts embedded backend + Vite `/app` + Next `:3001`)
 
 ### CI — Backend
 
@@ -66,6 +66,7 @@ Update required status checks in **Settings → Branches → production**:
 ```bash
 npm run lint
 cd frontend && npm run build
+cd ../web && npm run build
 CI=1 JWT_SECRET=e2e-ci-jwt-secret GOOGLE_CLIENT_ID=e2e-google-client-id COOKIE_SECURE=false npm run test:e2e --workspace=@chinese-laoshi/frontend
 cd backend && go test ./... -count=1 -p 1 && go build -o /dev/null ./cmd/server
 ```

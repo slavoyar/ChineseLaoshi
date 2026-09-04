@@ -30,6 +30,10 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
+      - name: Build marketing
+        working-directory: ./web
+        run: npm run build
+
   e2e:
     needs: check
     runs-on: ubuntu-latest

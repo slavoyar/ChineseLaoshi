@@ -34,7 +34,7 @@ test.describe('Demo study flow', () => {
   });
 
   test('about page serves static content', async ({ page }) => {
-    await page.goto('/about.html');
+    await page.goto('http://localhost:3001/about');
     await expect(e2e.aboutHeading(page)).toBeVisible();
     await expect(e2e.aboutBackLink(page)).toBeVisible();
     await expect(e2e.aboutFaq(page)).toBeVisible();

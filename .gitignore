@@ -38,3 +38,7 @@ backend/server.exe
 frontend/e2e/.auth/
 frontend/e2e/e2e/
 frontend/test-results/
+
+# Next marketing (web/)
+web/.next
+web/out

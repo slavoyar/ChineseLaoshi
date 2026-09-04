@@ -28,7 +28,7 @@ export const HeaderLayout = () => {
         <span className='hidden sm:inline' aria-hidden='true'>
           ·
         </span>
-        <a href='/about.html' className='underline-offset-4 hover:text-foreground hover:underline'>
+        <a href='/about' className='underline-offset-4 hover:text-foreground hover:underline'>
           {t('common.about')}
         </a>
       </footer>
