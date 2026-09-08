@@ -6,11 +6,25 @@ type TelegramWebApp = {
   ready?: () => void;
   expand?: () => void;
   requestFullscreen?: () => void;
+  isVersionAtLeast?: (version: string) => boolean;
   safeAreaInset?: { top: number; bottom: number };
   contentSafeAreaInset?: { top: number; bottom: number };
   onEvent?: (event: string, callback: () => void) => void;
   offEvent?: (event: string, callback: () => void) => void;
 };
+
+const FULLSCREEN_SINCE = '8.0';
+
+function requestTelegramFullscreen(webApp: TelegramWebApp) {
+  if (!webApp.initData || !webApp.isVersionAtLeast?.(FULLSCREEN_SINCE)) {
+    return;
+  }
+  try {
+    webApp.requestFullscreen?.();
+  } catch {
+    // Older Telegram clients expose the method but reject it (e.g. WebApp 6.0).
+  }
+}
 
 function getTelegramWebApp(): TelegramWebApp | undefined {
   return (window as Window & { Telegram?: { WebApp?: TelegramWebApp } }).Telegram?.WebApp;
@@ -20,7 +34,7 @@ function getTelegramWebApp(): TelegramWebApp | undefined {
 export function initTelegramWebApp(webApp: TelegramWebApp): () => void {
   webApp.ready?.();
   webApp.expand?.();
-  webApp.requestFullscreen?.();
+  requestTelegramFullscreen(webApp);
 
   const applyInsets = () => {
     const root = document.documentElement;

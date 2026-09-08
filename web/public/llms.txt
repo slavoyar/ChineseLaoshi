@@ -4,6 +4,8 @@
 
 - Live app: https://chineselaoshi.slavoyar.tech/app
 - About: https://chineselaoshi.slavoyar.tech/about
+- Hanzi handwriting: https://chineselaoshi.slavoyar.tech/hanzi-handwriting-practice
+- Mandarin flashcards: https://chineselaoshi.slavoyar.tech/mandarin-flashcards
 - Source: https://github.com/slavoyar/ChineseLaoshi
 - Contact: slavoyarmc@gmail.com
 

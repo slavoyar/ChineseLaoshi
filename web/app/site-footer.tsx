@@ -18,6 +18,14 @@ export function SiteFooter() {
       <a href="/about" className={styles.link} data-i18n="footerAbout">
         About
       </a>
+      <span aria-hidden="true">·</span>
+      <a href="/hanzi-handwriting-practice" className={styles.link} data-i18n="footerHanzi">
+        Hanzi practice
+      </a>
+      <span aria-hidden="true">·</span>
+      <a href="/mandarin-flashcards" className={styles.link} data-i18n="footerFlashcards">
+        Flashcards
+      </a>
     </footer>
   );
 }

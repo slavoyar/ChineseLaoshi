@@ -214,6 +214,16 @@
   font-size: 1.125rem;
 }
 
+.panelTitleLink {
+  color: inherit;
+  text-decoration: none;
+  text-underline-offset: 4px;
+}
+
+.panelTitleLink:hover {
+  text-decoration: underline;
+}
+
 .panel p {
   color: var(--muted);
   max-width: 70ch;
@@ -344,6 +354,25 @@
   color: var(--ink);
 }
 
+.crossNav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 0.75rem;
+  margin: 1.25rem 0 0;
+  font-size: 0.875rem;
+}
+
+.crossNav a {
+  color: var(--stage-ink);
+  text-underline-offset: 4px;
+}
+
+.crossNav a:hover {
+  text-decoration: none;
+}
+
 /* Feature stub pages reuse this centered fill. */
 .hero {
   flex: 1;
@@ -362,7 +391,9 @@
 .navLink:focus-visible,
 .cta:focus-visible,
 .ctaNav:focus-visible,
-.ctaClose:focus-visible {
+.ctaClose:focus-visible,
+.panelTitleLink:focus-visible,
+.crossNav a:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
 }

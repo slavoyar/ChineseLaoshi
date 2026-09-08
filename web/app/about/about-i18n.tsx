@@ -11,12 +11,12 @@ const copy = {
     intro:
       'Chinese Laoshi (中国老师) helps you write Chinese characters online and drill Mandarin translations with your own flashcards — free, in the browser on phone, tablet, or desktop.',
     featuresTitle: 'Features',
-    handwritingFeature:
-      'Handwriting practice — write Chinese characters with touch or mouse and get stroke feedback.',
-    translationFeature:
-      'Translation drills — review meanings and strengthen recall with flashcard study modes.',
-    customGroupsFeature:
-      'Custom word groups — build your own card decks with characters, pinyin, and translations.',
+    handwritingFeatureLead: 'Handwriting practice',
+    handwritingFeatureBody: ' — write Chinese characters with touch or mouse and get stroke feedback.',
+    translationFeatureLead: 'Translation drills',
+    translationFeatureBody: ' — review meanings and strengthen recall with flashcard study modes.',
+    customGroupsFeatureLead: 'Custom word groups',
+    customGroupsFeatureBody: ' — build your own card decks with characters, pinyin, and translations.',
     howItWorksTitle: 'How it works',
     howItWorksStep1: 'Open the app in your browser and try study modes in demo.',
     howItWorksStep2: 'Create word groups with characters, pinyin, and translations.',
@@ -48,10 +48,12 @@ const copy = {
     intro:
       'Chinese Laoshi (中国老师) помогает писать иероглифы онлайн и тренировать переводы с собственными карточками — бесплатно в браузере на телефоне, планшете или компьютере.',
     featuresTitle: 'Возможности',
-    handwritingFeature:
-      'Письмо — рисуйте иероглифы пальцем или мышью и получайте обратную связь по чертам.',
-    translationFeature: 'Перевод — повторяйте значения и тренируйте запоминание в режимах карточек.',
-    customGroupsFeature: 'Свои группы слов — собирайте колоды с иероглифами, пиньинем и переводами.',
+    handwritingFeatureLead: 'Письмо',
+    handwritingFeatureBody: ' — рисуйте иероглифы пальцем или мышью и получайте обратную связь по чертам.',
+    translationFeatureLead: 'Перевод',
+    translationFeatureBody: ' — повторяйте значения и тренируйте запоминание в режимах карточек.',
+    customGroupsFeatureLead: 'Свои группы слов',
+    customGroupsFeatureBody: ' — собирайте колоды с иероглифами, пиньинем и переводами.',
     howItWorksTitle: 'Как это работает',
     howItWorksStep1: 'Откройте приложение в браузере и попробуйте режимы обучения в демо.',
     howItWorksStep2: 'Создайте группы слов с иероглифами, пиньинем и переводами.',
@@ -86,7 +88,7 @@ function applyCopy(tgLang?: string) {
   document.documentElement.lang = lang;
   document.querySelectorAll('[data-i18n]').forEach((el) => {
     const key = el.getAttribute('data-i18n') as keyof (typeof copy)['en'] | null;
-    if (key && copy[lang][key]) {
+    if (key && copy[lang][key] && el.childElementCount === 0) {
       el.textContent = copy[lang][key];
     }
   });

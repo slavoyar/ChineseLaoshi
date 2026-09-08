@@ -9,11 +9,15 @@ const copy = {
     footerCopyright: `© ${year} Chinese Laoshi`,
     footerTagline: 'Free Mandarin flashcards and hanzi handwriting in the browser.',
     footerAbout: 'About',
+    footerHanzi: 'Hanzi practice',
+    footerFlashcards: 'Flashcards',
   },
   ru: {
     footerCopyright: `© ${year} Chinese Laoshi`,
     footerTagline: 'Бесплатные карточки и практика написания иероглифов в браузере.',
     footerAbout: 'О приложении',
+    footerHanzi: 'Письмо иероглифов',
+    footerFlashcards: 'Карточки',
   },
 } as const;
 
@@ -29,9 +33,9 @@ export function SiteFooterI18n() {
       lang = 'ru';
     }
 
-    document.querySelectorAll('[data-i18n]').forEach((el) => {
+    document.querySelectorAll('footer [data-i18n]').forEach((el) => {
       const key = el.getAttribute('data-i18n') as keyof (typeof copy)['en'] | null;
-      if (key && copy[lang][key]) {
+      if (key && copy[lang][key] && el.childElementCount === 0) {
         el.textContent = copy[lang][key];
       }
     });

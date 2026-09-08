@@ -5,6 +5,7 @@ interface TelegramWebApp {
   ready: () => void;
   expand: () => void;
   requestFullscreen?: () => void;
+  isVersionAtLeast?: (version: string) => boolean;
   safeAreaInset: { top: number; bottom: number; left: number; right: number };
   contentSafeAreaInset: { top: number; bottom: number; left: number; right: number };
   onEvent: (event: string, callback: () => void) => void;
@@ -36,7 +37,13 @@ export const initTelegramWebApp = (): void => {
 
   webApp.ready();
   webApp.expand();
-  webApp.requestFullscreen?.();
+  if (webApp.initData && webApp.isVersionAtLeast?.('8.0')) {
+    try {
+      webApp.requestFullscreen?.();
+    } catch {
+      // Older Telegram clients expose the method but reject it (e.g. WebApp 6.0).
+    }
+  }
 
   const applyInsets = () => {
     const root = document.documentElement;

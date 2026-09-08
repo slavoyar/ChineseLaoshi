@@ -31,6 +31,20 @@ export const HeaderLayout = () => {
         <a href='/about' className='underline-offset-4 hover:text-foreground hover:underline'>
           {t('common.about')}
         </a>
+        <span aria-hidden='true'>·</span>
+        <a
+          href='/hanzi-handwriting-practice'
+          className='underline-offset-4 hover:text-foreground hover:underline'
+        >
+          {t('footer.hanzi')}
+        </a>
+        <span aria-hidden='true'>·</span>
+        <a
+          href='/mandarin-flashcards'
+          className='underline-offset-4 hover:text-foreground hover:underline'
+        >
+          {t('footer.flashcards')}
+        </a>
       </footer>
     </div>
   );

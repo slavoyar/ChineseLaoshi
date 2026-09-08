@@ -19,7 +19,9 @@
   },
   "footer": {
     "copyright": "© {{year}} Chinese Laoshi",
-    "tagline": "Free Mandarin flashcards and hanzi handwriting in the browser."
+    "tagline": "Free Mandarin flashcards and hanzi handwriting in the browser.",
+    "hanzi": "Hanzi practice",
+    "flashcards": "Flashcards"
   },
   "studyModes": {
     "title": "Study modes",

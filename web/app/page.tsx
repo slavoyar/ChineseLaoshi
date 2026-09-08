@@ -3,9 +3,30 @@ import styles from './home.module.css';
 import { SiteFooter } from './site-footer';
 import { TelegramStudyRedirect } from './telegram-study-redirect';
 
+const homeJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      name: 'Chinese Laoshi',
+      alternateName: '中国老师',
+      url: 'https://chineselaoshi.slavoyar.tech/',
+    },
+    {
+      '@type': 'SoftwareApplication',
+      name: 'Chinese Laoshi',
+      applicationCategory: 'EducationalApplication',
+      operatingSystem: 'Web',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      url: 'https://chineselaoshi.slavoyar.tech/app',
+    },
+  ],
+};
+
 export default function HomePage() {
   return (
     <div className={styles.root}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd) }} />
       <TelegramStudyRedirect />
       <HomeI18n />
       <header className={styles.header}>
@@ -43,7 +64,11 @@ export default function HomePage() {
           <div className={styles.wide}>
             <div className={styles.featureGrid}>
               <section className={styles.panel}>
-                <h2 data-i18n="handwritingTitle">Hanzi handwriting practice</h2>
+                <h2>
+                  <a className={styles.panelTitleLink} href="/hanzi-handwriting-practice" data-i18n="handwritingTitle">
+                    Hanzi handwriting practice
+                  </a>
+                </h2>
                 <p data-i18n="handwritingBody">
                   Write Chinese characters in your browser with stroke feedback. Draw with your finger
                   on a phone or tablet, or with a mouse on desktop. Stroke-order feedback is part of
@@ -52,7 +77,11 @@ export default function HomePage() {
               </section>
 
               <section className={styles.panel}>
-                <h2 data-i18n="flashcardsTitle">Mandarin flashcards</h2>
+                <h2>
+                  <a className={styles.panelTitleLink} href="/mandarin-flashcards" data-i18n="flashcardsTitle">
+                    Mandarin flashcards
+                  </a>
+                </h2>
                 <p data-i18n="flashcardsBody">
                   Drill Mandarin translations with your own flashcards. Review meanings and strengthen
                   recall with flashcard study modes — character, pinyin, and translation on each card.
