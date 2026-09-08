@@ -1,5 +1,6 @@
 import { HomeI18n } from './home-i18n';
 import styles from './home.module.css';
+import { SiteFooter } from './site-footer';
 import { TelegramStudyRedirect } from './telegram-study-redirect';
 
 export default function HomePage() {
@@ -181,15 +182,7 @@ export default function HomePage() {
           </a>
         </section>
       </main>
-      <footer className={styles.footer}>
-        <div className={styles.bar}>
-          <nav className={styles.footerNav} aria-label="Site">
-            <a className={styles.navLink} href="/about" data-i18n="about">
-              About
-            </a>
-          </nav>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

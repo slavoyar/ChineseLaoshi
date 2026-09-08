@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import styles from '../home.module.css';
+import { SiteFooter } from '../site-footer';
 import { TelegramStudyRedirect } from '../telegram-study-redirect';
 
 export const metadata: Metadata = {
@@ -30,6 +31,7 @@ export default function HanziHandwritingPracticePage() {
           Start practicing
         </a>
       </main>
+      <SiteFooter />
     </div>
   );
 }

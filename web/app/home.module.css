@@ -358,20 +358,6 @@
   padding: 2.5rem var(--pad-x) 3rem;
 }
 
-.footer {
-  height: 80px;
-  flex-shrink: 0;
-}
-
-.footer .bar {
-  justify-content: flex-end;
-}
-
-.footerNav {
-  display: flex;
-  align-items: center;
-}
-
 .brand:focus-visible,
 .navLink:focus-visible,
 .cta:focus-visible,

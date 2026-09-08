@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 
+import { SiteFooter } from '../site-footer';
 import { AboutI18n } from './about-i18n';
 import styles from './about.module.css';
 
@@ -156,6 +157,7 @@ export default function AboutPage() {
           </p>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }
