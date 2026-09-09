@@ -19,7 +19,6 @@ export const DrawPad = ({ onPick, onUndoChar, canUndo }: DrawPadProps) => {
   const recognizingRef = useRef(false);
   const [ready, setReady] = useState(false);
   const [loadError, setLoadError] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [candidates, setCandidates] = useState<string[]>([]);
 
   const recognize = useCallback(async () => {
@@ -54,13 +53,7 @@ export const DrawPad = ({ onPick, onUndoChar, canUndo }: DrawPadProps) => {
     recognizerRef.current = recognizer;
 
     void recognizer
-      .initialize({
-        onProgress: (value) => {
-          if (!cancelled) {
-            setProgress(value);
-          }
-        },
-      })
+      .initialize()
       .then((ok) => {
         if (!cancelled) {
           setReady(ok);
@@ -154,14 +147,8 @@ export const DrawPad = ({ onPick, onUndoChar, canUndo }: DrawPadProps) => {
 
       <div className='relative h-44 touch-none overflow-hidden rounded-md border border-input bg-white dark:border-border sm:h-52'>
         {!ready && !loadError ? (
-          <div className='absolute inset-0 flex flex-col items-center justify-center gap-2 text-sm text-muted-foreground'>
-            <span>Loading handwriting…</span>
-            <div className='h-1.5 w-40 overflow-hidden rounded-full bg-muted'>
-              <div
-                className='h-full bg-primary transition-[width]'
-                style={{ width: `${Math.round(progress * 100)}%` }}
-              />
-            </div>
+          <div className='absolute inset-0 flex items-center justify-center text-sm text-muted-foreground'>
+            Loading handwriting…
           </div>
         ) : null}
         {loadError ? (
