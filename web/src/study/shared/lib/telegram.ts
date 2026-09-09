@@ -5,6 +5,7 @@ interface TelegramWebApp {
   ready: () => void;
   expand: () => void;
   requestFullscreen?: () => void;
+  disableVerticalSwipes?: () => void;
   isVersionAtLeast?: (version: string) => boolean;
   safeAreaInset: { top: number; bottom: number; left: number; right: number };
   contentSafeAreaInset: { top: number; bottom: number; left: number; right: number };
@@ -38,6 +39,13 @@ export const initTelegramWebApp = (): void => {
 
   webApp.ready();
   webApp.expand();
+  if (webApp.isVersionAtLeast?.('7.7')) {
+    try {
+      webApp.disableVerticalSwipes?.();
+    } catch {
+      // Older Telegram clients may expose the method but reject it.
+    }
+  }
   if (webApp.initData && webApp.isVersionAtLeast?.('8.0')) {
     try {
       webApp.requestFullscreen?.();

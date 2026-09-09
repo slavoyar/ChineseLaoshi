@@ -22,6 +22,72 @@ interface Props extends Word {
 const symbolKeys = (symbols: string, id: string) =>
   symbols.split('').map((symbol, index) => `${id}-${symbol}-${index}`);
 
+const pressedPointers = new Set<number>();
+let pointerTrackingBound = false;
+
+const bindPointerTracking = () => {
+  if (typeof window === 'undefined' || pointerTrackingBound) {
+    return;
+  }
+  pointerTrackingBound = true;
+  const track = (event: PointerEvent) => {
+    if (event.type === 'pointerdown') {
+      pressedPointers.add(event.pointerId);
+      return;
+    }
+    pressedPointers.delete(event.pointerId);
+  };
+  window.addEventListener('pointerdown', track, true);
+  window.addEventListener('pointerup', track, true);
+  window.addEventListener('pointercancel', track, true);
+};
+
+const isPointerDown = (): boolean => {
+  bindPointerTracking();
+  // Do not use :active alone: it matches <html>/<body> and can stick on
+  // the last tapped button after pointerup (dummy first tap on every card).
+  return pressedPointers.size > 0;
+};
+
+const whenPointerIdle = (start: () => void): (() => void) => {
+  bindPointerTracking();
+  let cancelled = false;
+  let raf = 0;
+
+  const run = () => {
+    if (!cancelled) {
+      start();
+    }
+  };
+
+  const onPointerGone = () => {
+    window.removeEventListener('pointerup', onPointerGone);
+    window.removeEventListener('pointercancel', onPointerGone);
+    raf = requestAnimationFrame(() => {
+      if (!cancelled) {
+        start();
+      }
+    });
+  };
+
+  if (isPointerDown()) {
+    window.addEventListener('pointerup', onPointerGone);
+    window.addEventListener('pointercancel', onPointerGone);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('pointerup', onPointerGone);
+      window.removeEventListener('pointercancel', onPointerGone);
+      cancelAnimationFrame(raf);
+    };
+  }
+
+  run();
+  return () => {
+    cancelled = true;
+    cancelAnimationFrame(raf);
+  };
+};
+
 const cssHex = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
 const writerColors = () => {
@@ -51,9 +117,11 @@ export const WriteCard = ({
   const isDemo = useAuthStore((state) => state.isDemo);
 
   const writers = useRef<HanziWriterType[]>([]);
+  const padEls = useRef<(HTMLDivElement | null)[]>([]);
   const isSubmittingRef = useRef(false);
   const hintCountRef = useRef(0);
   const guessedRef = useRef<string[]>([]);
+  const quizStartCleanup = useRef<(() => void) | null>(null);
   const { value: currentIndex, inc, dec, reset } = useCounter(0);
   const debouncedIndex = useDebounceValue(currentIndex, 300);
 
@@ -61,6 +129,7 @@ export const WriteCard = ({
   const [guessedSymbols, setGuessedSymbols] = useState<string[]>([]);
   const [hintCount, setHintCount] = useState(0);
   const [writersReady, setWritersReady] = useState(false);
+  const [writerGen, setWriterGen] = useState(0);
   const [writerError, setWriterError] = useState(false);
 
   const skipProgress = hintCount >= HINT_SKIP_PROGRESS_THRESHOLD;
@@ -101,10 +170,31 @@ export const WriteCard = ({
     onMistake: onHintMistake,
   });
 
+  const cancelScheduledQuiz = () => {
+    quizStartCleanup.current?.();
+    quizStartCleanup.current = null;
+  };
+
+  const scheduleQuizAt = (index: number) => {
+    cancelScheduledQuiz();
+    const writer = writers.current[index];
+    if (!writer) {
+      return;
+    }
+    if (guessedRef.current.includes(keys[index])) {
+      writer.showCharacter();
+      return;
+    }
+    quizStartCleanup.current = whenPointerIdle(() => {
+      writer.quiz(quizOpts());
+    });
+  };
+
   useEffect(() => {
     hintCountRef.current = 0;
     guessedRef.current = [];
     setHintCount(0);
+    setGuessedSymbols([]);
   }, [id, symbols]);
 
   useEffect(() => {
@@ -118,8 +208,14 @@ export const WriteCard = ({
           return;
         }
 
-        writers.current = symbols.split('').map((sym, index) =>
-          HanziWriter.create(`hanzi-input-${index}`, sym, {
+        const nodes = symbols.split('').map((_, index) => padEls.current[index]);
+        if (nodes.some((node) => !node)) {
+          setWriterError(true);
+          return;
+        }
+
+        writers.current = symbols.split('').map((sym, index) => {
+          const writer = HanziWriter.create(nodes[index] as HTMLDivElement, sym, {
             width: fieldSize,
             height: fieldSize,
             showCharacter: false,
@@ -129,10 +225,14 @@ export const WriteCard = ({
             ...writerColors(),
             strokeFadeDuration: 0,
             drawingFadeDuration: 0,
-          })
-        );
+          });
+          writer.target.node.style.touchAction = 'none';
+          return writer;
+        });
 
+        scheduleQuizAt(0);
         setWritersReady(true);
+        setWriterGen((gen) => gen + 1);
       })
       .catch(() => {
         if (!cancelled) {
@@ -142,7 +242,15 @@ export const WriteCard = ({
 
     return () => {
       cancelled = true;
-      writers.current.forEach((item) => item.target.node.remove());
+      cancelScheduledQuiz();
+      writers.current.forEach((writer) => {
+        try {
+          writer.cancelQuiz();
+        } catch {
+          // writer may not be in quiz mode
+        }
+        writer.target.node.remove();
+      });
       writers.current = [];
       guessedRef.current = [];
       setGuessedSymbols([]);
@@ -150,22 +258,30 @@ export const WriteCard = ({
       setWriterError(false);
       reset();
     };
-  }, [symbols, fieldSize, showOutline]);
+  }, [id, symbols, fieldSize, showOutline]);
 
   useEffect(() => {
-    if (!writersReady || paused) {
+    if (!writerGen || paused) {
       return;
     }
     const writer = writers.current[debouncedIndex];
     if (!writer) {
       return;
     }
-    if (guessedSymbols.includes(keys[debouncedIndex])) {
+    if (guessedRef.current.includes(keys[debouncedIndex])) {
       writer.showCharacter();
-    } else {
-      writer.quiz(quizOpts());
+      return;
     }
-  }, [symbols, debouncedIndex, writersReady, paused]);
+    scheduleQuizAt(debouncedIndex);
+    return () => {
+      cancelScheduledQuiz();
+      try {
+        writer.cancelQuiz();
+      } catch {
+        // writer may not be in quiz mode
+      }
+    };
+  }, [id, symbols, debouncedIndex, writerGen, paused]);
 
   useEffect(() => {
     if (!writersReady || !paused) {
@@ -244,14 +360,17 @@ export const WriteCard = ({
           />
         </Button>
         <div
-          className='max-h-[300px] max-w-[300px] rounded-md bg-muted'
+          className='max-h-[300px] max-w-[300px] touch-none select-none rounded-md bg-muted'
           aria-busy={!writersReady && !writerError}
         >
           {keys.map((key, index) => (
             <div
-              id={`hanzi-input-${index}`}
+              id={`hanzi-input-${id}-${index}`}
               key={key}
-              className={cn(index === currentIndex ? 'block' : 'hidden')}
+              ref={(node) => {
+                padEls.current[index] = node;
+              }}
+              className={cn('touch-none select-none', index === currentIndex ? 'block' : 'hidden')}
             />
           ))}
         </div>
