@@ -12,7 +12,7 @@ import { useStateStore, useStudyPauseStore } from '@shared/stores';
 import { Route } from '@shared/types';
 import { Button } from '@shared/ui';
 import { PrescriptionPractice } from '@widgets/prescription-practice';
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -377,7 +377,9 @@ export const WritePractice = () => {
 
   return (
     <div className='flex h-full w-full items-center justify-center px-3 py-3 sm:px-4 sm:py-4'>
-      {current && getWidget(current)}
+      {current ? (
+        <Fragment key={`${current.id}-${currentIndex}`}>{getWidget(current)}</Fragment>
+      ) : null}
     </div>
   );
 };
