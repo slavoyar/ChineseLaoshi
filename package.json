@@ -3,16 +3,17 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "frontend"
+    "web"
   ],
   "author": "Yaroslav Zaprudskii",
   "license": "ISC",
   "scripts": {
     "lint": "npm run lint:frontend",
-    "lint:frontend": "eslint \"frontend/**/*.{ts,tsx}\" -c ./frontend/eslint.config.js --report-unused-disable-directives --max-warnings 0 --fix",
-    "dev:frontend": "npm run dev --workspace=@chinese-laoshi/frontend",
+    "lint:frontend": "eslint \"web/src/study/**/*.{ts,tsx}\" \"web/app/app/**/*.{ts,tsx}\" -c ./web/eslint.config.js --report-unused-disable-directives --max-warnings 0 --fix",
+    "dev:web": "npm run dev --workspace=@chinese-laoshi/web",
     "dev:backend": "cd backend && go run ./cmd/server",
-    "generate:types": "tygo generate"
+    "generate:types": "tygo generate",
+    "test:e2e": "npm run test:e2e --workspace=@chinese-laoshi/web"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",

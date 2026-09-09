@@ -1,0 +1,200 @@
+.shell {
+  box-sizing: border-box;
+  min-height: 100svh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow-x: clip;
+  padding-top: var(--tg-content-safe-top, var(--tg-safe-top, 0px));
+  padding-bottom: var(--tg-content-safe-bottom, var(--tg-safe-bottom, 0px));
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.shell *,
+.shell *::before,
+.shell *::after {
+  box-sizing: border-box;
+}
+
+.header {
+  flex-shrink: 0;
+  height: 80px;
+  border-bottom: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+}
+
+.bar {
+  width: 100%;
+  max-width: 42rem;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: hsl(var(--foreground));
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  color: hsl(var(--muted-foreground));
+  text-decoration: none;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.navLink:hover {
+  color: hsl(var(--foreground));
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+}
+
+.article {
+  width: 100%;
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 2rem 1rem 2.5rem;
+  overflow-wrap: anywhere;
+}
+
+.article h1 {
+  margin: 0 0 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+}
+
+.article h2 {
+  margin: 2rem 0 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+}
+
+.article p,
+.article li,
+.article dd {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: hsl(var(--muted-foreground));
+}
+
+.article p {
+  margin: 0 0 1rem;
+}
+
+.article p:last-child {
+  margin-bottom: 0;
+}
+
+.article ul,
+.article ol {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+}
+
+.article li {
+  margin-bottom: 0.45rem;
+}
+
+.article a {
+  color: hsl(173 58% 39%);
+}
+
+:global(html.dark) .article a {
+  color: hsl(173 58% 55%);
+}
+
+.article a:hover {
+  text-decoration: none;
+}
+
+.article a.cta,
+:global(html.dark) .article a.cta {
+  background: hsl(var(--foreground));
+  color: hsl(var(--card));
+  text-decoration: none;
+}
+
+.article a.cta:hover,
+:global(html.dark) .article a.cta:hover {
+  color: hsl(var(--card));
+  opacity: 0.9;
+}
+
+.lead {
+  margin: 0 0 1.5rem;
+  max-width: 40rem;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  margin-bottom: 0.25rem;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.5;
+  text-decoration: none;
+  background: hsl(var(--foreground));
+  color: hsl(var(--card));
+}
+
+.cta:hover {
+  opacity: 0.9;
+}
+
+.cross {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin: 2rem 0 0;
+  font-size: 0.875rem;
+}
+
+.cross span {
+  color: hsl(var(--muted-foreground));
+}
+
+.brand:focus-visible,
+.navLink:focus-visible,
+.cta:focus-visible,
+.article a:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+@media (min-width: 40rem) {
+  .article {
+    padding: 2.5rem 1.25rem 3rem;
+  }
+
+  .article h1 {
+    font-size: 1.75rem;
+  }
+}

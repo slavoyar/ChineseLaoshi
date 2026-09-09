@@ -13,6 +13,8 @@ yarn-error.log
 *.log
 
 frontend/dist
+web/.next
+web/out
 coverage
 **/coverage
 

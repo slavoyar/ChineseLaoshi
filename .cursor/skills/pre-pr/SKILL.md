@@ -25,7 +25,7 @@ Copy and update as you go:
 Pre-PR:
 - [ ] 1. Context (branch, base, dirty tree)
 - [ ] 2. FSD import check (scripts/fsd-import-check.mjs)
-- [ ] 3. Frontend build
+- [ ] 3. Frontend build (Next `web`)
 - [ ] 4. Bugbot review
 - [ ] 5. Fix valid findings + re-run failed steps
 - [ ] 6. Summary — continue to local preview (no push)
@@ -51,15 +51,15 @@ Exit `0` = clean. Exit `1` = violations printed by category.
 
 Fix every reported violation (use `feature-sliced-design` for placement/Strategy C). Re-run until exit `0`.
 
-Optional (not required): `npx steiger frontend/src` if already installed; do not add Steiger as a hard gate unless the user asks.
+Optional (not required): `npx steiger web/src/study` if already installed; do not add Steiger as a hard gate unless the user asks.
 
 ### 3. Frontend build
 
 ```bash
-cd frontend && npm run build
+cd web && npm run build
 ```
 
-Fix compile errors; re-run until success.
+Fix compile errors; re-run until the build succeeds.
 
 ### 4. Bugbot
 
@@ -95,7 +95,7 @@ Present a short report, then **continue to delivery step 4** (start local dev se
 - Branch: …
 - Base: production
 - FSD import check: pass | fail (counts)
-- Frontend build: pass | fail
+- Frontend build (Next `web`): pass | fail
 - Bugbot: N findings fixed, M deferred/disputed
 - Deferred: …
 - Uncommitted changes: yes/no
@@ -129,4 +129,4 @@ When run **outside** the delivery pipeline and the user only wanted checks (no f
 
 ## Script reference
 
-- [scripts/fsd-import-check.mjs](scripts/fsd-import-check.mjs) — counts FSD import violations under `frontend/src` (upward imports, entity cross-imports, deep public-API bypasses).
+- [scripts/fsd-import-check.mjs](scripts/fsd-import-check.mjs) — counts FSD import violations under `web/src/study` (upward imports, entity cross-imports, deep public-API bypasses).

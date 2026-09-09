@@ -11,7 +11,7 @@ Chinese Laoshi is a comprehensive Chinese language learning application designed
 - **Multi-Platform Support**: Accessible on phones, tablets, and desktop browsers.
 
 ## Tech Stack
-- **Frontend**: React, TypeScript, Vite
+- **Frontend**: React, TypeScript, Next.js
 - **Backend**: Go, PostgreSQL
 
 ## Development

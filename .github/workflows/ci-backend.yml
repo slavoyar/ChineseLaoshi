@@ -5,13 +5,13 @@ on:
   pull_request:
     paths:
       - "backend/**"
-      - "frontend/src/shared/api/generated/**"
+      - "web/src/study/shared/api/generated/**"
     branches:
       - production
   push:
     paths:
       - "backend/**"
-      - "frontend/src/shared/api/generated/**"
+      - "web/src/study/shared/api/generated/**"
     branches:
       - production
 
@@ -30,7 +30,7 @@ jobs:
         run: |
           go install github.com/gzuidhof/tygo@latest
           tygo generate
-          git diff --exit-code frontend/src/shared/api/generated/index.ts
+          git diff --exit-code web/src/study/shared/api/generated/index.ts
 
       - name: Download Go modules
         working-directory: ./backend

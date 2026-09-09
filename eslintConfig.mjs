@@ -9,8 +9,10 @@ export const createConfig = (options = []) =>
     globalIgnores([
       '**/node_modules/**',
       '**/dist/**',
-      'frontend/public/**',
-      'frontend/src/shared/api/generated/**',
+      'web/public/**',
+      'web/out/**',
+      'web/.next/**',
+      'web/src/study/shared/api/generated/**',
       '**/.env*',
       '**/*.md',
       '**/.impeccable/**',

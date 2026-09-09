@@ -26,8 +26,8 @@ jobs:
 
       - run: npm run lint
 
-      - name: Build frontend
-        working-directory: ./frontend
+      - name: Build web
+        working-directory: ./web
         run: npm run build
 
   e2e:
@@ -55,11 +55,11 @@ jobs:
           key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
       - name: Install Playwright browsers
-        working-directory: ./frontend
+        working-directory: ./web
         run: npx playwright install --with-deps chromium
 
       - name: Run Playwright e2e
-        working-directory: ./frontend
+        working-directory: ./web
         env:
           CI: true
           JWT_SECRET: e2e-ci-jwt-secret

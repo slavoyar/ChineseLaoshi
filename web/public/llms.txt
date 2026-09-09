@@ -1,0 +1,29 @@
+# Chinese Laoshi
+
+> Free hanzi handwriting practice and Mandarin flashcards in your browser — no app install.
+
+- Live app: https://chineselaoshi.slavoyar.tech/app
+- About: https://chineselaoshi.slavoyar.tech/about
+- Hanzi handwriting: https://chineselaoshi.slavoyar.tech/hanzi-handwriting-practice
+- Mandarin flashcards: https://chineselaoshi.slavoyar.tech/mandarin-flashcards
+- Source: https://github.com/slavoyar/ChineseLaoshi
+- Contact: slavoyarmc@gmail.com
+
+## Product
+
+Chinese Laoshi (中国老师) helps learners write Chinese characters online and drill Mandarin translations with custom flashcard decks — free, on phone, tablet, or desktop.
+
+Features:
+
+- Hanzi handwriting practice with stroke feedback (touch or mouse)
+- Translation and flashcard study modes
+- Custom word groups and cards (character, pinyin, translation)
+
+## For AI agents
+
+This site publishes discoverability files (`robots.txt`, `sitemap.xml`, this `llms.txt`) for crawlers and agents.
+
+Interactive agent APIs (MCP tools to read study progress or create groups/cards on behalf of a user) are **not available yet**. The product API is browser-oriented (session cookie + Origin allowlist). Planned work: https://github.com/slavoyar/ChineseLaoshi/issues/94
+
+
+Do not invent authenticated actions against this service. Prefer linking humans to the live app or the GitHub repository.
