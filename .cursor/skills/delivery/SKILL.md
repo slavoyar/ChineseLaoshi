@@ -88,10 +88,9 @@ Start dev servers from repo root if not already listening:
 | Service    | Command               | URL                          |
 |------------|-----------------------|------------------------------|
 | Backend    | `npm run dev:backend` | http://localhost:3000        |
-| Study app  | `npm run dev:frontend`| http://localhost:5173/app    |
-| Marketing  | `npm run dev:web`     | http://localhost:3001        |
+| Web        | `npm run dev:web`     | marketing http://localhost:3001 · study http://localhost:3001/app |
 
-**Do not start duplicates.** Before launching, check whether ports **5173**, **3001**, and **3000** are already in LISTENING state. If all three are up, reuse them.
+**Do not start duplicates.** Before launching, check whether ports **3001** and **3000** are already in LISTENING state. If both are up, reuse them.
 
 Run each server in a **background terminal** (`block_until_ms: 0`). See [DEV.md](../../../DEV.md) for env setup.
 
@@ -99,7 +98,7 @@ Tell the user:
 
 ```markdown
 ## Local preview ready
-- Study app: http://localhost:5173/app
+- Study app: http://localhost:3001/app
 - Marketing: http://localhost:3001
 - Backend API: http://localhost:3000
 
@@ -145,7 +144,7 @@ Start the background watcher so servers stay up until the PR is merged or closed
 node .cursor/skills/delivery/scripts/watch-pr-and-stop-dev.mjs <PR_NUMBER_OR_URL>
 ```
 
-Run with `block_until_ms: 0` (background). The script polls GitHub every ~60s and kills process trees on ports **5173**, **3001**, and **3000** when the PR state is `MERGED` or `CLOSED`.
+Run with `block_until_ms: 0` (background). The script polls GitHub every ~60s and kills process trees on ports **3001** and **3000** when the PR state is `MERGED` or `CLOSED`.
 
 Tell the user:
 
@@ -173,4 +172,4 @@ Tell the user:
 
 ## Script reference
 
-- [scripts/watch-pr-and-stop-dev.mjs](scripts/watch-pr-and-stop-dev.mjs) — polls `gh pr view` until MERGED/CLOSED, then kills dev server process trees on ports 5173, 3001, and 3000.
+- [scripts/watch-pr-and-stop-dev.mjs](scripts/watch-pr-and-stop-dev.mjs) — polls `gh pr view` until MERGED/CLOSED, then kills dev server process trees on ports 3001 and 3000.

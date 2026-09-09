@@ -1,19 +1,11 @@
-# Build marketing (Next static export)
+# Build marketing + study (Next static export)
 FROM node:24-alpine AS web
 WORKDIR /app/web
 COPY web/package.json ./
 RUN npm install
 COPY web/ ./
-RUN npm run build
-
-# Build study SPA
-FROM node:24-alpine AS frontend
-WORKDIR /app/frontend
-COPY frontend/package.json ./
-RUN npm install
-COPY frontend/ ./
-ARG VITE_GOOGLE_CLIENT_ID=
-ENV VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID
+ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID=
+ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
 RUN npm run build
 
 # Build backend
@@ -25,7 +17,7 @@ WORKDIR /src/backend
 RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -o /server ./cmd/server
 
-# Runtime: nginx (marketing + /app SPA + /api proxy) + Go API
+# Runtime: nginx (Next static + /api proxy) + Go API
 FROM nginx:1.27-alpine
 RUN apk add --no-cache ca-certificates tzdata su-exec \
   && adduser -D -u 1000 -h /home/app app \
@@ -37,7 +29,6 @@ WORKDIR /app
 COPY --from=backend /server ./server
 COPY backend/migrations ./migrations
 COPY --from=web /app/web/out /usr/share/nginx/html
-COPY --from=frontend /app/frontend/dist /usr/share/nginx/html/app
 COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
 COPY deploy/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh \

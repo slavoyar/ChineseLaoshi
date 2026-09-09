@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '../../../..');
-const srcRoot = path.join(repoRoot, 'frontend', 'src');
+const srcRoot = path.join(repoRoot, 'web', 'src', 'study');
 
 const CHECKS = [
   {

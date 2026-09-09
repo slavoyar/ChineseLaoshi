@@ -91,7 +91,7 @@ func Load() Config {
 		}
 	} else if nodeEnv != "production" {
 		// Local/dev defaults only — production requires an explicit allowlist.
-		allowedOrigins = []string{"http://localhost:5173", "http://127.0.0.1:5173"}
+		allowedOrigins = []string{"http://localhost:3001", "http://127.0.0.1:3001"}
 	}
 
 	return Config{

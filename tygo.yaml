@@ -1,9 +1,9 @@
 packages:
   - path: github.com/slavo/ChineseLaoshi/backend/internal/dto
-    output_path: frontend/src/shared/api/generated/index.ts
+    output_path: web/src/study/shared/api/generated/index.ts
     type_mappings:
       time.Time: string
   - path: github.com/slavo/ChineseLaoshi/backend/internal/apperrors
-    output_path: frontend/src/shared/api/generated/errors.ts
+    output_path: web/src/study/shared/api/generated/errors.ts
     type_mappings:
       time.Time: string

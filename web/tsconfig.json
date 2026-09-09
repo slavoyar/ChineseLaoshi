@@ -13,8 +13,17 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "plugins": [{ "name": "next" }]
+    "plugins": [{ "name": "next" }],
+    "baseUrl": ".",
+    "paths": {
+      "@app/*": ["./src/study/app/*"],
+      "@entities/*": ["./src/study/entities/*"],
+      "@features/*": ["./src/study/features/*"],
+      "@shared/*": ["./src/study/shared/*"],
+      "@pages/*": ["./src/study/pages/*"],
+      "@widgets/*": ["./src/study/widgets/*"]
+    }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "e2e"]
 }

@@ -1,6 +1,6 @@
 # Local Development
 
-This guide covers running the Go backend, Vite study app, and Next marketing site together for local testing.
+This guide covers running the Go backend and the Next.js site (marketing + study) together for local testing.
 
 ## Prerequisites
 
@@ -13,7 +13,7 @@ This guide covers running the Go backend, Vite study app, and Next marketing sit
 
 ## Quick start
 
-Use three terminals from the repository root.
+Use two terminals from the repository root.
 
 ### Terminal 1 — Backend
 
@@ -26,25 +26,18 @@ npm run dev:backend
 - Database files are stored in `./data/pg` (relative to where you run the command)
 - Migrations run automatically on startup
 
-### Terminal 2 — Study app
-
-```bash
-npm run dev:frontend
-```
-
-- Vite dev server runs at **http://localhost:5173/app** (`base`/`basename` `/app`)
-- All `/api/*` requests are proxied to `http://localhost:3000`
-
-### Terminal 3 — Marketing
+### Terminal 2 — Web (marketing + study)
 
 ```bash
 npm run dev:web
 ```
 
-- Next.js marketing site runs at **http://localhost:3001**
-- Production serves this at `/` from a static export (`web/out`)
+- Next.js runs at **http://localhost:3001**
+- Marketing: `/`, `/about`, feature pages
+- Study app: **http://localhost:3001/app** (React Router, FSD under `web/src/study`)
+- In development, `/api/*` is rewritten to `http://localhost:3000`
 
-Open **http://localhost:5173/app** for the study app and **http://localhost:3001** for marketing.
+Open **http://localhost:3001/app** for the study app and **http://localhost:3001** for marketing.
 
 ## Environment variables
 
@@ -63,22 +56,22 @@ Copy `backend/.env.example` to `backend/.env` and fill in values. `npm run dev:b
 | `JWT_SECRET` | *(required)* | Secret used to sign the httpOnly session cookie JWT |
 | `COOKIE_SECURE` | `true` when `NODE_ENV=production` | Set `false` for local http |
 | `SESSION_TTL_HOURS` | `168` (7 days) | Session cookie lifetime |
-| `ALLOWED_ORIGINS` | non-prod: `http://localhost:5173`, `http://127.0.0.1:5173`; production: *(empty = reject all)* | Origins allowed for **all** `/api` requests (Origin/Referer). Always set explicitly in production. |
+| `ALLOWED_ORIGINS` | non-prod: `http://localhost:3001`, `http://127.0.0.1:3001`; production: *(empty = reject all)* | Origins allowed for **all** `/api` requests (Origin/Referer). Always set explicitly in production. Local Google OAuth must also list `http://localhost:3001` as an authorized JavaScript origin. |
 | `NODE_ENV` | *(empty)* | `production` enables secure cookies and disables localhost origin defaults. `test` disables request logging. |
 | `TELEGRAM_BOT_TOKEN` | *(empty)* | Optional. BotFather token for admin ERROR notify. Empty = stderr-only logs (no Telegram). |
 | `TELEGRAM_MINIAPP_BOT_TOKEN` | *(empty)* | Optional. Public Mini App bot token for Telegram `initData` HMAC verification. Separate from notify bot. |
 | `TELEGRAM_CHAT_ID` | *(empty)* | Optional. Destination chat. Empty = no Telegram. |
 | `TELEGRAM_RELAY_BASE` | *(empty)* | `https://` base of the Telegram Caddy relay. Required together with notify token and chat. HTTP is rejected. Do not call `api.telegram.org` from the app host. Telegram Bot API puts the token in the URL path; configure the relay so access logs do not record `/bot*` URLs. |
 
-> **Security:** The Vite dev proxy must target the **local** backend only (`http://localhost:3000`). Do not proxy local frontend traffic to production — production rejects non-allowlisted origins (including localhost).
+> **Security:** The Next `/api` rewrite must target the **local** backend only (`http://localhost:3000`). Do not proxy local frontend traffic to production — production rejects non-allowlisted origins (including localhost).
 
-### Frontend
+### Web
 
-Create or edit `frontend/.env.development`:
+Create or edit `web/.env.development`:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `VITE_GOOGLE_CLIENT_ID` | *(required)* | Same Google Web Client ID as backend `GOOGLE_CLIENT_ID` |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | *(required)* | Same Google Web Client ID as backend `GOOGLE_CLIENT_ID` |
 
 > **Note:** Anonymous users read the demo template. Mutations require Google SSO. The session is an httpOnly cookie (`cl_session`) set by `POST /api/auth/google`.
 
@@ -90,7 +83,7 @@ After changing Go DTOs in `backend/internal/dto/`:
 npm run generate:types
 ```
 
-This runs `tygo generate` and writes TypeScript interfaces to `frontend/src/shared/api/generated/index.ts`.
+This runs `tygo generate` and writes TypeScript interfaces to `web/src/study/shared/api/generated/index.ts`.
 
 ## Smoke test checklist
 
@@ -98,36 +91,6 @@ This runs `tygo generate` and writes TypeScript interfaces to `frontend/src/shar
 2. Create a group
 3. Rename a group
 4. Open a group — cards load
-5. Add a word card
-6. Start a write-practice session
-7. Delete a card
-8. Delete a group
-
-## Troubleshooting
-
-**Backend fails to start (port in use)**  
-Change `PORT` or stop the process using port 3000.
-
-**Embedded Postgres issues**  
-Delete `./data/pg` and restart the backend to reset the local database.
-
-**Study app shows network errors**  
-Ensure the backend is running on port 3000 before starting the Vite app.
-
-**Empty groups after restart**  
-Expected with a fresh embedded database. Create groups and cards through the UI.
-
-## Other commands
-
-```bash
-# Lint frontend
-npm run lint
-
-# Build study app and marketing for production
-cd frontend && npm run build
-cd ../web && npm run build
-
-# Run backend tests
-cd backend && go test ./...
-```
-
+5. Add a word
+6. Start a translation quiz
+7. Marketing `/` and `/about` still render

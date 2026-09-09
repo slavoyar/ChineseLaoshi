@@ -7,7 +7,7 @@
 1. **Plan first** — write a plan and wait for user approval. Do not implement until approved.
 2. **Implement** — create a branch off `production` using the naming convention (`feat/…`, `fix/…`, etc.; see delivery skill).
 3. **Pre-PR** — run `.cursor/skills/pre-pr` (FSD import check, frontend build, Bugbot). Do not push here.
-4. **Local preview** — start backend + Vite study (`/app`) + Next marketing; user reviews study at http://localhost:5173/app and marketing at http://localhost:3001.
+4. **Local preview** — start backend + Next (`web`); user reviews study at http://localhost:3001/app and marketing at http://localhost:3001.
 5. **Ship** — when the user says **done**: commit, push to GitHub, create PR targeting `production`.
 6. **Watch and stop** — poll GitHub until the PR is merged or closed, then kill local dev servers.
 
@@ -24,11 +24,11 @@ Use for every implementation task. Orchestrates plan → implement → pre-PR �
 - Skill path: project skill `.cursor/skills/delivery`
 - Do not push or create a PR until the user says **done** after browser review
 - After PR is created, start the background watcher so servers stay up until the PR closes
-- Local preview is dual frontend: Next `web` on :3001 and Vite study on :5173/app
+- Local preview is one Next `web` on :3001 (marketing `/` + study `/app`)
 
 ### Feature-Sliced Design (`feature-sliced-design`)
 
-Use for frontend architecture: layer placement (`app` / `pages` / `features` / `entities` / `shared`), import direction, public APIs, extractions, and refactors of `frontend/src`.
+Use for frontend architecture: layer placement (`app` / `pages` / `features` / `entities` / `shared`), import direction, public APIs, extractions, and refactors of `web/src/study`.
 
 - Skill path: user skill `feature-sliced-design` (global: `~/.agents/skills/feature-sliced-design`)
 - Prefer pages-first; extract to `features` / `entities` only when reused in 2+ places
@@ -56,6 +56,5 @@ Step 3 of the delivery pipeline. Also runs standalone when the user asks for pre
 
 ## Frontend stack notes
 
-- Marketing (`web/`): Next.js App Router, static export (`output: 'export'`), local port **3001**
-- Study app (`frontend/`): Vite + React + React Router + Zustand + axios, `base`/`basename` `/app`, local **http://localhost:5173/app**
-- Path aliases (study app): `@app`, `@pages`, `@widgets`, `@features`, `@entities`, `@shared`
+- Marketing + study (`web/`): Next.js App Router, static export (`output: 'export'`), local port **3001**. Study lives at `/app` (React Router client island, FSD under `web/src/study`).
+- Path aliases (study app): `@app`, `@pages`, `@widgets`, `@features`, `@entities`, `@shared` → `web/src/study/…`
