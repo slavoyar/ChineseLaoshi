@@ -3,7 +3,9 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
+    "predev": "node scripts/copy-handwrite-models.mjs",
     "dev": "next dev -p 3001",
+    "prebuild": "node scripts/copy-handwrite-models.mjs",
     "build": "next build",
     "test:e2e": "playwright test"
   },
@@ -17,7 +19,8 @@
     "@radix-ui/react-slot": "^1.3.0",
     "@react-oauth/google": "^0.13.5",
     "@siberiacancode/reactuse": "^1.0.8",
-    "@zh-keyboard/recognizer": "^2.0.0",
+    "@zh-keyboard/core": "2.1.0",
+    "@zh-keyboard/recognizer": "2.1.0",
     "axios": "^1.18.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

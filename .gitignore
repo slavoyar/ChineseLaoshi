@@ -41,3 +41,4 @@ web/test-results/
 # Next marketing (web/)
 web/.next
 web/out
+web/public/models
