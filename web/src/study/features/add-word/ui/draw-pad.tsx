@@ -3,8 +3,8 @@ import { CanvasDrawer } from '@zh-keyboard/core';
 import { ZhkRecognizer } from '@zh-keyboard/recognizer';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
-const MODEL_PATH = '/app/models/handwrite/model.json';
-const DICT_PATH = '/app/models/dict.txt';
+const MODEL_PATH = '/models/handwrite/model.json';
+const DICT_PATH = '/models/dict.txt';
 
 type DrawPadProps = {
   onPick: (char: string) => void;
@@ -55,12 +55,17 @@ export const DrawPad = ({ onPick, onUndoChar, canUndo }: DrawPadProps) => {
     void recognizer
       .initialize()
       .then((ok) => {
-        if (!cancelled) {
-          setReady(ok);
-          setLoadError(!ok);
+        if (cancelled) {
+          return;
+        }
+        setReady(ok);
+        setLoadError(!ok);
+        if (!ok) {
+          console.error('Handwriting recognizer initialize() returned false');
         }
       })
-      .catch(() => {
+      .catch((err: unknown) => {
+        console.error('Handwriting recognizer failed to initialize', err);
         if (!cancelled) {
           setLoadError(true);
           setReady(false);

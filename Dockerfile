@@ -1,11 +1,13 @@
 # Build marketing + study (Next static export)
 FROM node:24-alpine AS web
-WORKDIR /app/web
-COPY web/package.json ./
-RUN npm install
-COPY web/ ./
+WORKDIR /src
+COPY package.json package-lock.json ./
+COPY web/package.json ./web/
+RUN npm ci --workspace=@chinese-laoshi/web --include-workspace-root=false
+COPY web/ ./web/
 ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID=
 ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
+WORKDIR /src/web
 RUN npm run build
 
 # Build backend
@@ -28,7 +30,7 @@ WORKDIR /app
 
 COPY --from=backend /server ./server
 COPY backend/migrations ./migrations
-COPY --from=web /app/web/out /usr/share/nginx/html
+COPY --from=web /src/web/out /usr/share/nginx/html
 COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
 COPY deploy/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh \
