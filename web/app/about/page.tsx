@@ -6,9 +6,9 @@ import { AboutI18n } from './about-i18n';
 import styles from './about.module.css';
 
 export const metadata: Metadata = {
-  title: 'Hanzi Handwriting Practice Online — Chinese Laoshi',
+  title: 'About Chinese Laoshi',
   description:
-    'Write Chinese characters in your browser with stroke feedback. Free Mandarin flashcards, custom word groups, and translation drills — no app install required.',
+    'Chinese Laoshi is a free browser app for hanzi handwriting and Mandarin flashcards. Open source, no install.',
   alternates: { canonical: 'https://chineselaoshi.slavoyar.tech/about' },
 };
 
@@ -18,7 +18,7 @@ const faqJsonLd = {
     {
       '@type': 'WebSite',
       name: 'Chinese Laoshi',
-      alternateName: '中国老师',
+      alternateName: ['中国老师', 'chineselaoshi.slavoyar.tech'],
       url: 'https://chineselaoshi.slavoyar.tech/',
     },
     {
@@ -77,7 +77,7 @@ export default function AboutPage() {
       }
     >
       <h1 data-i18n="title" data-testid="about-heading">
-        Free Hanzi Handwriting Practice in Your Browser
+        About Chinese Laoshi
       </h1>
       <p data-i18n="intro">
         Chinese Laoshi (中国老师) helps you write Chinese characters online and drill Mandarin

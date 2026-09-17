@@ -15,10 +15,9 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://chineselaoshi.slavoyar.tech'),
-  title: 'Free hanzi practice in your browser',
+  title: 'Free hanzi practice in your browser — Chinese Laoshi',
   description:
     'Write Chinese characters and drill translations with your own flashcards. Free, no app install.',
-  alternates: { canonical: 'https://chineselaoshi.slavoyar.tech/' },
   icons: {
     icon: [
       { url: '/assets/icon.svg', type: 'image/svg+xml' },
@@ -30,7 +29,7 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: 'Chinese Laoshi',
     locale: 'en_US',
-    title: 'Free hanzi practice in your browser',
+    title: 'Free hanzi practice in your browser — Chinese Laoshi',
     description:
       'Write Chinese characters and drill translations with your own flashcards. Free, no app install.',
     images: [
@@ -44,7 +43,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Free hanzi practice in your browser',
+    title: 'Free hanzi practice in your browser — Chinese Laoshi',
     description:
       'Write Chinese characters and drill translations with your own flashcards. Free, no app install.',
     images: ['/og-image.png'],

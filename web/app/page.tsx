@@ -1,7 +1,23 @@
+import type { Metadata } from 'next';
+
 import { HomeI18n } from './home-i18n';
 import styles from './home.module.css';
+import { SiteBrand } from './site-brand';
 import { SiteFooter } from './site-footer';
 import { TelegramStudyRedirect } from './telegram-study-redirect';
+
+export const metadata: Metadata = {
+  title: 'Free hanzi practice in your browser — Chinese Laoshi',
+  description:
+    'Write Chinese characters and drill translations with your own flashcards. Free, no app install.',
+  alternates: { canonical: 'https://chineselaoshi.slavoyar.tech/' },
+  openGraph: {
+    title: 'Free hanzi practice in your browser — Chinese Laoshi',
+  },
+  twitter: {
+    title: 'Free hanzi practice in your browser — Chinese Laoshi',
+  },
+};
 
 const homeJsonLd = {
   '@context': 'https://schema.org',
@@ -9,7 +25,7 @@ const homeJsonLd = {
     {
       '@type': 'WebSite',
       name: 'Chinese Laoshi',
-      alternateName: '中国老师',
+      alternateName: ['中国老师', 'chineselaoshi.slavoyar.tech'],
       url: 'https://chineselaoshi.slavoyar.tech/',
     },
     {
@@ -18,7 +34,7 @@ const homeJsonLd = {
       applicationCategory: 'EducationalApplication',
       operatingSystem: 'Web',
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-      url: 'https://chineselaoshi.slavoyar.tech/app',
+      url: 'https://chineselaoshi.slavoyar.tech/',
     },
   ],
 };
@@ -31,9 +47,7 @@ export default function HomePage() {
       <HomeI18n />
       <header className={styles.header}>
         <div className={styles.bar}>
-          <a className={styles.brand} href="/">
-            中国老师
-          </a>
+          <SiteBrand />
           <div className={styles.nav}>
             <a className={styles.navLink} href="/about" data-i18n="about">
               About

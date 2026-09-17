@@ -2,7 +2,7 @@
 User-agent: *
 Allow: /
 Disallow: /api/
-Disallow: /app
+Disallow: /app/
 
 # Common AI / search crawlers (explicit allow; same /api/ disallow as wildcard)
 User-agent: GPTBot
@@ -19,6 +19,6 @@ User-agent: CCBot
 User-agent: Applebot-Extended
 Allow: /
 Disallow: /api/
-Disallow: /app
+Disallow: /app/
 
 Sitemap: https://chineselaoshi.slavoyar.tech/sitemap.xml

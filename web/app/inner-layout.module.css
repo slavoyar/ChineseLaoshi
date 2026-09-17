@@ -38,15 +38,6 @@
   gap: 1rem;
 }
 
-.brand {
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.25;
-  color: hsl(var(--foreground));
-  text-decoration: none;
-  flex-shrink: 0;
-}
-
 .navLink {
   display: inline-flex;
   align-items: center;
@@ -181,7 +172,6 @@
   color: hsl(var(--muted-foreground));
 }
 
-.brand:focus-visible,
 .navLink:focus-visible,
 .cta:focus-visible,
 .article a:focus-visible {

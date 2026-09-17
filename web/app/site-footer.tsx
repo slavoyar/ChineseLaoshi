@@ -7,7 +7,7 @@ export function SiteFooter() {
   return (
     <footer className={styles.footer}>
       <SiteFooterI18n />
-      <span data-i18n="footerCopyright">© {year} Chinese Laoshi</span>
+      <span data-i18n="footerCopyright">© {year} Chinese Laoshi · 中国老师</span>
       <span aria-hidden="true">·</span>
       <span className={styles.tagline} data-i18n="footerTagline">
         Free Mandarin flashcards and hanzi handwriting in the browser.

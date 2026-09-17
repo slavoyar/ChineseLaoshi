@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 
 import styles from './inner-layout.module.css';
+import { SiteBrand } from './site-brand';
 import { SiteFooter } from './site-footer';
 
 type InnerLayoutProps = {
@@ -15,9 +16,7 @@ export function InnerLayout({ nav, before, children }: InnerLayoutProps) {
       {before}
       <header className={styles.header}>
         <div className={styles.bar}>
-          <a className={styles.brand} href="/">
-            中国老师
-          </a>
+          <SiteBrand />
           {nav}
         </div>
       </header>

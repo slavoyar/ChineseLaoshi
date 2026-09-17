@@ -1,0 +1,18 @@
+.brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.25;
+  flex-shrink: 1;
+  white-space: nowrap;
+}
+
+.brand:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
