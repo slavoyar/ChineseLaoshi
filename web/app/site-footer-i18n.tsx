@@ -6,14 +6,14 @@ const year = new Date().getFullYear();
 
 const copy = {
   en: {
-    footerCopyright: `© ${year} Chinese Laoshi`,
+    footerCopyright: `© ${year} Chinese Laoshi · 中国老师`,
     footerTagline: 'Free Mandarin flashcards and hanzi handwriting in the browser.',
     footerAbout: 'About',
     footerHanzi: 'Hanzi practice',
     footerFlashcards: 'Flashcards',
   },
   ru: {
-    footerCopyright: `© ${year} Chinese Laoshi`,
+    footerCopyright: `© ${year} Chinese Laoshi · 中国老师`,
     footerTagline: 'Бесплатные карточки и практика написания иероглифов в браузере.',
     footerAbout: 'О приложении',
     footerHanzi: 'Письмо иероглифов',

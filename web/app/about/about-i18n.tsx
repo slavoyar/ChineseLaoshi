@@ -7,7 +7,7 @@ import { initTelegramWebApp, loadTelegramSdk } from '../load-telegram-sdk';
 const copy = {
   en: {
     backToApp: 'Back to app',
-    title: 'Free Hanzi Handwriting Practice in Your Browser',
+    title: 'About Chinese Laoshi',
     intro:
       'Chinese Laoshi (中国老师) helps you write Chinese characters online and drill Mandarin translations with your own flashcards — free, in the browser on phone, tablet, or desktop.',
     featuresTitle: 'Features',
@@ -44,7 +44,7 @@ const copy = {
   },
   ru: {
     backToApp: 'В приложение',
-    title: 'Бесплатная практика написания иероглифов в браузере',
+    title: 'О проекте Chinese Laoshi',
     intro:
       'Chinese Laoshi (中国老师) помогает писать иероглифы онлайн и тренировать переводы с собственными карточками — бесплатно в браузере на телефоне, планшете или компьютере.',
     featuresTitle: 'Возможности',
