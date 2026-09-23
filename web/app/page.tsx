@@ -11,12 +11,6 @@ export const metadata: Metadata = {
   description:
     'Write Chinese characters and drill translations with your own flashcards. Free, no app install.',
   alternates: { canonical: 'https://chineselaoshi.slavoyar.tech/' },
-  openGraph: {
-    title: 'Free hanzi practice in your browser — Chinese Laoshi',
-  },
-  twitter: {
-    title: 'Free hanzi practice in your browser — Chinese Laoshi',
-  },
 };
 
 const homeJsonLd = {
