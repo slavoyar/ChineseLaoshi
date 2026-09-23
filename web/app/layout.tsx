@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   title: 'Free hanzi practice in your browser — Chinese Laoshi',
   description:
     'Write Chinese characters and drill translations with your own flashcards. Free, no app install.',
+  robots: { index: true, follow: true },
   icons: {
     icon: [
       { url: '/assets/icon.svg', type: 'image/svg+xml' },
