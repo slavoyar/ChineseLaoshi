@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from 'next';
-import Script from 'next/script';
 import type { ReactNode } from 'react';
 
 import './globals.css';
@@ -59,10 +58,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <ThemeSync />
         {children}
-        <Script
+        {/* Plain script avoids next/script preload/crossorigin mismatch for the CF beacon */}
+        <script
+          defer
           src="https://static.cloudflareinsights.com/beacon.min.js"
-          strategy="afterInteractive"
-          type="module"
           data-cf-beacon='{"token": "7cb60d452a964f07939a9d6e040b9918"}'
         />
       </body>

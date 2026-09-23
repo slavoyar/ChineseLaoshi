@@ -5,7 +5,6 @@ const isDev = process.env.NODE_ENV === 'development';
 const nextConfig: NextConfig = {
   images: { unoptimized: true },
   transpilePackages: ['@zh-keyboard/recognizer', '@zh-keyboard/core'],
-  eslint: { ignoreDuringBuilds: true },
 };
 
 if (!isDev) {
